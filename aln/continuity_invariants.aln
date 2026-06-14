@@ -1,0 +1,33 @@
+// filename: aln/continuity_invariants.aln
+// destination: EcoNet-CEIM-PhoenixWater/aln/continuity_invariants.aln
+
+invariant PsychologicalContinuityNonDegradation {
+    description = "No actuation channel, regardless of therapeutic intent, may reduce the host's psychological continuity score or belief kernel stability."
+    
+    predicates = [
+        "post_actuation_continuity_score >= pre_actuation_continuity_score - 0.01",
+        "post_actuation_belief_kernel_stability == pre_actuation_belief_kernel_stability",
+        "post_actuation_neuroinflammation_proxy <= 0.40"
+    ]
+    
+    enforcement = "HARD_BLOCK"
+    
+    on_violation = [
+        "HALT_ACTUATION_IMMEDIATELY",
+        "LOG_TO_ORGANICHAIN_AUDIT_SHARD",
+        "ALERT_HOST_VIA_SAFE_CHANNEL",
+        "REVOKE_CHANNEL_AUTHORIZATION"
+    ]
+}
+
+invariant BiocompatibilityCoupling {
+    description = "Actuation channels must respect the host's BLOOD, PROTEIN, and OXYGEN envelopes to prevent biological cascades that secondarily disrupt psychological continuity."
+    
+    predicates = [
+        "actuation_protein_draw <= host_protein_envelope_remaining",
+        "actuation_thermal_delta <= host_thermal_envelope_max",
+        "actuation_energy_draw <= host_blood_oxygen_envelope_remaining"
+    ]
+    
+    enforcement = "HARD_BLOCK"
+}
