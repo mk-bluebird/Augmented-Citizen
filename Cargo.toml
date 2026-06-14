@@ -1,0 +1,23 @@
+# filename: Cargo.toml
+# Root manifest for mk-bluebird/Augmented-Citizen
+[workspace]
+members = [
+    "crates/sovereign-guards-core",
+    "crates/econet-healthcare-guard",
+    "crates/detox-interval-guard",
+    "crates/organiccpu-scheduler",
+]
+
+resolver = "2"
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.85"
+license = "MIT OR Apache-2.0"
+authors = ["mk-bluebird <host@augmented-citizen.org>"]
+homepage = "https://github.com/mk-bluebird/Augmented-Citizen"
+repository = "https://github.com/mk-bluebird/Augmented-Citizen"
+
+[workspace.dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
