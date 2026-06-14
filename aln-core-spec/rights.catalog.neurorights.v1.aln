@@ -1,0 +1,54 @@
+# File: /aln-core-spec/rights.catalog.neurorights.v1.aln
+# Purpose: Catalog of neurorights instances built on rights.core-schema.
+
+rights_catalog Neurorights_v1 {
+    imports = ["/aln-core-spec/rights.core-schema.aln"]
+    
+    catalog = [
+        {
+            right_id                 = "NR_MENTAL_PRIVACY"
+            name                     = "Right to Mental Privacy"
+            description              = "The right to seclude one's inner world from unauthorized intrusion, decoding, collection, or sharing of neural data."
+            category                 = "NEURORIGHTS"
+            protected_interests      = ["NEURAL_DATA", "COGNITIVE_PATTERNS", "UNEXPRESSED_THOUGHTS"]
+            risk_examples            = ["UNCONSENTED_EEG_EXPORT", "COVERT_BIOMETRIC_PROFILING", "NEURODATA_COMMODIFICATION"]
+            enforcement_expectations = ["DEFAULT_DENY_ACCESS", "EXPLICIT_REVOCABLE_CONSENT", "DATA_MINIMIZATION"]
+        },
+        {
+            right_id                 = "NR_COGNITIVE_LIBERTY"
+            name                     = "Right to Cognitive Liberty"
+            description              = "The freedom to control one's own consciousness, electrochemical thought processes, and the liberty to engage in cognitive enhancement."
+            category                 = "NEURORIGHTS"
+            protected_interests      = ["THOUGHT_PROCESSES", "BELIEF_FORMATION", "DECISION_MAKING"]
+            risk_examples            = ["COVERT_PERSUASION", "SUBLIMINAL_NUDGING", "FORCED_NEURAL_MONITORING"]
+            enforcement_expectations = ["NO_COVERT_MANIPULATION", "HOST_INITIATED_MODULATION_ONLY", "TRANSPARENT_ALGORITHMIC_INFLUENCE"]
+        },
+        {
+            right_id                 = "NR_MENTAL_INTEGRITY"
+            name                     = "Right to Mental Integrity"
+            description              = "The right to be protected from illicit, coercive, or harmful manipulations of mental activity and brain function."
+            category                 = "NEURORIGHTS"
+            protected_interests      = ["NEUROLOGICAL_HEALTH", "EMOTIONAL_STABILITY", "COGNITIVE_CAPACITY"]
+            risk_examples            = ["INDUCED_DISTRESS", "COGNITIVE_OVERLOAD", "HARMFUL_STIMULATION"]
+            enforcement_expectations = ["THERMAL_AND_DUTY_CEILINGS", "EMERGENCY_SHUTDOWN_PATHS", "CONTINUOUS_SAFETY_MONITORING"]
+        },
+        {
+            right_id                 = "NR_PSYCHOLOGICAL_CONTINUITY"
+            name                     = "Right to Psychological Continuity"
+            description              = "The right to preserve personal identity and the continuity of one's mental life from abrupt, unconsented external alterations."
+            category                 = "NEURORIGHTS"
+            protected_interests      = ["SELF_NARRATIVE", "MEMORY_INTEGRITY", "PERSONALITY_STABILITY"]
+            risk_examples            = ["UNCONSENTED_MEMORY_SUPPRESSION", "ABRUPT_BELIEF_SHIFTING", "IDENTITY_FRAGMENTATION"]
+            enforcement_expectations = ["LAYERED_CONSENT_FOR_IDENTITY_CHANGES", "NO_ABRUPT_PERSONALITY_REWRITING", "REVERSIBILITY_PREFERENCE"]
+        },
+        {
+            right_id                 = "NR_PERSONAL_IDENTITY"
+            name                     = "Right to Personal Identity"
+            description              = "The right to prohibit technology from disrupting the sense of self when connecting individuals with digital networks."
+            category                 = "NEURORIGHTS"
+            protected_interests      = ["CORE_SELF_LABELS", "FOUNDATIONAL_VALUES", "RELATIONAL_BONDS"]
+            risk_examples            = ["INDUCED_DISSOCIATION", "THIRD_PARTY_PERSONALITY_SHAPING"]
+            enforcement_expectations = ["PROTECTION_OF_CORE_BELIEF_KERNELS", "NO_RECODING_OF_SELF_LABELS"]
+        }
+    ]
+}
