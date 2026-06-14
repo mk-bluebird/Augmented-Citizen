@@ -1,0 +1,23 @@
+# File: /aln-core-spec/sovereignty.core-schema.aln
+# Purpose: Core schema for sovereignty over digital and neuro-cognitive states.
+
+sovereignty_schema SovereigntyCore_v1 {
+    definition {
+        sovereign_subject = "enum[HOST, COMMUNITY, PLATFORM]"
+        sovereign_domain  = "enum[NEURAL_DATA, POLICY_CONFIG, AUGMENTATION_STATE, DIGITAL_INFRASTRUCTURE]"
+        control_level     = "enum[ABSOLUTE, DELEGATED, SHARED]"
+    }
+
+    delegation_rules {
+        delegation_id          = "string"
+        from_subject           = "sovereign_subject"
+        to_subject             = "sovereign_subject"
+        scope                  = "list[sovereign_domain]"
+        revocation_condition   = "enum[ANY_TIME, CAUSE_ONLY, TIME_BOUNDED]"
+    }
+
+    constraints {
+        host_primacy = "HOST sovereign_subject always retains ABSOLUTE control over NEURAL_DATA and AUGMENTATION_STATE"
+        revocability = "All delegations must be revocable by the from_subject"
+    }
+}
