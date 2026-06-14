@@ -1,0 +1,20 @@
+# File: /aln-bci-special/bci.special.mental-identity.envelope.aln
+# Purpose: Envelope for identity safeguards in BCI operations.
+
+mental_identity_envelope MentalIdentityEnvelope_v1 {
+    imports = ["/aln-core-spec/invariants.mental-identity.aln"]
+
+    personality_shaping_policy         = "STRICTLY_FORBIDDEN"
+    long_term_character_shift_policy   = "STRICTLY_FORBIDDEN"
+    
+    allowed_transformations = [
+        "SKILL_ACQUISITION_SUPPORT",
+        "FOCUS_ENHANCEMENT"
+    ]
+    
+    forbidden_transformations = [
+        "POLITICAL_REALIGNMENT",
+        "CONSUMER_PREFERENCE_MANIPULATION",
+        "COMPLIANCE_INDUCING_CONDITIONING"
+    ]
+}
