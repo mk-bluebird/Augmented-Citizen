@@ -1,0 +1,18 @@
+# File: /aln-core-spec/host.healthcare-context.aln
+# Purpose: Models healthcare context for therapeutic modulation.
+
+host_healthcare_context HostHealthcareContext_v1 {
+    imports = ["/aln-core-spec/host.core-schema.aln"]
+
+    definition {
+        clinical_indications = "list[string]"
+        treating_clinicians  = "list[did]"
+        care_setting         = "enum[HOSPITAL, CLINIC, HOME, RESEARCH_LAB]"
+        risk_profile         = "enum[LOW, MEDIUM, HIGH]"
+    }
+
+    constraints {
+        requires_clinical_indication = "If care_setting == HOSPITAL, clinical_indications must not be empty"
+        clinician_verification       = "All treating_clinicians must be verified via a valid DID"
+    }
+}
