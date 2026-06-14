@@ -1,0 +1,36 @@
+# File: /aln-core-spec/rights.catalog.healthcare.v1.aln
+# Purpose: Rights catalog for healthcare contexts intersecting therapeutic modulation.
+
+rights_catalog HealthcareRights_v1 {
+    imports = ["/aln-core-spec/rights.core-schema.aln"]
+
+    catalog = [
+        {
+            right_id                 = "HC_INFORMED_CONSENT"
+            name                     = "Right to Informed Consent"
+            description              = "The right to receive clear, comprehensive, and understandable information regarding therapeutic interventions and their risks."
+            category                 = "HEALTHCARE"
+            clinical_contexts        = ["THERAPEUTIC_MODULATION", "DIAGNOSTIC_IMAGING", "CLINICAL_TRIALS"]
+            link_to_guidelines       = ["FDA_INFORMED_CONSENT", "EU_MDR_ARTICLE_10"]
+            enforcement_expectations = ["PLAIN_LANGUAGE_DISCLOSURE", "COOLING_OFF_PERIOD", "DOCUMENTED_ACKNOWLEDGMENT"]
+        },
+        {
+            right_id                 = "HC_WITHDRAW_CONSENT"
+            name                     = "Right to Withdraw Consent"
+            description              = "The right to withdraw from any therapeutic or diagnostic procedure at any time without penalty or loss of care."
+            category                 = "HEALTHCARE"
+            clinical_contexts        = ["ALL_CLINICAL_INTERVENTIONS"]
+            link_to_guidelines       = ["GDPR_ARTICLE_7", "HIPAA_PATIENT_RIGHTS"]
+            enforcement_expectations = ["IMMEDIATE_CESSATION_OF_MODULATION", "NO_PENALTY_FOR_WITHDRAWAL", "GRACEFUL_DOWNGRADE_TO_BASELINE"]
+        },
+        {
+            right_id                 = "HC_SAFE_CARE"
+            name                     = "Right to Safe Care"
+            description              = "The right to receive care that adheres to established safety envelopes, thermal limits, and biophysical corridors."
+            category                 = "HEALTHCARE"
+            clinical_contexts        = ["NEUROSTIMULATION", "NANOSWARM_THERAPIES"]
+            link_to_guidelines       = ["ISO_13485", "IEC_60601"]
+            enforcement_expectations = ["HARD_THERMAL_CEILINGS", "DUTY_CYCLE_LIMITS", "AUTOMATED_SAFETY_SHUTDOWN"]
+        }
+    ]
+}
