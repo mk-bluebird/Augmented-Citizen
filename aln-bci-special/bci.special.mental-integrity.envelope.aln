@@ -1,0 +1,19 @@
+# File: /aln-bci-special/bci.special.mental-integrity.envelope.aln
+# Purpose: Encodes mental integrity posture: thresholds for acceptable modulation risk.
+
+mental_integrity_envelope MentalIntegrityEnvelope_v1 {
+    imports = ["/aln-core-spec/invariants.mental-integrity.aln"]
+
+    allowed_modulation_types = ["THERAPEUTIC", "SUPPORTIVE"]
+    
+    intensity_caps = {
+        "MAX_THERMAL_DELTA_C" = 0.5,
+        "MAX_DUTY_CYCLE"      = 0.3,
+        "MAX_STIMULATION_MA"  = 2.0
+    }
+
+    review_requirements = [
+        "CONTINUOUS_DISTRESS_MONITORING",
+        "AUTOMATED_SHUTDOWN_ON_ANOMALY"
+    ]
+}
