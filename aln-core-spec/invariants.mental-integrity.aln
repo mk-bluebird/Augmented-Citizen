@@ -1,0 +1,24 @@
+# File: /aln-core-spec/invariants.mental-integrity.aln
+# Purpose: Invariants protecting mental integrity from harmful interference.
+
+mental_integrity_invariants MentalIntegrityInvariants_v1 {
+    disallowed_harms = [
+        "PERSISTENT_DISTRESS_INDUCCTION",
+        "COGNITIVE_IMPAIRMENT",
+        "INDUCED_CONFUSION_AS_CONTROL",
+        "NEUROLOGICAL_OVERLOAD"
+    ]
+
+    monitoring_expectations = [
+        {
+            expectation_id = "MII_DETECT_DISTRESS"
+            description    = "System must continuously monitor for signs of distress or cognitive overload."
+            enforcement    = "RUN_DISTRESS_DETECTION_MODEL"
+        },
+        {
+            expectation_id = "MII_EMERGENCY_SHUTDOWN"
+            description    = "System must provide an immediate emergency shutdown path for all modulation flows."
+            enforcement    = "MAINTAIN_HARDWARE_KILL_SWITCH"
+        }
+    ]
+}
