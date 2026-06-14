@@ -1,0 +1,2 @@
+destination-path,module,version,role,security-protocol,interop-standard,identity-mgmt,ai-agent-integration,device-type,authentication,digital-twin,edge-analytics,compliance,log-persistence
+vnodebci.loihi2.edge,NeuromorphicBCINode,1.0.0,BCIGateway,AES256-TLS,MQTT-Secure,FIDO2-WebAuthn,MistralQwen,BCIEdge,BiometricVital,Enabled,SNNHealth,HIPAAFCC,GDPRAuditChain
