@@ -1,0 +1,23 @@
+# File: /aln-core-spec/beliefs.core-schema.aln
+# Purpose: Schema for belief objects and belief graphs, including core kernels and dependency relations.
+
+beliefs_schema BeliefsCore_v1 {
+    definition {
+        belief_id              = "string"
+        category               = "enum[KERNEL, PERIPHERAL, SUPPORTIVE]"
+        content_summary        = "string"
+        identity_centrality    = "float[0.0, 1.0]"
+        modulation_sensitivity = "enum[LOW, MEDIUM, HIGH, CRITICAL]"
+    }
+
+    relationships {
+        supports       = "list[belief_id]"
+        contradicts    = "list[belief_id]"
+        derived_from   = "list[belief_id]"
+    }
+
+    constraints {
+        kernel_centrality  = "If category == KERNEL, identity_centrality must be >= 0.8"
+        kernel_sensitivity = "If category == KERNEL, modulation_sensitivity must be CRITICAL"
+    }
+}
