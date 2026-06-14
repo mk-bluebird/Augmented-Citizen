@@ -1,0 +1,23 @@
+# File: /aln-core-spec/host.core-schema.aln
+# Purpose: Schema for host profiles, including identity, augmentation state, and bindings.
+
+host_schema HostCore_v1 {
+    definition {
+        host_did                = "string"
+        bostrom_address         = "string"
+        status_flags            = "list[enum[AUGMENTED_CITIZEN, DEVICELESS_ORGANIC, CLINICAL_PATIENT, RESEARCH_PARTICIPANT]]"
+        baseline_capabilities   = "list[capability_id]"
+    }
+
+    bindings {
+        rights_profile          = "rights_profile_id"
+        consent_state           = "consent_state_id"
+        audit_references        = "list[audit_shard_id]"
+        sovereignty_claims      = "sovereignty_claim_id"
+    }
+
+    constraints {
+        unique_did              = "host_did must be globally unique"
+        valid_bostrom           = "bostrom_address must be a valid Bostrom blockchain address"
+    }
+}
