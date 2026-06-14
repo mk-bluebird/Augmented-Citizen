@@ -1,0 +1,30 @@
+# File: /aln-core-spec/host.capability-bounds.aln
+# Purpose: Defines capability bounds for the host's augmentations.
+
+host_capability_bounds HostCapabilityBounds_v1 {
+    imports = ["/aln-core-spec/host.core-schema.aln"]
+
+    bounds = [
+        {
+            capability_id       = "MAX_MODULATION_INTENSITY"
+            description         = "Maximum allowable intensity for any neural or affective modulation."
+            safe_range          = "0.0 - 0.5"
+            hard_limit          = "0.8"
+            review_conditions   = ["CLINICAL_OVERRIDE", "EMERGENCY_MEDICAL"]
+        },
+        {
+            capability_id       = "MAX_SENSING_RESOLUTION"
+            description         = "Maximum fidelity for neural data acquisition."
+            safe_range          = "LOW - MEDIUM"
+            hard_limit          = "HIGH"
+            review_conditions   = ["RESEARCH_PROTOCOL", "DIAGNOSTIC_NEED"]
+        },
+        {
+            capability_id       = "MAX_DUTY_CYCLE"
+            description         = "Maximum percentage of time active modulation or sensing can occur."
+            safe_range          = "0.0 - 0.3"
+            hard_limit          = "0.5"
+            review_conditions   = ["THERAPEUTIC_REGIMEN"]
+        }
+    ]
+}
