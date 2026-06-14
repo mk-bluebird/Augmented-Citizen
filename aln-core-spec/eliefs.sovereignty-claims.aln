@@ -1,0 +1,34 @@
+# File: /aln-core-spec/beliefs.sovereignty-claims.aln
+# Purpose: Encodes host sovereignty over belief space, defining who can propose changes.
+
+belief_sovereignty BeliefSovereignty_v1 {
+    imports = ["/aln-core-spec/beliefs.protection.classes.aln"]
+
+    claim_types = {
+        HOST_EXCLUSIVE_ACTIONS = [
+            "ALTER_CORE_BELIEF_KERNELS",
+            "INITIATE_IDENTITY_REVISION",
+            "REVOKE_BELIEF_PROTECTIONS"
+        ]
+        COLLABORATIVE_ACTIONS = [
+            "THERAPEUTIC_REFLECTION",
+            "SUPPORTIVE_NUDGING",
+            "PROVIDE_INFORMATIONAL_CONTEXT"
+        ]
+    }
+
+    sovereignty_rules = [
+        {
+            rule_id             = "BSR_HOST_INITIATION_REQUIRED"
+            operation           = "ALTER_CORE_BELIEF_KERNELS"
+            condition           = "Operation must be explicitly initiated by the host via a verified UI or neural command."
+            external_proposals  = "FORBIDDEN"
+        },
+        {
+            rule_id             = "BSR_NO_COVERT_PERSUASION"
+            operation           = "COLLABORATIVE_ACTIONS"
+            condition           = "System may provide context, but must not use closed-loop affective conditioning to force belief adoption."
+            external_proposals  = "ALLOWED_WITH_TRANSPARENCY"
+        }
+    ]
+}
