@@ -1,0 +1,23 @@
+# File: /aln-core-spec/invariants.psychological-continuity.aln
+# Purpose: Invariants preserving self-narrative and identity continuity.
+
+psychological_continuity_invariants PsychologicalContinuityInvariants_v1 {
+    protected_domains = [
+        "SELF_NARRATIVE",
+        "KEY_RELATIONSHIPS",
+        "WORLDVIEW_CLUSTERS"
+    ]
+
+    rules = [
+        {
+            rule_id     = "PCI_NO_ABRUPT_SHIFTS"
+            description = "No abrupt, large-scale belief shifting without layered consent and review."
+            enforcement = "REQUIRE_GRADUAL_TRANSITION_AND_HOST_APPROVAL"
+        },
+        {
+            rule_id     = "PCI_MEMORY_PROTECTION"
+            description = "Memory suppression is only allowed for therapeutic reasons with independent review."
+            enforcement = "REQUIRE_CLINICAL_INDICATION_AND_REVIEW"
+        }
+    ]
+}
