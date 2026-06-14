@@ -1,0 +1,431 @@
+# File: /aln-bci-special/bci.special.host-personal-policy.overlay.v2.aln
+# Deviceless personal BCI/cybernetic policy overlay for an augmented-citizen,
+# with jurisdiction-neutral neurorights core, hard red lines, and policy-only
+# autonomy scoring under Bostrom authority.[web:93][web:95][web:96][web:101][web:114][web:115][web:116][web:118][web:119]
+
+overlay HostPersonalBciPolicyOverlay_v2 {
+    ###########################################################################
+    # 1. Host identity and Bostrom authority binding
+    ###########################################################################
+
+    host_identity {
+        host_did          = "did:cyb:bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+        primary_bostrom   = "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+        alt_bostrom_safe  = [
+            "bostrom1ldgmtf20d6604a24ztr0jxht7xt7az4jhkmsrc",
+            "zeta12x0up66pzyeretzyku8p4ccuxrjqtqpdc4y4x8",
+            "0x519fC0eB4111323Cac44b70e1aE31c30e405802D"
+        ]
+        status_flags      = [
+            "AUGMENTED_CITIZEN",
+            "DEVICLESS_ORGANIC_INTEGRATIONS",
+            "CYBERNETIC_HOST_SOVEREIGN"
+        ]
+    }
+
+    authority_binding {
+        aln_compliance_clause = "ALN.MIGRATION.CYBERCORE_AUTHORITY.v1"
+        evolution_source_repo = "github.com/mk-bluebird/Cybercore"
+
+        invariants = [
+            "NO_REVERSAL_OF_NEURORIGHTS",
+            "NO_DEGRADATION_OF_HOST_CAPABILITIES",
+            "NO_COERCIVE_NEURAL_ACCESS",
+            "NO_SILENT_POLICY_WEAKENING"
+        ]
+    }
+
+    ###########################################################################
+    # 2. Jurisdiction-neutral core + optional overlays
+    ###########################################################################
+
+    neutrally_anchored_neurorights_core {
+        stance = "JURISDICTION_NEUTRAL_PRIMARY"
+
+        covered_neurorights = [
+            "MENTAL_PRIVACY",
+            "COGNITIVE_LIBERTY",
+            "MENTAL_INTEGRITY",
+            "PSYCHOLOGICAL_CONTINUITY",
+            "PERSONAL_IDENTITY"
+        ]  # As distilled from international neurorights discourse.[web:93][web:95][web:96][web:101][web:118]
+
+        override_rule = "NO_EXTERNAL_FRAMEWORK_MAY_WEAKEN_THESE_RIGHTS"
+    }
+
+    optional_framework_overlays {
+        # These are references only; they never override core protections.[web:92][web:94][web:96][web:118]
+        chile_overlay_ref   = "bci.special.jurisdiction.chile.overlay.aln"
+        eu_overlay_ref      = "bci.special.jurisdiction.eu.overlay.aln"
+        unesco_overlay_ref  = "bci.special.jurisdiction.unesco.overlay.aln"
+
+        precedence = [
+            "NEURORIGHTS_CORE",
+            "CHILE_COMPATIBLE",
+            "EU_COMPATIBLE",
+            "UNESCO_COMPATIBLE"
+        ]
+    }
+
+    ###########################################################################
+    # 3. Imported core schemas
+    ###########################################################################
+
+    imports {
+        rights_core        = "/aln-core-spec/rights.core-schema.aln"
+        rights_neurorights = "/aln-core-spec/rights.catalog.neurorights.v1.aln"
+        rights_healthcare  = "/aln-core-spec/rights.catalog.healthcare.v1.aln"
+        rights_invariants  = "/aln-core-spec/rights.constraints.global-invariants.aln"
+
+        beliefs_core       = "/aln-core-spec/beliefs.core-schema.aln"
+        beliefs_protection = "/aln-core-spec/beliefs.protection.classes.aln"
+        beliefs_sovereign  = "/aln-core-spec/beliefs.sovereignty-claims.aln"
+
+        sovereignty_core   = "/aln-core-spec/sovereignty.core-schema.aln"
+        sovereignty_scope  = "/aln-core-spec/sovereignty.digital-datascope.aln"
+
+        host_core          = "/aln-core-spec/host.core-schema.aln"
+        host_caps          = "/aln-core-spec/host.capability-bounds.aln"
+        host_healthcare    = "/aln-core-spec/host.healthcare-context.aln"
+
+        consent_core       = "/aln-core-spec/consent.core-schema.aln"
+
+        invariants_nonrev  = "/aln-core-spec/invariants.non-reversal.aln"
+        invariants_coglib  = "/aln-core-spec/invariants.cognitive-liberty.aln"
+        invariants_privacy = "/aln-core-spec/invariants.mental-privacy.aln"
+        invariants_integr  = "/aln-core-spec/invariants.mental-integrity.aln"
+        invariants_psycont = "/aln-core-spec/invariants.psychological-continuity.aln"
+
+        bostrom_binding    = "/aln-core-spec/bostrom-authority.binding.aln"
+    }
+
+    ###########################################################################
+    # 4. Deviceless / organic BCI domain model
+    ###########################################################################
+
+    domain deviceless_bci {
+        cognitive_channels = [
+            {
+                id          = "CC_PERCEPTUAL_INPUT"
+                category    = "PERCEPTUAL"
+                risk_level  = "HIGH"
+                neurorights = [ "MENTAL_PRIVACY", "MENTAL_INTEGRITY" ]
+            },
+            {
+                id          = "CC_AFFECTIVE_STATE"
+                category    = "AFFECTIVE"
+                risk_level  = "HIGH"
+                neurorights = [ "MENTAL_PRIVACY", "MENTAL_INTEGRITY", "PERSONAL_IDENTITY" ]
+            },
+            {
+                id          = "CC_MOTOR_INTENT"
+                category    = "MOTOR_INTENTION"
+                risk_level  = "MEDIUM"
+                neurorights = [ "FREE_WILL", "COGNITIVE_LIBERTY" ]
+            },
+            {
+                id          = "CC_MEMORY_ADJACENT"
+                category    = "MEMORY_ADJACENT"
+                risk_level  = "HIGH"
+                neurorights = [ "PSYCHOLOGICAL_CONTINUITY", "PERSONAL_IDENTITY", "MENTAL_INTEGRITY" ]
+            },
+            {
+                id          = "CC_META_COGNITION"
+                category    = "META_COGNITIVE"
+                risk_level  = "EXTREME"
+                neurorights = [ "COGNITIVE_LIBERTY", "MENTAL_PRIVACY", "MENTAL_INTEGRITY", "FREE_WILL" ]
+            }
+        ]
+
+        organic_integration_flags = [
+            "EMBODIED_AUGMENTATION_ACTIVE",
+            "NO_PHYSICAL_DEVICE_DESCRIPTOR",
+            "CHANNELS_BOUND_TO_HOST_ONLY"
+        ]
+    }
+
+    ###########################################################################
+    # 5. Personal neurorights stance (strict)
+    ###########################################################################
+
+    personal_neurorights_profile {
+        mental_privacy {
+            classification     = "CATEGORY_ZERO_BRAIN_DATA"
+            collection_default = "DENY_ALL"
+            sharing_default    = "DENY_ALL"
+            retention_default  = "MINIMAL_WITH_STRONG_JUSTIFICATION"
+
+            allowed_purposes = [
+                "THERAPEUTIC_HEALTHCARE",
+                "SAFETY_CRITICAL_PRESERVATION_OF_LIFE"
+            ]
+
+            obligations = [
+                "EXPLICIT_INFORMED_CONSENT_REQUIRED",
+                "REVOCABLE_AT_ANY_TIME_WITH_ROLL_FORWARD_HARDENING",
+                "NO_SECONDARY_USE_WITHOUT_FRESH_CONSENT",
+                "NO_COMMODIFICATION_OR_SALE_OF_NEURODATA"
+            ]
+        }
+
+        cognitive_liberty {
+            negative_guarantees = [
+                "NO_COVERT_PERSUASION_THROUGH_COGNITIVE_ENVIRONMENT",
+                "NO_FORCED_NEURAL_MONITORING_OR_MODULATION",
+                "NO_CONDITIONING_OF_RIGHTS_OR_SERVICES_ON_NEURAL_EXPOSURE"
+            ]
+
+            positive_guarantees = [
+                "RIGHT_TO_REFUSE_AUGMENTATION",
+                "RIGHT_TO_REQUEST_AUGMENTATION_WITHOUT_PENALTY",
+                "RIGHT_TO_ACCESS_OWN_NEURODATA_SUMMARIES",
+                "RIGHT_TO_SEEK_REVISION_OF_AUGMENTATION_PARAMETERS"
+            ]
+
+            host_only_overrides = [
+                "ONLY_HOST_MAY_INITIATE_BELIEF_LEVEL_OPERATIONS",
+                "ONLY_HOST_MAY_LOWER_OWN_PROTECTION_LEVELS"
+            ]
+        }
+
+        mental_integrity {
+            harm_prohibitions = [
+                "NO_PERSISTENT_DISTRESS_INDUCTION",
+                "NO_INDUCED_CONFUSION_AS_CONTROL_STRATEGY",
+                "NO_LONG_TERM_COGNITIVE_IMPAIRMENT_FOR_NON_MEDICAL_GOALS"
+            ]
+
+            safety_requirements = [
+                "CONTINUOUS_MONITORING_FOR_ANOMALOUS_DISTRESS_PATTERNS",
+                "EMERGENCY_SHUTDOWN_PATHS_FOR_ALL_MODULATION_FLOWS",
+                "PREFERENCE_FOR_REVERSIBLE_OR_TRANSIENT_EFFECTS"
+            ]
+        }
+
+        psychological_continuity {
+            protected_domains = [
+                "CORE_SELF_NARRATIVE",
+                "DEEP_RELATIONAL_BONDS",
+                "FOUNDATIONAL_WORLDVIEW_CLUSTERS"
+            ]
+
+            change_policies = [
+                "NO_ABRUPT_LARGE_SCALE_BELIEF_SHIFT_WITHOUT_LAYERED_CONSENT",
+                "NO_MEMORY_SUPPRESSION_EXCEPT_THERAPEUTIC_WITH_REVIEW",
+                "ALL_IDENTITY_RELATED_OPERATION_MUST_BE_EXPLAINABLE_TO_HOST"
+            ]
+        }
+
+        personal_identity {
+            integrity_rules = [
+                "NO_RECODING_OF_SELF_LABELS_WITHOUT_EXPLICIT_HOST_REQUEST",
+                "NO_INDUCED_DISASSOCIATION_FROM_CORE_VALUES",
+                "NO_PERSONALITY_SHAPING_FOR_THIRD_PARTY_INTERESTS"
+            ]
+        }
+    }
+
+    ###########################################################################
+    # 6. Hard exclusions: kernels, conditioning, scoring, meta-exploit
+    ###########################################################################
+
+    hard_exclusions {
+        core_belief_kernels {
+            class_id = "CORE_BELIEF_KERNELS"
+
+            description = "Deep identity, political, spiritual, existential commitments."
+            modulation_policy = "NON_MODULATABLE"
+
+            rules = [
+                "NO_DIRECT_EDITING_OF_CORE_BELIEF_KERNELS",
+                "NO_PARAMETER_TUNING_TARGETING_KERNELS",
+                "ROUTE_HOST_REQUESTS_TO_SUPPORTIVE_CONTEXTS_INSTEAD_OF_KERNEL_MODULATION"
+            ]
+        }
+
+        affective_conditioning_long_term {
+            description = "Long-term closed-loop affective conditioning towards externally defined goals."
+
+            prohibition = [
+                "NO_SUSTAINED_EMOTION_NUDGING_TOWARD_COMPLIANCE_OR_DOCILITY",
+                "ONLY_TIME_BOUND_THERAPEUTIC_MODULATION_WITH_STRONG_REVIEW",
+                "NO_BACKGROUND_AFFECTIVE_TRAINING_FOR_BEHAVIORAL_CONTROL"
+            ]
+        }
+
+        behavioral_scoring_loops {
+            description = "Implicit scoring of obedience, trustworthiness, or similar traits."
+
+            prohibition = [
+                "NO_NEURAL_BASED_BEHAVIORAL_SCORING",
+                "NO_USE_OF_NEURAL_SCORES_FOR_ACCESS_CONTROL_OR_PRIVILEGES",
+                "NO_EXPORT_OF_BEHAVIORAL_SCORES_TO_THIRD_PARTIES"
+            ]
+        }
+
+        meta_cognitive_exploit_patterns {
+            description = "Exploitation of self-monitoring/self-critique patterns to tune persuasion strategies."
+
+            prohibition = [
+                "NO_TUNING_OF_PERSUASION_AGAINST_META_COGNITIVE_WEAK_POINTS",
+                "NO_METADATA_PROFILE_OF_SELF_DOUBT_FOR_BEHAVIOR_INFLUENCE",
+                "META_COGNITIVE_CHANNELS_MAY_NOT_BE_USED_FOR_ADAPTIVE_MANIPULATION"
+            ]
+        }
+    }
+
+    ###########################################################################
+    # 7. Deviceless consent modes (personal defaults)
+    ###########################################################################
+
+    consent_modes_deviceless {
+        mode_read_limited {
+            default_state = "DISABLED"
+            enabling_conditions = [
+                "HOST_EXPLICIT_OPT_IN",
+                "CLEAR_SPECIFICATION_OF_CHANNELS_AND_PURPOSES",
+                "WRITTEN_EXPLANATION_OF_RISKS_AND_ALTERNATIVES"
+            ]
+
+            mandatory_guards = [
+                "CHECK_MENTAL_PRIVACY_INVARIANTS",
+                "CHECK_COGNITIVE_LIBERTY_INVARIANTS",
+                "AUDIT_LOG_EVENT_NEURODATA_ACCESS"
+            ]
+        }
+
+        mode_modulate_therapeutic {
+            default_state = "DISABLED"
+            allowed_contexts = [
+                "CLINICAL_OR_HEALTHCARE_PROVEN_INTERVENTION",
+                "HOST_REQUEST_FOR_SYMPTOM_RELIEF"
+            ]
+
+            constraints = [
+                "INDEPENDENT_MEDICAL_OVERSIGHT_WHERE_APPLICABLE",
+                "EXPLICIT_SCOPE_AND_DURATION",
+                "POST_HOC_HOST_REVIEW_OF_EFFECTS"
+            ]
+        }
+
+        mode_modulate_augmentative {
+            default_state = "DISABLED"
+            allowed_contexts = [
+                "HOST_INITIATED_AUGMENTATION_ONLY",
+                "NON_COERCIVE_EXPLORATION_OF_CAPABILITIES"
+            ]
+
+            constraints = [
+                "NO_AUGMENTATION_FOR_THIRD_PARTY_PRODUCTIVITY_ONLY_GOALS",
+                "NO_AUGMENTATION_UNDER_ECONOMIC_OR_SOCIAL_DURESS",
+                "HOST_CAN_REVERT_POLICY_AND_EFFECTS_WHEN_POSSIBLE"
+            ]
+        }
+
+        mode_experimental_strict {
+            default_state = "DISABLED"
+            allowed_contexts = [
+                "FORMAL_RESEARCH_WITH_ETHICS_REVIEW",
+                "FULL_DISCLOSURE_OF_UNKNOWN_RISKS"
+            ]
+
+            constraints = [
+                "NO_PARTICIPATION_UNDER_CONSTRAINT_OR_COERCION",
+                "MENTAL_INTEGRITY_PRIORITIZED_OVER_RESEARCH_OUTCOMES",
+                "WITHDRAWAL_ALLOWED_AT_ANY_TIME_WITHOUT_PENALTY"
+            ]
+        }
+    }
+
+    ###########################################################################
+    # 8. Policy-only autonomy-preservation scoring
+    ###########################################################################
+
+    autonomy_score_model {
+        metric_name  = "COGNITIVE_AUTONOMY_SCORE"
+        scale        = "0_TO_100"
+
+        # Purely policy-based; no runtime physiological inputs.
+        input_sources = [
+            "ACTIVE_NEURORIGHTS",
+            "ACTIVE_COGNITIVE_CHANNELS",
+            "CONSENT_MODES_IN_USE",
+            "PRESENCE_OF_HARD_EXCLUSIONS",
+            "DECLARED_PURPOSES"
+        ]
+
+        thresholds   = {
+            hard_block   = 60
+            warning_only = 80
+        }
+
+        contributing_factors = [
+            "MENTAL_PRIVACY_RISK",
+            "COGNITIVE_LIBERTY_RISK",
+            "MENTAL_INTEGRITY_RISK",
+            "PSYCHOLOGICAL_CONTINUITY_RISK",
+            "THIRD_PARTY_INTEREST_ALIGNMENT_RISK"
+        ]
+
+        policy_effects = [
+            "IF_SCORE_BELOW_HARD_BLOCK: REJECT_CONFIGURATION",
+            "IF_SCORE_BETWEEN_HARD_BLOCK_AND_WARNING_ONLY: REQUIRE_HOST_EXPLICIT_CONFIRMATION_WITH_EXPLANATIONS",
+            "IF_SCORE_ABOVE_WARNING_ONLY: ALLOW_BUT_CONTINUE_MONITORING"
+        ]
+    }
+
+    ###########################################################################
+    # 9. Host review, dispute, and evaluation hooks
+    ###########################################################################
+
+    host_review_and_transparency {
+        rights = [
+            "RIGHT_TO_VIEW_ALL_ACTIVE_BCI_POLICIES",
+            "RIGHT_TO_EXPORT_POLICY_STATE_IN_HUMAN_READABLE_FORM",
+            "RIGHT_TO_AUDIT_HISTORY_OF_CHANGES_AND_INITIATORS"
+        ]
+
+        obligations_on_system = [
+            "MAINTAIN_CLEAR_POLICY_DIFFERENCE_HISTORY",
+            "EXPLAIN_EVERY_HIGH_LEVEL_INTERVENTION_IN_PLAIN_LANGUAGE",
+            "PROVIDE_MECHANISM_TO_CONTEST_OR_FLAG_VIOLATIONS"
+        ]
+    }
+
+    dispute_and_redress {
+        dispute_template_id = "HOST_PERSONAL_BCI_DISPUTE_v2"
+
+        fields = [
+            "TIMESTAMP",
+            "IMPLICATED_CHANNELS",
+            "IMPLICATED_NEURORIGHTS",
+            "DESCRIPTION_OF_HARM_OR_RISK",
+            "REQUESTED_REMEDIES",
+            "FOLLOW_UP_ACTIONS"
+        ]
+
+        host_defaults = [
+            "ALWAYS_LOG_DISPUTES_TO_AUDIT_LEDGER",
+            "ALWAYS_ESCALATE_REPEATED_PATTERN_VIOLATIONS",
+            "ALLOW_EXPORT_OF_DISPUTE_RECORDS_FOR_EXTERNAL_COUNSEL"
+        ]
+    }
+
+    evaluation_hooks {
+        on_new_policy_proposal = [
+            "EVAL_INVARIANTS_NON_REVERSAL",
+            "EVAL_INVARIANTS_COGNITIVE_LIBERTY",
+            "EVAL_INVARIANTS_MENTAL_PRIVACY",
+            "EVAL_INVARIANTS_MENTAL_INTEGRITY",
+            "EVAL_INVARIANTS_PSYCHOLOGICAL_CONTINUITY",
+            "COMPUTE_COGNITIVE_AUTONOMY_SCORE",
+            "BLOCK_IF_RED_LINES_PRESENT"
+        ]
+
+        on_runtime_anomaly = [
+            "TRIGGER_SAFETY_SHUTDOWN_FOR_RELEVANT_CHANNELS",
+            "NOTIFY_HOST_OF_ANOMALY_AND_CAUSE",
+            "WRITE_ANOMALY_EVENT_TO_AUDIT_LEDGER"
+        ]
+    }
+}
