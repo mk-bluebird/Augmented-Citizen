@@ -1,0 +1,37 @@
+# File: /aln-core-spec/consent.core-schema.aln
+# Purpose: Base schema for consent envelopes, grants, revocations, and lifecycle.
+
+consent_schema ConsentCore_v1 {
+    definition {
+        envelope_id          = "string"
+        subject_id           = "host_did"
+        purposes             = "list[string]"
+        valid_from           = "timestamp"
+        valid_until          = "timestamp"
+        revocation_mechanism = "enum[HOST_UI, NEURAL_COMMAND, AUTOMATED_SAFETY]"
+        data_scope           = "digital_datascope_id"
+    }
+
+    events {
+        consent_grant = {
+            event_id                = "string"
+            envelope_id             = "string"
+            granted_by              = "host_did"
+            timestamp               = "timestamp"
+            cryptographic_signature = "string"
+        }
+        consent_revocation = {
+            event_id    = "string"
+            envelope_id = "string"
+            revoked_by  = "host_did"
+            timestamp   = "timestamp"
+            reason      = "string"
+        }
+    }
+
+    constraints {
+        explicitness       = "Consent must be explicitly granted via cryptographic signature"
+        revocability       = "revocation_mechanism must always be available to the host"
+        purpose_limitation = "purposes must be strictly limited and enumerated"
+    }
+}
