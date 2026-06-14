@@ -1,0 +1,19 @@
+# File: /aln-bci-special/bci.special.cognitive-liberty.envelope.aln
+# Purpose: Envelope struct for cognitive liberty configuration.
+
+cognitive_liberty_envelope CognitiveLibertyEnvelope_v1 {
+    imports = ["/aln-core-spec/invariants.cognitive-liberty.aln"]
+
+    enabled_protections = [
+        "BLOCK_COVERT_PERSUASION",
+        "BLOCK_META_COGNITIVE_EXPLOITATION",
+        "REQUIRE_HOST_INITIATION_FOR_MODULATION"
+    ]
+
+    exceptions = []
+
+    required_confirmations = {
+        "MODULATE_THERAPEUTIC"  = 2,
+        "MODULATE_AUGMENTATIVE" = 3
+    }
+}
