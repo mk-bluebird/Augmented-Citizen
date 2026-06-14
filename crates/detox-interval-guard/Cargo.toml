@@ -1,0 +1,19 @@
+# filename: crates/detox-interval-guard/Cargo.toml
+[package]
+name = "detox-interval-guard"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "MIT OR Apache-2.0"
+authors = ["mk-bluebird <host@augmented-citizen.org>"]
+description = "DetoxIntervalGuard wired to nanoswarm, thermo, eco shards and econet healthcare charter inputs"
+repository = "https://github.com/mk-bluebird/Augmented-Citizen"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+sovereign-guards-core = { path = "../sovereign-guards-core" }
+econet-healthcare-guard = { path = "../econet-healthcare-guard" }
+
+[features]
+default = []
