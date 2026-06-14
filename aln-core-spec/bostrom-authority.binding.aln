@@ -1,0 +1,24 @@
+# File: /aln-core-spec/bostrom-authority.binding.aln
+# Purpose: Canonical binding between host identity, Bostrom address, and Cybercore authority.
+
+bostrom_authority_binding BostromAuthorityBinding_v1 {
+    definition {
+        host_did               = "string"
+        bostrom_address        = "string"
+        aln_compliance_clause  = "string"
+        evolution_source_repo  = "string"
+    }
+
+    rules = [
+        {
+            rule_id     = "BAB_AUTHORITY_ANCHOR"
+            description = "All host-critical decisions and OTA paths must respect this authority binding as a first-order constraint."
+            enforcement = "VERIFY_BOSTROM_SIGNATURE_ON_UPDATES"
+        },
+        {
+            rule_id     = "BAB_CYBERCORE_MIGRATION"
+            description = "Evolution must adhere to ALN.MIGRATION.CYBERCORE_AUTHORITY.v1."
+            enforcement = "REJECT_NON_COMPLIANT_REPOS"
+        }
+    ]
+}
