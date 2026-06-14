@@ -1,0 +1,22 @@
+# File: /aln-core-spec/invariants.mental-identity.aln
+# Purpose: Invariants preventing personality rewriting for external goals.
+
+mental_identity_invariants MentalIdentityInvariants_v1 {
+    rules = [
+        {
+            rule_id     = "MII_NO_RECODING"
+            description = "No recoding of self-labels without explicit host request."
+            enforcement = "BLOCK_AUTONOMOUS_SELF_LABEL_CHANGES"
+        },
+        {
+            rule_id     = "MII_NO_DISSOCIATION"
+            description = "No induced dissociation from core values."
+            enforcement = "MONITOR_FOR_DISSOCIATIVE_MARKERS"
+        },
+        {
+            rule_id     = "MII_NO_THIRD_PARTY_SHAPING"
+            description = "No personality shaping for third-party interests (e.g., marketing, compliance)."
+            enforcement = "AUDIT_MODULATION_TARGETS_FOR_EXTERNAL_BENEFIT"
+        }
+    ]
+}
