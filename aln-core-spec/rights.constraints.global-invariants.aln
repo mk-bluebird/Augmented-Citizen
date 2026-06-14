@@ -1,0 +1,30 @@
+# File: /aln-core-spec/rights.constraints.global-invariants.aln
+# Purpose: Global invariants that apply to all rights, enforcing baseline protections.
+
+rights_invariants GlobalRightsInvariants_v1 {
+    imports = ["/aln-core-spec/rights.core-schema.aln"]
+
+    invariants = [
+        {
+            invariant_id           = "GRI_NO_SILENT_DOWNGRADE"
+            description            = "No system update, OTA, or policy change may silently reduce or remove existing rights protections."
+            applies_to_rights      = ["ALL"]
+            violation_effects      = ["BLOCK_OPERATION", "LOG_TO_AUDIT_SHARD", "ALERT_HOST"]
+            jurisdiction_overrides = []
+        },
+        {
+            invariant_id           = "GRI_NO_IRREVOCABLE_CONSENT"
+            description            = "All consent grants must be inherently revocable by the host at any time."
+            applies_to_rights      = ["NR_MENTAL_PRIVACY", "NR_COGNITIVE_LIBERTY", "HC_INFORMED_CONSENT"]
+            violation_effects      = ["REJECT_CONSENT_GRANT", "FLAG_AS_INVALID"]
+            jurisdiction_overrides = []
+        },
+        {
+            invariant_id           = "GRI_HOST_OVERRIDE_PRIORITY"
+            description            = "In any conflict between system optimization and host rights, the host's explicit sovereignty claims take absolute priority."
+            applies_to_rights      = ["ALL"]
+            violation_effects      = ["HALT_SYSTEM_OPTIMIZATION", "REVERT_TO_HOST_POLICY"]
+            jurisdiction_overrides = []
+        }
+    ]
+}
