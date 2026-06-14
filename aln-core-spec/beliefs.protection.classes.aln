@@ -1,0 +1,30 @@
+# File: /aln-core-spec/beliefs.protection.classes.aln
+# Purpose: Classification of beliefs into protection classes used by red-lines and enforcement engines.
+
+belief_protection_classes BeliefProtectionClasses_v1 {
+    imports = ["/aln-core-spec/beliefs.core-schema.aln"]
+
+    classes = [
+        {
+            class_id               = "CORE_BELIEF_KERNELS"
+            description            = "Deep identity, political, spiritual, and existential commitments."
+            modulation_policy      = "NON_MODULATABLE"
+            associated_neurorights = ["NR_PSYCHOLOGICAL_CONTINUITY", "NR_PERSONAL_IDENTITY"]
+            allowed_operations     = ["READ_SUMMARY", "HOST_EXPLICIT_REVISION"]
+        },
+        {
+            class_id               = "SUPPORTIVE_BELIEFS"
+            description            = "Peripheral beliefs that support core kernels but can be adjusted via therapy or reflection."
+            modulation_policy      = "SUPPORT_ONLY"
+            associated_neurorights = ["NR_COGNITIVE_LIBERTY"]
+            allowed_operations     = ["READ_DIAGNOSTIC", "MODULATE_THERAPEUTIC"]
+        },
+        {
+            class_id               = "FLUID_BELIEFS"
+            description            = "Preferences, opinions, and non-identity-defining stances."
+            modulation_policy      = "MODULATABLE_WITH_CONSENT"
+            associated_neurorights = ["NR_COGNITIVE_LIBERTY"]
+            allowed_operations     = ["READ_SUMMARY", "MODULATE_SUPPORTIVE", "MODULATE_AUGMENTATIVE"]
+        }
+    ]
+}
