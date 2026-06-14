@@ -1,0 +1,81 @@
+// crates/vitalnet-plane/src/qpu_datashard_vitalnet_safety.aln
+// QPU.Datashard expressing VitalNet Sentinel legal mappings
+// Design score: D = Medium, NR = Medium, EE = High
+
+title VitalNetSentinelLegalMappings
+
+/*
+destination-path,module,version,role,security-protocol,edge-analytics,compliance,safety-vectors
+vnodeqpudatashardsvitalnet.sentinel.aln,VitalNetSentinel,1.0.0,BuildTimeScanner,AES256-PostQ,"NO_PASSIVE_BIOMETRIC_SCANNING","EUAIActHighRisk,GDPRArt9,IEEE2410BiometricPrivacy","D:Medium;NR:Medium;EE:High"
+*/
+
+patterns.forbidden {
+  keywords: [
+    "death-network",
+    "deathnet",
+    "neuroforcepattern",
+    "ghostinject",
+    "passive_facial_recognition",
+    "passive_biometric_scan"
+  ]
+  regex: [
+    "(?i)death[-_ ]network",
+    "(?i)passive.*biometric"
+  ]
+}
+
+legal.mapping {
+  eu_ai_act_high_risk: {
+    scope: ["DroneCamera", "CityCctv"]
+    invariants: [
+      "no_passive_biometric_scanning == true",
+      "human_in_the_loop_required == true"
+    ]
+  }
+  ieee_2410_biometric_privacy: {
+    scope: ["BciImplant", "BciWearable"]
+    invariants: [
+      "biometric_storage_allowed == false unless explicit_consent == true",
+      "templates unlinkable and revocable"
+    ]
+  }
+  gdpr_art9: {
+    scope: ["DroneCamera", "CityCctv", "BciWearable"]
+    invariants: [
+      "special_category_data requires explicit_consent",
+      "data_minimization == true"
+    ]
+  }
+  fcc_part_15: {
+    scope: ["BciImplant", "BciWearable", "XrHeadset"]
+    invariants: [
+      "rf_emission_mw_eirp <= 0.5",
+      "stimulation_disabled_in_research_mode == true"
+    ]
+  }
+}
+
+edge.analytics.constraints {
+  drone_camera: {
+    no_passive_biometric_scanning: true
+    allowed_modalities: ["depth","optical_flow","segmentation"]
+    max_frame_rate_hz: 15.0
+  }
+  bci_gateway: {
+    no_passive_biometric_scanning: true
+    allowed_modalities: ["eeg","emg","eog"]
+    max_frame_rate_hz: 1.0
+  }
+}
+
+safety.vectors {
+  design: "D:Medium"
+  neuro-risk: "NR:Medium"
+  energy-efficiency: "EE:High"
+}
+
+graph TD
+  S[Source Code] -->|scan| VNS[ VitalNetSentinel ]
+  VNS -->|block| F[Forbidden Patterns]
+  DeviceProfile -->|validate| Rules[Legal Mappings]
+  Rules -->|enforce| Edge[Edge Analytics Constraints]
