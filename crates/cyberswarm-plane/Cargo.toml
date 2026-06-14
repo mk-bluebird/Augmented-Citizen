@@ -1,0 +1,10 @@
+# crates/cyberswarm-plane/Cargo.toml
+[package]
+name = "cyberswarm-plane"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
