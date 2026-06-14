@@ -1,0 +1,219 @@
+# filename: aln/econet.healthcare.policy.v1.aln
+#
+# ALN shard: econet.healthcare.policy.v1
+# Domain: nanoswarm-mediated healthcare for augmented-citizens
+# Invariants:
+#   - Healthcare is a sovereign right, but *activation* is gated by:
+#       (a) SovereigntyCorridorOK (host-local neurorights & RoH ≤ 0.3)
+#       (b) EcoNonRegressionOK (eco-monotone, no ecological regression)
+#       (c) EconetHealthcareOK (earned healthcare corridor via econet work/research)
+#   - All host-critical bindings are to mk-bluebird/Cybercore and bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+#   - Non-derogable clause: ALN.MIGRATION.CYBERCORE_AUTHORITY.v1
+
+aln-shard econet.healthcare.policy.v1 {
+    meta {
+        host_did        = "did:aln:bostrom-organic-host";
+        bostrom_address = "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7";
+        repo_authority  = "github.com/mk-bluebird/Cybercore";
+        clause_aln_migration = "ALN.MIGRATION.CYBERCORE_AUTHORITY.v1";
+        description = "Econet healthcare policy binding nanoswarm-mediated care to eco/work/research contributions under RoH ≤ 0.3 and eco non-regression.";
+        version = 1;
+    }
+
+    rights_kernel {
+        neurorights_profile_id   = "neuro.constitution.v1";
+        bio_safety_envelope_id   = "bio.safety.envelope.citizen.v1";
+        eco_monotonicity_id      = "eco.monotonicity.charter.v1";
+        roh_ceiling_global       = 0.30;
+        # strictest_wins is *implicit* by construction; we do not name it or permit relaxation.
+        roh_ceiling_mode_health  = 0.28;  # tighter band when in active healthcare corridor
+    }
+
+    # EconetHealthcareOK: healthcare is *earned* via ecological contributions, work, and research.
+    econet_healthcare_corridor {
+        # Tokens that must be active and non-negative for healthcare actuation:
+        required_tokens = [
+            "EVOLVE",
+            "BLOOD",
+            "PROTEIN",
+            "ECOHELP",
+            "RESEARCH",
+            "WORK"
+        ];
+
+        # Minimal daily eco contribution to unlock healthcare, measured in EcoImpactScore units.
+        eco_floor_daily      = 10.0;   # host-specific calibration via EcoBudgetConfig.[file:21]
+        eco_floor_weekly     = 60.0;
+        eco_non_regression   = true;   # EcoImpactScore_new ≥ EcoImpactScore_old.[file:25]
+
+        # Healthcare corridors are a *subset* of evolution corridors, never wider.
+        corridor_ids = [
+            "healthcare.nanoswarm.uvrepair.v1",
+            "healthcare.nanoswarm.detox.lowroh.v1",
+            "healthcare.nanoswarm.repair.biomech.v1"
+        ];
+
+        # Healthcare is always host-sovereign: no external override of HealthcareRequestV1 that passes eco & RoH guards.[file:21]
+        sovereignty_clause = "ALN.NEURORIGHTS.HEALTHCARE.SOVEREIGNTY.v1";
+    }
+
+    # Predicate: SovereigntyCorridorOK
+    #
+    # Encodes host-local neurorights, RoH ceiling, PainEnvelope, EvolutionIntervalPolicy,
+    # and consent envelopes as a single boolean.[file:24]
+    predicate SovereigntyCorridorOK {
+        inputs {
+            roh_scalar         : f32;   # RoH(state_vector).[file:25]
+            roh_ceiling        : f32;   # must be ≤ 0.30 global.[file:25]
+            consent_token      : bool;  # DID-bound consent VC is active.[file:25]
+            neurorights_ok     : bool;  # cognitive liberty, mental privacy, continuity.[file:24]
+            evolution_interval : bool;  # EvolutionIntervalPolicy satisfied.[file:24]
+        }
+
+        definition {
+            return (
+                roh_scalar <= roh_ceiling &&
+                roh_scalar <= 0.30 &&        # hard global ceiling.[file:25]
+                consent_token == true &&
+                neurorights_ok == true &&
+                evolution_interval == true
+            );
+        }
+    }
+
+    # Predicate: EcoNonRegressionOK
+    #
+    # Encodes eco-monotonicity: EcoImpactScore is non-decreasing over accepted steps.[file:25]
+    predicate EcoNonRegressionOK {
+        inputs {
+            eco_score_prev : f32;
+            eco_score_next : f32;
+        }
+
+        definition {
+            return eco_score_next >= eco_score_prev;
+        }
+    }
+
+    # Predicate: EconetHealthcareOK
+    #
+    # Encodes that healthcare actuation is tied to econet/ecological contributions,
+    # work, and research.[file:21][file:25]
+    predicate EconetHealthcareOK {
+        inputs {
+            eco_contrib_daily  : f32;   # current day's EcoImpactScore delta from work/research.[file:21]
+            eco_floor_daily    : f32;
+            eco_contrib_weekly : f32;
+            eco_floor_weekly   : f32;
+
+            token_EVOLVE   : bool;
+            token_BLOOD    : bool;
+            token_PROTEIN  : bool;
+            token_ECOHELP  : bool;
+            token_RESEARCH : bool;
+            token_WORK     : bool;
+        }
+
+        definition {
+            let eco_ok_daily  = eco_contrib_daily  >= eco_floor_daily;
+            let eco_ok_weekly = eco_contrib_weekly >= eco_floor_weekly;
+
+            let tokens_ok = (
+                token_EVOLVE   == true &&
+                token_BLOOD    == true &&
+                token_PROTEIN  == true &&
+                token_ECOHELP  == true &&
+                token_RESEARCH == true &&
+                token_WORK     == true
+            );
+
+            return eco_ok_daily && eco_ok_weekly && tokens_ok;
+        }
+    }
+
+    # Composite predicate: EconetHealthcareCorridorAdmissible
+    #
+    # This is the ALN-level AND-gate:
+    #     Allowed ⇔ SovereigntyCorridorOK ∧ EcoNonRegressionOK ∧ EconetHealthcareOK.[file:25][file:24]
+    predicate EconetHealthcareCorridorAdmissible {
+        inputs {
+            sovereignty_ok       : bool;
+            eco_non_regression_ok: bool;
+            econet_healthcare_ok : bool;
+        }
+
+        definition {
+            return (
+                sovereignty_ok &&
+                eco_non_regression_ok &&
+                econet_healthcare_ok
+            );
+        }
+    }
+
+    # Policy: HealthcareActionAdmissible.v1
+    #
+    # ALN-executable rule: any nanoswarm healthcare actuation must call this predicate
+    # and may proceed *only* if it returns true.[file:21][file:25]
+    policy HealthcareActionAdmissible.v1 {
+        inputs {
+            # Sovereignty limb:
+            roh_scalar         : f32;
+            roh_ceiling        : f32;
+            consent_token      : bool;
+            neurorights_ok     : bool;
+            evolution_interval : bool;
+
+            # Eco limb:
+            eco_score_prev     : f32;
+            eco_score_next     : f32;
+
+            # Econet limb:
+            eco_contrib_daily  : f32;
+            eco_floor_daily    : f32;
+            eco_contrib_weekly : f32;
+            eco_floor_weekly   : f32;
+
+            token_EVOLVE       : bool;
+            token_BLOOD        : bool;
+            token_PROTEIN      : bool;
+            token_ECOHELP      : bool;
+            token_RESEARCH     : bool;
+            token_WORK         : bool;
+        }
+
+        definition {
+            let sovereignty_ok = SovereigntyCorridorOK {
+                roh_scalar,
+                roh_ceiling,
+                consent_token,
+                neurorights_ok,
+                evolution_interval
+            };
+
+            let eco_non_regression_ok = EcoNonRegressionOK {
+                eco_score_prev,
+                eco_score_next
+            };
+
+            let econet_healthcare_ok = EconetHealthcareOK {
+                eco_contrib_daily,
+                eco_floor_daily,
+                eco_contrib_weekly,
+                eco_floor_weekly,
+                token_EVOLVE,
+                token_BLOOD,
+                token_PROTEIN,
+                token_ECOHELP,
+                token_RESEARCH,
+                token_WORK
+            };
+
+            return EconetHealthcareCorridorAdmissible {
+                sovereignty_ok,
+                eco_non_regression_ok,
+                econet_healthcare_ok
+            };
+        }
+    }
+}
