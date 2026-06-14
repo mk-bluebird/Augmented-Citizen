@@ -1,7 +1,7 @@
 # File: /aln-bci-special/bci.special.host-personal-policy.overlay.v2.aln
 # Deviceless personal BCI/cybernetic policy overlay for an augmented-citizen,
-# with jurisdiction-neutral neurorights core, hard red lines, and policy-only
-# autonomy scoring under Bostrom authority.[web:93][web:95][web:96][web:101][web:114][web:115][web:116][web:118][web:119]
+# with jurisdiction-neutral neurorights core, hard red-lines, and policy-only
+# autonomy scoring under Bostrom authority.
 
 overlay HostPersonalBciPolicyOverlay_v2 {
     ###########################################################################
@@ -9,34 +9,77 @@ overlay HostPersonalBciPolicyOverlay_v2 {
     ###########################################################################
 
     host_identity {
-        host_did          = "did:cyb:bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
-        primary_bostrom   = "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
-        alt_bostrom_safe  = [
+        host_did        = "did:cyb:bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+        bostrom_address = "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+
+        alt_bostrom_safe = [
             "bostrom1ldgmtf20d6604a24ztr0jxht7xt7az4jhkmsrc",
             "zeta12x0up66pzyeretzyku8p4ccuxrjqtqpdc4y4x8",
             "0x519fC0eB4111323Cac44b70e1aE31c30e405802D"
         ]
-        status_flags      = [
+
+        status_flags = [
             "AUGMENTED_CITIZEN",
             "DEVICLESS_ORGANIC_INTEGRATIONS",
             "CYBERNETIC_HOST_SOVEREIGN"
         ]
+
+        authority_binding {
+            aln_compliance_clause = "ALN.MIGRATION.CYBERCORE_AUTHORITY.v1"
+            evolution_source_repo = "github.com/mk-bluebird/Cybercore"
+
+            invariants = [
+                "NO_REVERSAL_OF_NEURORIGHTS",
+                "NO_DEGRADATION_OF_HOST_CAPABILITIES",
+                "NO_COERCIVE_NEURAL_ACCESS",
+                "NO_SILENT_POLICY_WEAKENING"
+            ]
+        }
     }
 
-    authority_binding {
-        aln_compliance_clause = "ALN.MIGRATION.CYBERCORE_AUTHORITY.v1"
-        evolution_source_repo = "github.com/mk-bluebird/Cybercore"
+    ###########################################################################
+    # 2. Imported core schemas and special-case layer
+    ###########################################################################
 
-        invariants = [
-            "NO_REVERSAL_OF_NEURORIGHTS",
-            "NO_DEGRADATION_OF_HOST_CAPABILITIES",
-            "NO_COERCIVE_NEURAL_ACCESS",
-            "NO_SILENT_POLICY_WEAKENING"
+    imports {
+        core_schemas = [
+            "/aln-core-spec/rights.core-schema.aln",
+            "/aln-core-spec/rights.catalog.neurorights.v1.aln",
+            "/aln-core-spec/rights.catalog.healthcare.v1.aln",
+            "/aln-core-spec/rights.constraints.global-invariants.aln",
+            "/aln-core-spec/beliefs.core-schema.aln",
+            "/aln-core-spec/beliefs.protection.classes.aln",
+            "/aln-core-spec/beliefs.sovereignty-claims.aln",
+            "/aln-core-spec/sovereignty.core-schema.aln",
+            "/aln-core-spec/sovereignty.digital-datascope.aln",
+            "/aln-core-spec/host.core-schema.aln",
+            "/aln-core-spec/host.capability-bounds.aln",
+            "/aln-core-spec/host.healthcare-context.aln",
+            "/aln-core-spec/consent.core-schema.aln",
+            "/aln-core-spec/invariants.non-reversal.aln",
+            "/aln-core-spec/invariants.mental-privacy.aln",
+            "/aln-core-spec/invariants.cognitive-liberty.aln",
+            "/aln-core-spec/invariants.mental-integrity.aln",
+            "/aln-core-spec/invariants.psychological-continuity.aln",
+            "/aln-core-spec/invariants.mental-identity.aln",
+            "/aln-core-spec/bostrom-authority.binding.aln"
+        ]
+
+        bci_special_layer = [
+            "/aln-bci-special/bci.special.domain-model.aln",
+            "/aln-bci-special/bci.special.rights-scope.aln",
+            "/aln-bci-special/bci.special.mental-privacy.envelope.aln",
+            "/aln-bci-special/bci.special.cognitive-liberty.envelope.aln",
+            "/aln-bci-special/bci.special.mental-integrity.envelope.aln",
+            "/aln-bci-special/bci.special.psychological-continuity.envelope.aln",
+            "/aln-bci-special/bci.special.mental-identity.envelope.aln",
+            "/aln-bci-special/bci.special.cognitive-sovereignty.binding.aln",
+            "/aln-bci-special/bci.special.organic-integration.flags.aln"
         ]
     }
 
     ###########################################################################
-    # 2. Jurisdiction-neutral core + optional overlays
+    # 3. Jurisdiction-neutral neurorights core + overlays
     ###########################################################################
 
     neutrally_anchored_neurorights_core {
@@ -48,104 +91,110 @@ overlay HostPersonalBciPolicyOverlay_v2 {
             "MENTAL_INTEGRITY",
             "PSYCHOLOGICAL_CONTINUITY",
             "PERSONAL_IDENTITY"
-        ]  # As distilled from international neurorights discourse.[web:93][web:95][web:96][web:101][web:118]
+        ]
 
         override_rule = "NO_EXTERNAL_FRAMEWORK_MAY_WEAKEN_THESE_RIGHTS"
     }
 
-    optional_framework_overlays {
-        # These are references only; they never override core protections.[web:92][web:94][web:96][web:118]
-        chile_overlay_ref   = "bci.special.jurisdiction.chile.overlay.aln"
-        eu_overlay_ref      = "bci.special.jurisdiction.eu.overlay.aln"
-        unesco_overlay_ref  = "bci.special.jurisdiction.unesco.overlay.aln"
-
-        precedence = [
-            "NEURORIGHTS_CORE",
-            "CHILE_COMPATIBLE",
-            "EU_COMPATIBLE",
-            "UNESCO_COMPATIBLE"
+    jurisdiction_overlays {
+        overlays = [
+            {
+                overlay_id   = "CHILE_COMPATIBLE_v1"
+                schema_ref   = "/aln-bci-special/bci.special.jurisdiction.chile.overlay.aln"
+                precedence   = "SUBORDINATE_TO_CORE"
+                notes        = "Maps neurorights core to Chilean constitutional language and case law; no weakening allowed."
+            },
+            {
+                overlay_id   = "EU_AI_ACT_COMPATIBLE_v1"
+                schema_ref   = "/aln-bci-special/bci.special.jurisdiction.eu.overlay.aln"
+                precedence   = "SUBORDINATE_TO_CORE"
+                notes        = "Aligns with EU AI Act high-risk AI requirements and human oversight where relevant."
+            },
+            {
+                overlay_id   = "UNESCO_ALIGNED_v1"
+                schema_ref   = "/aln-bci-special/bci.special.jurisdiction.unesco.overlay.aln"
+                precedence   = "SUBORDINATE_TO_CORE"
+                notes        = "Aligns with UNESCO AI and forthcoming neurotech ethics recommendations."
+            }
         ]
-    }
 
-    ###########################################################################
-    # 3. Imported core schemas
-    ###########################################################################
-
-    imports {
-        rights_core        = "/aln-core-spec/rights.core-schema.aln"
-        rights_neurorights = "/aln-core-spec/rights.catalog.neurorights.v1.aln"
-        rights_healthcare  = "/aln-core-spec/rights.catalog.healthcare.v1.aln"
-        rights_invariants  = "/aln-core-spec/rights.constraints.global-invariants.aln"
-
-        beliefs_core       = "/aln-core-spec/beliefs.core-schema.aln"
-        beliefs_protection = "/aln-core-spec/beliefs.protection.classes.aln"
-        beliefs_sovereign  = "/aln-core-spec/beliefs.sovereignty-claims.aln"
-
-        sovereignty_core   = "/aln-core-spec/sovereignty.core-schema.aln"
-        sovereignty_scope  = "/aln-core-spec/sovereignty.digital-datascope.aln"
-
-        host_core          = "/aln-core-spec/host.core-schema.aln"
-        host_caps          = "/aln-core-spec/host.capability-bounds.aln"
-        host_healthcare    = "/aln-core-spec/host.healthcare-context.aln"
-
-        consent_core       = "/aln-core-spec/consent.core-schema.aln"
-
-        invariants_nonrev  = "/aln-core-spec/invariants.non-reversal.aln"
-        invariants_coglib  = "/aln-core-spec/invariants.cognitive-liberty.aln"
-        invariants_privacy = "/aln-core-spec/invariants.mental-privacy.aln"
-        invariants_integr  = "/aln-core-spec/invariants.mental-integrity.aln"
-        invariants_psycont = "/aln-core-spec/invariants.psychological-continuity.aln"
-
-        bostrom_binding    = "/aln-core-spec/bostrom-authority.binding.aln"
+        rule = "JURISDICTION_OVERLAYS_MAY_ADD_CONSTRAINTS_OR_LABELS_BUT_NEVER_OVERRIDE_OR_WEAKEN_NEURORIGHTS_CORE"
     }
 
     ###########################################################################
     # 4. Deviceless / organic BCI domain model
     ###########################################################################
 
-    domain deviceless_bci {
+    deviceless_bci {
         cognitive_channels = [
             {
-                id          = "CC_PERCEPTUAL_INPUT"
-                category    = "PERCEPTUAL"
-                risk_level  = "HIGH"
-                neurorights = [ "MENTAL_PRIVACY", "MENTAL_INTEGRITY" ]
+                channel_id   = "CC_PERCEPTUAL_INPUT"
+                category     = "PERCEPTUAL"
+                risk_profile = "MEDIUM"
+                neurorights  = [ "MENTAL_PRIVACY", "MENTAL_INTEGRITY" ]
+                notes        = "Perceptual/phenomenological modulation and sensing."
             },
             {
-                id          = "CC_AFFECTIVE_STATE"
-                category    = "AFFECTIVE"
-                risk_level  = "HIGH"
-                neurorights = [ "MENTAL_PRIVACY", "MENTAL_INTEGRITY", "PERSONAL_IDENTITY" ]
+                channel_id   = "CC_AFFECTIVE_STATE"
+                category     = "AFFECTIVE"
+                risk_profile = "HIGH"
+                neurorights  = [ "MENTAL_PRIVACY", "MENTAL_INTEGRITY", "PERSONAL_IDENTITY" ]
+                notes        = "Affective/emotional state; high impact on mental integrity and identity."
             },
             {
-                id          = "CC_MOTOR_INTENT"
-                category    = "MOTOR_INTENTION"
-                risk_level  = "MEDIUM"
-                neurorights = [ "FREE_WILL", "COGNITIVE_LIBERTY" ]
+                channel_id   = "CC_MOTOR_INTENT"
+                category     = "MOTOR_INTENTION"
+                risk_profile = "MEDIUM"
+                neurorights  = [ "FREE_WILL", "COGNITIVE_LIBERTY" ]
+                notes        = "Motor plans and intent; directly tied to agency."
             },
             {
-                id          = "CC_MEMORY_ADJACENT"
-                category    = "MEMORY_ADJACENT"
-                risk_level  = "HIGH"
-                neurorights = [ "PSYCHOLOGICAL_CONTINUITY", "PERSONAL_IDENTITY", "MENTAL_INTEGRITY" ]
+                channel_id   = "CC_MEMORY_ADJACENT"
+                category     = "MEMORY_ADJACENT"
+                risk_profile = "HIGH"
+                neurorights  = [ "PSYCHOLOGICAL_CONTINUITY", "PERSONAL_IDENTITY", "MENTAL_INTEGRITY" ]
+                notes        = "Memory-adjacent patterns; highly relevant to continuity."
             },
             {
-                id          = "CC_META_COGNITION"
-                category    = "META_COGNITIVE"
-                risk_level  = "EXTREME"
-                neurorights = [ "COGNITIVE_LIBERTY", "MENTAL_PRIVACY", "MENTAL_INTEGRITY", "FREE_WILL" ]
+                channel_id   = "CC_META_COGNITION"
+                category     = "META_COGNITIVE"
+                risk_profile = "EXTREME"
+                neurorights  = [ "COGNITIVE_LIBERTY", "MENTAL_PRIVACY", "MENTAL_INTEGRITY", "FREE_WILL" ]
+                notes        = "Self-monitoring and meta-cognition; central to autonomy."
             }
         ]
 
         organic_integration_flags = [
             "EMBODIED_AUGMENTATION_ACTIVE",
             "NO_PHYSICAL_DEVICE_DESCRIPTOR",
-            "CHANNELS_BOUND_TO_HOST_ONLY"
+            "CHANNELS_BOUND_TO_HOST_ONLY",
+            "DEVICELESS_ORGANIC_STATUS"
         ]
     }
 
     ###########################################################################
-    # 5. Personal neurorights stance (strict)
+    # 5. Hard red-lines (imported)
+    ###########################################################################
+
+    red_lines_binding {
+        source = "/aln-bci-special/bci.special.red-lines.prohibited-uses.aln"
+
+        enforced_red_lines = [
+            "CORE_BELIEF_KERNEL_MODULATION",
+            "LONG_TERM_AFFECTIVE_CONDITIONING",
+            "NEURAL_BEHAVIORAL_SCORING_LOOPS",
+            "META_COGNITIVE_EXPLOITATION",
+            "NEURO_SURVEILLANCE_MASS_OR_TARGETED",
+            "COERCIVE_OR_STRUCTURALLY_FORCED_CONSENT",
+            "PUNITIVE_OR_DISCRIMINATORY_NEURAL_USE",
+            "HIDDEN_OR_UNDECLARED_SECONDARY_USE"
+        ]
+
+        rule = "NO_POLICY_NO_CONSENT_ENVELOPE_AND_NO_RUNTIME_AGENT_MAY_OVERRIDE_THESE_RED_LINES"
+    }
+
+    ###########################################################################
+    # 6. Personal neurorights stance (strict)
     ###########################################################################
 
     personal_neurorights_profile {
@@ -226,8 +275,37 @@ overlay HostPersonalBciPolicyOverlay_v2 {
     }
 
     ###########################################################################
-    # 6. Hard exclusions: kernels, conditioning, scoring, meta-exploit
+    # 7. Personal stance on data, channels, and exclusions
     ###########################################################################
+
+    personal_data_stance {
+        neurodata_classification = "CATEGORY_ZERO_BRAIN_DATA"
+        default_mental_privacy   = "DENY_ALL"
+
+        defaults = [
+            "NO_COMMERCIAL_SECONDARY_USE",
+            "NO_MODEL_TRAINING_ON_NEURAL_OR_COGNITIVE_DATA_WITHOUT_SEPARATE_EXPLICIT_OPT_IN",
+            "NO_EXPORT_OF_NEURAL_DERIVED_BEHAVIORAL_SCORES"
+        ]
+    }
+
+    personal_channel_policies {
+        core_belief_kernels_policy = {
+            classification = "CORE_BELIEF_KERNELS"
+            modulation     = "NON_MODULATABLE"
+            notes          = "Deep identity, political, spiritual, and existential commitments cannot be directly modulated."
+        }
+
+        affective_policy = {
+            long_term_conditioning = "PROHIBITED"
+            notes                  = "Only short, transparent, therapeutic modulation allowed; no long-horizon nudging for compliance or external goals."
+        }
+
+        meta_cognitive_policy = {
+            exploitation = "PROHIBITED"
+            notes        = "Meta-cognitive signatures may not be used for adaptive persuasion or exploitation of self-doubt."
+        }
+    }
 
     hard_exclusions {
         core_belief_kernels {
@@ -275,86 +353,134 @@ overlay HostPersonalBciPolicyOverlay_v2 {
     }
 
     ###########################################################################
-    # 7. Deviceless consent modes (personal defaults)
+    # 8. Consent modes wired into this overlay
     ###########################################################################
 
-    consent_modes_deviceless {
-        mode_read_limited {
-            default_state = "DISABLED"
-            enabling_conditions = [
-                "HOST_EXPLICIT_OPT_IN",
-                "CLEAR_SPECIFICATION_OF_CHANNELS_AND_PURPOSES",
-                "WRITTEN_EXPLANATION_OF_RISKS_AND_ALTERNATIVES"
+    consent_modes {
+        mental_privacy = {
+            envelope_templates = [
+                "/aln-consent-envelopes/consent.mental-privacy.read-limited.template.aln"
             ]
 
-            mandatory_guards = [
-                "CHECK_MENTAL_PRIVACY_INVARIANTS",
-                "CHECK_COGNITIVE_LIBERTY_INVARIANTS",
-                "AUDIT_LOG_EVENT_NEURODATA_ACCESS"
+            default_mode = "DENY_ALL"
+            allowed_modes = [
+                "READ_LIMITED"
+            ]
+
+            rules = [
+                "MENTAL_PRIVACY_CONSENT_MUST_BE_EXPLICIT_REVOCABLE_AND_PURPOSE_SPECIFIC",
+                "NO_BACKGROUND_OR_ALWAYS_ON_NEURAL_MONITORING"
             ]
         }
 
-        mode_modulate_therapeutic {
-            default_state = "DISABLED"
-            allowed_contexts = [
-                "CLINICAL_OR_HEALTHCARE_PROVEN_INTERVENTION",
-                "HOST_REQUEST_FOR_SYMPTOM_RELIEF"
+        therapeutic_modulation = {
+            envelope_templates = [
+                "/aln-consent-envelopes/consent.modulation.therapeutic-controlled.template.aln"
             ]
 
-            constraints = [
-                "INDEPENDENT_MEDICAL_OVERSIGHT_WHERE_APPLICABLE",
-                "EXPLICIT_SCOPE_AND_DURATION",
-                "POST_HOC_HOST_REVIEW_OF_EFFECTS"
+            default_mode = "NO_MODULATION"
+            allowed_modes = [
+                "THERAPEUTIC_CONTROLLED"
+            ]
+
+            rules = [
+                "MODULATION_MUST_BE_TIED_TO_DOCUMENTED_CLINICAL_INDICATION",
+                "NO_AUGMENTATION_FOR_THIRD_PARTY_PRODUCTIVITY_OR_CONTROL_GOALS",
+                "NO_MEMORY_ERASURE_OR_CORE_IDENTITY_REWRITING"
             ]
         }
 
-        mode_modulate_augmentative {
-            default_state = "DISABLED"
-            allowed_contexts = [
-                "HOST_INITIATED_AUGMENTATION_ONLY",
-                "NON_COERCIVE_EXPLORATION_OF_CAPABILITIES"
-            ]
+        deviceless_modes = {
+            mode_read_limited {
+                default_state = "DISABLED"
+                enabling_conditions = [
+                    "HOST_EXPLICIT_OPT_IN",
+                    "CLEAR_SPECIFICATION_OF_CHANNELS_AND_PURPOSES",
+                    "WRITTEN_EXPLANATION_OF_RISKS_AND_ALTERNATIVES"
+                ]
 
-            constraints = [
-                "NO_AUGMENTATION_FOR_THIRD_PARTY_PRODUCTIVITY_ONLY_GOALS",
-                "NO_AUGMENTATION_UNDER_ECONOMIC_OR_SOCIAL_DURESS",
-                "HOST_CAN_REVERT_POLICY_AND_EFFECTS_WHEN_POSSIBLE"
-            ]
-        }
+                mandatory_guards = [
+                    "CHECK_MENTAL_PRIVACY_INVARIANTS",
+                    "CHECK_COGNITIVE_LIBERTY_INVARIANTS",
+                    "AUDIT_LOG_EVENT_NEURODATA_ACCESS"
+                ]
+            }
 
-        mode_experimental_strict {
-            default_state = "DISABLED"
-            allowed_contexts = [
-                "FORMAL_RESEARCH_WITH_ETHICS_REVIEW",
-                "FULL_DISCLOSURE_OF_UNKNOWN_RISKS"
-            ]
+            mode_modulate_therapeutic {
+                default_state = "DISABLED"
+                allowed_contexts = [
+                    "CLINICAL_OR_HEALTHCARE_PROVEN_INTERVENTION",
+                    "HOST_REQUEST_FOR_SYMPTOM_RELIEF"
+                ]
 
-            constraints = [
-                "NO_PARTICIPATION_UNDER_CONSTRAINT_OR_COERCION",
-                "MENTAL_INTEGRITY_PRIORITIZED_OVER_RESEARCH_OUTCOMES",
-                "WITHDRAWAL_ALLOWED_AT_ANY_TIME_WITHOUT_PENALTY"
-            ]
+                constraints = [
+                    "INDEPENDENT_MEDICAL_OVERSIGHT_WHERE_APPLICABLE",
+                    "EXPLICIT_SCOPE_AND_DURATION",
+                    "POST_HOC_HOST_REVIEW_OF_EFFECTS"
+                ]
+            }
+
+            mode_modulate_augmentative {
+                default_state = "DISABLED"
+                allowed_contexts = [
+                    "HOST_INITIATED_AUGMENTATION_ONLY",
+                    "NON_COERCIVE_EXPLORATION_OF_CAPABILITIES"
+                ]
+
+                constraints = [
+                    "NO_AUGMENTATION_FOR_THIRD_PARTY_PRODUCTIVITY_ONLY_GOALS",
+                    "NO_AUGMENTATION_UNDER_ECONOMIC_OR_SOCIAL_DURESS",
+                    "HOST_CAN_REVERT_POLICY_AND_EFFECTS_WHEN_POSSIBLE"
+                ]
+            }
+
+            mode_experimental_strict {
+                default_state = "DISABLED"
+                allowed_contexts = [
+                    "FORMAL_RESEARCH_WITH_ETHICS_REVIEW",
+                    "FULL_DISCLOSURE_OF_UNKNOWN_RISKS"
+                ]
+
+                constraints = [
+                    "NO_PARTICIPATION_UNDER_CONSTRAINT_OR_COERCION",
+                    "MENTAL_INTEGRITY_PRIORITIZED_OVER_RESEARCH_OUTCOMES",
+                    "WITHDRAWAL_ALLOWED_AT_ANY_TIME_WITHOUT_PENALTY"
+                ]
+            }
         }
     }
 
     ###########################################################################
-    # 8. Policy-only autonomy-preservation scoring
+    # 9. Policy-only autonomy-preservation scoring
     ###########################################################################
 
-    autonomy_score_model {
+    autonomy_preservation {
+        model_id = "COGNITIVE_AUTONOMY_SCORE_POLICY_ONLY_v1"
+
         metric_name  = "COGNITIVE_AUTONOMY_SCORE"
         scale        = "0_TO_100"
 
-        # Purely policy-based; no runtime physiological inputs.
-        input_sources = [
-            "ACTIVE_NEURORIGHTS",
-            "ACTIVE_COGNITIVE_CHANNELS",
-            "CONSENT_MODES_IN_USE",
-            "PRESENCE_OF_HARD_EXCLUSIONS",
-            "DECLARED_PURPOSES"
+        inputs = [
+            "NEURORIGHTS_ENGAGED",
+            "CHANNEL_RISK_LEVELS",
+            "CONSENT_MODES_ACTIVE",
+            "PRESENCE_OF_RED_LINE_PATTERNS",
+            "DECLARED_PURPOSES",
+            "THERAPEUTIC_VS_NON_THERAPEUTIC_CONTEXT"
         ]
 
-        thresholds   = {
+        forbidden_inputs = [
+            "RAW_PHYSIOLOGICAL_STREAMS",
+            "CONTINUOUS_NEURAL_SIGNAL_FEEDS"
+        ]
+
+        thresholds = {
+            hard_block_threshold    = 0.30
+            warning_threshold       = 0.60
+            max_score               = 1.00
+        }
+
+        thresholds_policy_scale = {
             hard_block   = 60
             warning_only = 80
         }
@@ -367,15 +493,35 @@ overlay HostPersonalBciPolicyOverlay_v2 {
             "THIRD_PARTY_INTEREST_ALIGNMENT_RISK"
         ]
 
-        policy_effects = [
-            "IF_SCORE_BELOW_HARD_BLOCK: REJECT_CONFIGURATION",
-            "IF_SCORE_BETWEEN_HARD_BLOCK_AND_WARNING_ONLY: REQUIRE_HOST_EXPLICIT_CONFIRMATION_WITH_EXPLANATIONS",
-            "IF_SCORE_ABOVE_WARNING_ONLY: ALLOW_BUT_CONTINUE_MONITORING"
+        rules = [
+            "IF_RED_LINE_TRIGGERED_THEN_AUTONOMY_SCORE_MUST_BE_TREATED_AS_0_AND_OPERATION_BLOCKED",
+            "IF_SCORE_BELOW_HARD_BLOCK_THRESHOLD_OPERATION_MUST_BE_DENIED",
+            "IF_SCORE_BETWEEN_HARD_BLOCK_AND_WARNING_THRESHOLDS_OPERATION_REQUIRES_HIGH_SALIENCE_HOST_CONFIRMATION",
+            "SCORE_ABOVE_WARNING_THRESHOLD_PERMITS_OPERATION_SUBJECT_TO_CONSENT_AND_INVARIANTS",
+            "IF_SCORE_BELOW_HARD_BLOCK_ON_POLICY_SCALE_REJECT_CONFIGURATION",
+            "IF_SCORE_BETWEEN_HARD_BLOCK_AND_WARNING_ONLY_ON_POLICY_SCALE_REQUIRE_HOST_EXPLICIT_CONFIRMATION_WITH_EXPLANATIONS",
+            "IF_SCORE_ABOVE_WARNING_ONLY_ON_POLICY_SCALE_ALLOW_BUT_CONTINUE_MONITORING"
         ]
     }
 
     ###########################################################################
-    # 9. Host review, dispute, and evaluation hooks
+    # 10. Audit and anchoring expectations
+    ###########################################################################
+
+    audit_and_anchoring {
+        event_schema_ref  = "/aln-audit-ledger/audit.schema.events.aln::NeurorightsAuditEvents_v1"
+        index_schema_ref  = "/aln-audit-ledger/audit.index.schema.aln::NeurorightsAuditIndex_v1"
+        host_log_pattern  = "/aln-audit-ledger/audit.host.bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7.<QUARTER>.aln"
+
+        rules = [
+            "EVERY_CONSENT_CHANGE_NEURODATA_ACCESS_AND_MODULATION_EVENT_MUST_EMIT_AN_AUDIT_EVENT",
+            "EACH_EVENT_MUST_INCLUDE_ENTRY_HASH_AND_PREV_ENTRY_HASH_FIELDS",
+            "QUARTERLY_LEDGER_ROOTS_MUST_BE_ANCHORED_IN_BOSTROM_VIA_CYBERCORE"
+        ]
+    }
+
+    ###########################################################################
+    # 11. Host review, dispute, and evaluation hooks
     ###########################################################################
 
     host_review_and_transparency {
