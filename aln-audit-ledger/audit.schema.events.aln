@@ -1,0 +1,216 @@
+# File: /aln-audit-ledger/audit.schema.events.aln
+# Purpose:
+# Canonical schema and taxonomy for neurorights-relevant audit events, including
+# consent, neurodata access, and modulation, with fields needed for immutable,
+# accountable logging anchored to host_did and Bostrom address.[web:96][web:101][web:116][web:118][web:141][web:146][web:147][web:149]
+
+audit_schema NeurorightsAuditEvents_v1 {
+    ###########################################################################
+    # 1. Global principles and identifiers
+    ###########################################################################
+
+    principles {
+        # Mental-privacy-first: all neural events must be traceable and reviewable.[web:96][web:101][web:116][web:118]
+        aims = [
+            "MENTAL_PRIVACY_PROTECTION",
+            "COGNITIVE_LIBERTY_PROTECTION",
+            "MENTAL_INTEGRITY_PROTECTION",
+            "PSYCHOLOGICAL_CONTINUITY_PROTECTION",
+            "ON_CHAIN_ACCOUNTABILITY"
+        ]
+
+        # Events are append-only; mutation is prohibited at the ALN level.[web:147][web:150]
+        immutability_rule = "EVENTS_ARE_APPEND_ONLY_AND_NEVER_EDITED_IN_PLACE"
+    }
+
+    identifiers {
+        event_id_format        = "UUID_V4_OR_EQUIVALENT_UNIQUE"
+        host_did_format        = "did:cyb:<HASHED_IDENTIFIER>"
+        bostrom_address_format = "bostrom1[0-9a-z]+"
+
+        index_keys = [
+            "HOST_DID",
+            "BOSTROM_ADDRESS",
+            "EVENT_TYPE",
+            "TIMESTAMP",
+            "ENVELOPE_ID",
+            "CHANNELS",
+            "ACTOR_OR_SERVICE_ID"
+        ]
+    }
+
+    ###########################################################################
+    # 2. Event type taxonomy
+    ###########################################################################
+
+    event_types {
+        consent_events = [
+            "CONSENT_MENTAL_PRIVACY_READ_LIMITED_GRANTED",
+            "CONSENT_MENTAL_PRIVACY_READ_LIMITED_RENEWED",
+            "CONSENT_MENTAL_PRIVACY_READ_LIMITED_REVOKED",
+            "CONSENT_THERAPEUTIC_MODULATION_GRANTED",
+            "CONSENT_THERAPEUTIC_MODULATION_RENEWED",
+            "CONSENT_THERAPEUTIC_MODULATION_REVOKED"
+        ]
+
+        neurodata_events = [
+            "NEURODATA_ACCESS_UNDER_MENTAL_PRIVACY_READ_LIMITED"
+        ]
+
+        modulation_events = [
+            "THERAPEUTIC_MODULATION_SESSION_STARTED",
+            "THERAPEUTIC_MODULATION_SESSION_ENDED",
+            "THERAPEUTIC_MODULATION_ADVERSE_EVENT"
+        ]
+
+        policy_events = [
+            "POLICY_PROPOSAL_REJECTED_RED_LINE_TRIGGERED",
+            "POLICY_PROPOSAL_REJECTED_LOW_AUTONOMY_SCORE",
+            "POLICY_OVERLAY_UPDATED"
+        ]
+
+        anomaly_events = [
+            "SAFETY_ANOMALY_DETECTED",
+            "RED_LINE_BREACH_ATTEMPT_BLOCKED"
+        ]
+
+        dispute_events = [
+            "HOST_DISPUTE_FILED",
+            "HOST_DISPUTE_RESOLVED"
+        ]
+    }
+
+    ###########################################################################
+    # 3. Event field schemas
+    ###########################################################################
+
+    fields_common {
+        required = [
+            "event_id",          # Unique event identifier
+            "event_type",        # From event_types
+            "timestamp_utc",     # ISO 8601
+            "host_did",
+            "bostrom_address",
+            "actor_or_service_id", # System, agent, or human responsible
+            "source_system",     # e.g., JAVA_BACKEND, KOTLIN_HOST_APP, CPP_EDGE
+            "aln_policy_version" # ALN schema/overlay versions in effect
+        ]
+
+        optional = [
+            "session_id",
+            "client_ip_or_node_id",
+            "jurisdiction_context",
+            "notes"
+        ]
+    }
+
+    fields_consent_events {
+        required = [
+            "envelope_template_id",
+            "envelope_id",
+            "consent_category",     # MENTAL_PRIVACY or THERAPEUTIC_MODULATION
+            "channels_covered",
+            "purposes",
+            "valid_from",
+            "valid_until"
+        ]
+
+        optional = [
+            "clinical_indication",  # For therapeutic envelopes
+            "reason",               # e.g., HOST_INITIATED, POLICY_CHANGE
+            "previous_envelope_id"
+        ]
+    }
+
+    fields_neurodata_events {
+        required = [
+            "envelope_id",
+            "channels_used",
+            "purpose",
+            "data_categories",   # e.g., NEURAL_SIGNAL_SUMMARIES
+            "access_mode"        # e.g., READ_ONLY
+        ]
+
+        optional = [
+            "data_volume_estimate",
+            "retention_applied",
+            "sharing_route"      # INTERNAL_CARE_TEAM, NONE
+        ]
+    }
+
+    fields_modulation_events {
+        required = [
+            "envelope_id",
+            "channels_modulated",
+            "modulation_parameters", # Intensity, duration, target state
+            "clinical_indication",
+            "responsible_clinician_id"
+        ]
+
+        optional = [
+            "session_outcome",      # e.g., COMPLETED, ABORTED
+            "adverse_event_flag",
+            "adverse_event_description"
+        ]
+    }
+
+    fields_policy_events {
+        required = [
+            "policy_id_or_proposal_id",
+            "policy_action",      # e.g., PROPOSED, REJECTED, APPLIED
+            "reason_code"        # e.g., RED_LINE_TRIGGER, LOW_AUTONOMY_SCORE
+        ]
+
+        optional = [
+            "red_line_ids_triggered",
+            "autonomy_score_value"
+        ]
+    }
+
+    fields_anomaly_events {
+        required = [
+            "anomaly_type",      # e.g., DISTRESS_PATTERN, UNEXPECTED_MODULATION
+            "severity_level",    # e.g., INFO, WARNING, CRITICAL
+            "channels_involved"
+        ]
+
+        optional = [
+            "triggering_operation",
+            "immediate_actions_taken"
+        ]
+    }
+
+    fields_dispute_events {
+        required = [
+            "dispute_id",
+            "dispute_type",
+            "implicated_event_ids",
+            "status"             # e.g., OPEN, UNDER_REVIEW, RESOLVED
+        ]
+
+        optional = [
+            "host_statement_summary",
+            "resolution_summary"
+        ]
+    }
+
+    ###########################################################################
+    # 4. Integrity and chaining (ledger semantics)
+    ###########################################################################
+
+    integrity_and_chaining {
+        # ALN-level representation of immutable ledger design; actual hashing/
+        # anchoring occurs in Cybercore/Bostrom infrastructure.[web:147][web:150]
+        fields = [
+            "prev_entry_hash",
+            "entry_hash",
+            "ledger_epoch_id"
+        ]
+
+        rules = [
+            "entry_hash_MUST_BE_COMPUTED_OVER_ALL_EVENT_FIELDS_EXCEPT_prev_entry_hash",
+            "prev_entry_hash_OF_FIRST_ENTRY_IN_EPOCH_MAY_BE_ZERO_OR_EPOCH_ROOT",
+            "ANY_CHANGE_TO_PAST_EVENT_WILL_BREAK_HASH_CHAIN_AND_BE_TREATED_AS_TAMPERING"
+        ]
+    }
+}
