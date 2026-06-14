@@ -1,0 +1,179 @@
+# File: /aln-audit-ledger/audit.host.bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7.2026Q1.aln
+# Purpose:
+# Example quarterly audit log for a single host, showing consent and modulation
+# events anchored to host_did and Bostrom address, using NeurorightsAuditEvents_v1.[web:96][web:101][web:116][web:118][web:141][web:146][web:147][web:149]
+
+host_audit_log HostAuditLog_2026Q1 {
+    ###########################################################################
+    # 1. Ledger header
+    ###########################################################################
+
+    header {
+        host_did          = "did:cyb:bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+        bostrom_address   = "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+        quarter           = "2026Q1"
+        schema_ref        = "/aln-audit-ledger/audit.schema.events.aln::NeurorightsAuditEvents_v1"
+        overlay_ref       = "/aln-bci-special/bci.special.host-personal-policy.overlay.v2.aln"
+        created_at_utc    = "2026-04-01T00:00:00Z"
+
+        # Hash of previous quarter’s ledger file for hash chaining.
+        prev_quarter_hash = "<hash_of_2025Q4_log>"
+    }
+
+    ###########################################################################
+    # 2. Events (append-only chain)
+    ###########################################################################
+
+    events = [
+        {
+            # 2.1 Consent: mental privacy read-limited granted
+            event_id            = "c3be2f3a-1e01-4ba0-b5a5-000000000001"
+            event_type          = "CONSENT_MENTAL_PRIVACY_READ_LIMITED_GRANTED"
+            timestamp_utc       = "2026-01-10T15:23:45Z"
+            host_did            = "did:cyb:bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+            bostrom_address     = "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+            actor_or_service_id = "JAVA_BACKEND_NEURORIGHTS_SERVICE"
+            source_system       = "JAVA_BACKEND"
+            aln_policy_version  = "v2"
+
+            envelope_template_id = "CONSENT_MENTAL_PRIVACY_READ_LIMITED_v1"
+            envelope_id          = "env-mp-read-limited-2026-01-10-01"
+            consent_category     = "MENTAL_PRIVACY"
+            channels_covered     = [ "CC_PERCEPTUAL_INPUT" ]
+            purposes             = [ "DIAGNOSTIC_EVALUATION" ]
+            valid_from           = "2026-01-10T15:23:45Z"
+            valid_until          = "2026-04-09T23:59:59Z"
+
+            prev_entry_hash      = "<hash_genesis_or_prev>"
+            entry_hash           = "<hash_of_this_event_record>"
+            ledger_epoch_id      = "2026Q1-EPOCH-1"
+
+            notes                = "Host granted limited diagnostic read access via Kotlin host app."
+        },
+        {
+            # 2.2 Neurodata access under mental-privacy read-limited consent
+            event_id            = "c3be2f3a-1e01-4ba0-b5a5-000000000002"
+            event_type          = "NEURODATA_ACCESS_UNDER_MENTAL_PRIVACY_READ_LIMITED"
+            timestamp_utc       = "2026-01-15T09:10:11Z"
+            host_did            = "did:cyb:bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+            bostrom_address     = "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+            actor_or_service_id = "CPP_EDGE_DIAGNOSTIC_AGENT"
+            source_system       = "CPP_EDGE"
+            aln_policy_version  = "v2"
+
+            envelope_id         = "env-mp-read-limited-2026-01-10-01"
+            channels_used       = [ "CC_PERCEPTUAL_INPUT" ]
+            purpose             = "DIAGNOSTIC_EVALUATION"
+            data_categories     = [ "NEURAL_SIGNAL_SUMMARIES" ]
+            access_mode         = "READ_ONLY"
+
+            data_volume_estimate = "SMALL"
+            retention_applied    = "DELETE_AFTER_7_DAYS"
+            sharing_route        = "INTERNAL_CARE_TEAM"
+
+            prev_entry_hash      = "<hash_of_previous_event>"
+            entry_hash           = "<hash_of_this_event_record>"
+            ledger_epoch_id      = "2026Q1-EPOCH-1"
+
+            notes                = "Single diagnostic snapshot captured and minimized."
+        },
+        {
+            # 2.3 Consent: therapeutic modulation granted
+            event_id            = "c3be2f3a-1e01-4ba0-b5a5-000000000003"
+            event_type          = "CONSENT_THERAPEUTIC_MODULATION_GRANTED"
+            timestamp_utc       = "2026-02-05T12:05:00Z"
+            host_did            = "did:cyb:bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+            bostrom_address     = "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+            actor_or_service_id = "JAVA_BACKEND_NEURORIGHTS_SERVICE"
+            source_system       = "JAVA_BACKEND"
+            aln_policy_version  = "v2"
+
+            envelope_template_id = "CONSENT_MODULATION_THERAPEUTIC_CONTROLLED_v1"
+            envelope_id          = "env-mod-ther-2026-02-05-01"
+            consent_category     = "THERAPEUTIC_MODULATION"
+            channels_covered     = [ "CC_AFFECTIVE_STATE" ]
+            purposes             = [ "THERAPEUTIC_SYMPTOM_RELIEF" ]
+            clinical_indication  = "DIAGNOSED_ANXIETY_EPISODES"
+            valid_from           = "2026-02-05T12:05:00Z"
+            valid_until          = "2026-08-04T23:59:59Z"
+
+            prev_entry_hash      = "<hash_of_previous_event>"
+            entry_hash           = "<hash_of_this_event_record>"
+            ledger_epoch_id      = "2026Q1-EPOCH-1"
+
+            notes                = "Controlled therapeutic modulation consent granted after full disclosure."
+        },
+        {
+            # 2.4 Therapeutic modulation session started
+            event_id            = "c3be2f3a-1e01-4ba0-b5a5-000000000004"
+            event_type          = "THERAPEUTIC_MODULATION_SESSION_STARTED"
+            timestamp_utc       = "2026-02-10T14:00:00Z"
+            host_did            = "did:cyb:bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+            bostrom_address     = "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+            actor_or_service_id = "CPP_EDGE_THER_AGENT"
+            source_system       = "CPP_EDGE"
+            aln_policy_version  = "v2"
+
+            envelope_id            = "env-mod-ther-2026-02-05-01"
+            channels_modulated     = [ "CC_AFFECTIVE_STATE" ]
+            modulation_parameters  = "INTENSITY=LOW;DURATION_MIN=30;TARGET=REDUCE_ACUTE_ANXIETY"
+            clinical_indication    = "DIAGNOSED_ANXIETY_EPISODES"
+            responsible_clinician_id = "CLINICIAN-1234"
+
+            prev_entry_hash      = "<hash_of_previous_event>"
+            entry_hash           = "<hash_of_this_event_record>"
+            ledger_epoch_id      = "2026Q1-EPOCH-1"
+
+            notes                = "Session 1/60 under therapeutic-controlled envelope."
+        },
+        {
+            # 2.5 Therapeutic modulation session ended
+            event_id            = "c3be2f3a-1e01-4ba0-b5a5-000000000005"
+            event_type          = "THERAPEUTIC_MODULATION_SESSION_ENDED"
+            timestamp_utc       = "2026-02-10T14:32:10Z"
+            host_did            = "did:cyb:bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+            bostrom_address     = "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+            actor_or_service_id = "CPP_EDGE_THER_AGENT"
+            source_system       = "CPP_EDGE"
+            aln_policy_version  = "v2"
+
+            envelope_id            = "env-mod-ther-2026-02-05-01"
+            channels_modulated     = [ "CC_AFFECTIVE_STATE" ]
+            modulation_parameters  = "INTENSITY=LOW;DURATION_MIN=30;TARGET=REDUCE_ACUTE_ANXIETY"
+            clinical_indication    = "DIAGNOSED_ANXIETY_EPISODES"
+            responsible_clinician_id = "CLINICIAN-1234"
+            session_outcome        = "COMPLETED"
+            adverse_event_flag     = false
+
+            prev_entry_hash      = "<hash_of_previous_event>"
+            entry_hash           = "<hash_of_this_event_record>"
+            ledger_epoch_id      = "2026Q1-EPOCH-1"
+
+            notes                = "No adverse events reported; host to review experience with clinician."
+        },
+        {
+            # 2.6 Policy proposal rejected due to red-line trigger
+            event_id            = "c3be2f3a-1e01-4ba0-b5a5-000000000006"
+            event_type          = "POLICY_PROPOSAL_REJECTED_RED_LINE_TRIGGERED"
+            timestamp_utc       = "2026-03-01T11:11:11Z"
+            host_did            = "did:cyb:bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+            bostrom_address     = "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+            actor_or_service_id = "JAVA_BACKEND_POLICY_ENGINE"
+            source_system       = "JAVA_BACKEND"
+            aln_policy_version  = "v2"
+
+            policy_id_or_proposal_id = "policy-proposal-2026-03-01-01"
+            policy_action            = "REJECTED"
+            reason_code              = "RED_LINE_TRIGGER"
+            red_line_ids_triggered   = [
+                "CORE_BELIEF_KERNEL_MODULATION"
+            ]
+
+            prev_entry_hash      = "<hash_of_previous_event>"
+            entry_hash           = "<hash_of_this_event_record>"
+            ledger_epoch_id      = "2026Q1-EPOCH-1"
+
+            notes                = "Attempt to propose kernel-level belief modulation was blocked."
+        }
+    ]
+}
