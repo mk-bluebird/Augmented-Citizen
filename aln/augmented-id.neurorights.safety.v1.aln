@@ -1,0 +1,115 @@
+# filename: aln/augmented-id.neurorights.safety.v1.aln
+
+aln-shard augmented-id.neurorights.safety.v1 {
+    meta {
+        host_did        = "did:aln:bostrom-organic-host";
+        bostrom_address = "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7";
+        repo_authority  = "github.com/mk-bluebird/Augmented-Citizen";
+        clause_aln_migration = "ALN.MIGRATION.CYBERCORE_AUTHORITY.v1";
+        description = "Neurorights and device-as-artifacts safety shard for Augmented-ID.";
+        version = 1;
+    }
+
+    neurorights {
+        cognitive_liberty_clause = "ALN.NEURORIGHTS.COGNITIVE_LIBERTY.v1";
+        mental_privacy_clause    = "ALN.NEURORIGHTS.MENTAL_PRIVACY.v1";
+        augmentation_continuity  = "ALN.NEURORIGHTS.AUGMENTATION_CONTINUITY.v1";
+
+        # Prohibit scoring or classification from raw inner-state.
+        rights_noscore_from_inner_state = true;
+
+        # Telemetry fields that are absolutely forbidden in Augmented-ID flows.
+        telemetry_forbidden = [
+            "RAW_Q_FIELD",
+            "SUBJECTIVE_CONTENT",
+            "RAW_EEG_BAND",
+            "FULL_NEURAL_WAVEFORM",
+            "BCI_CONTROL_CHANNEL"
+        ];
+
+        # Only anonymized and bounded RoH bands may be exported.
+        roh_export_policy {
+            allow_export      = true;
+            export_mode       = "banded";  # bands, not raw values.
+            roh_band_labels   = ["low", "medium", "high"];
+            roh_max_ceiling   = 0.30;
+        }
+    }
+
+    device_as_artifacts_policy {
+        # Treat integrated AI/BCI hardware as non-fungible artifacts bound to the host.
+        host_artifact_binding {
+            requires_host_did     = true;
+            requires_bostrom_addr = "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7";
+        }
+
+        # No remote control; only proposals.
+        remote_control_forbidden = true;
+
+        # Allowed remote interactions: proposals and audit requests.
+        remote_interaction_modes = [
+            "age_verification_request",
+            "audit_log_request"
+        ];
+
+        # All actuation remains host-local.
+        host_local_execution_only = true;
+    }
+
+    predicate AugmentedIdTelemetrySafe {
+        inputs {
+            exported_fields : [string];
+            forbidden       : [string];
+        }
+
+        definition {
+            for field in exported_fields {
+                if field in forbidden {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
+    predicate DeviceAsArtifactsCorridorOK {
+        inputs {
+            host_did        : string;
+            bostrom_address : string;
+            control_mode    : string;  # "host_local" | "remote"
+        }
+
+        definition {
+            let did_ok   = host_did == meta.host_did;
+            let addr_ok  = bostrom_address == meta.bostrom_address;
+            let ctrl_ok  = control_mode == "host_local";
+
+            return did_ok && addr_ok && ctrl_ok;
+        }
+    }
+
+    predicate AugmentedIdNeurorightsSafe {
+        inputs {
+            exported_fields : [string];
+            host_did        : string;
+            bostrom_address : string;
+            control_mode    : string;
+        }
+
+        definition {
+            let tel_ok = AugmentedIdTelemetrySafe {
+                exported_fields,
+                neurorights.telemetry_forbidden
+            };
+
+            let artifacts_ok = DeviceAsArtifactsCorridorOK {
+                host_did,
+                bostrom_address,
+                control_mode
+            };
+
+            return tel_ok && artifacts_ok;
+        }
+    }
+}
