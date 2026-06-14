@@ -1,0 +1,141 @@
+# File: /aln-audit-ledger/audit.index.schema.aln
+# Purpose:
+# Minimal indexing schema for neurorights audit logs, enabling fast lookup
+# by (host_did, quarter, event_type, timestamp) while preserving immutable,
+# append-only ledger semantics.[web:96][web:101][web:116][web:118][web:147][web:155][web:156][web:159]
+
+audit_index_schema NeurorightsAuditIndex_v1 {
+    ###########################################################################
+    # 1. Indexing goals and constraints
+    ###########################################################################
+
+    goals {
+        objectives = [
+            "FAST_LOOKUP_BY_HOST_AND_QUARTER",
+            "FILTER_BY_EVENT_TYPE_AND_TIME_RANGE",
+            "MAINTAIN_IMMUTABILITY_OF_UNDERLYING_EVENTS",
+            "SUPPORT_MENTAL_PRIVACY_AND_NEURORIGHTS_AUDITABILITY"
+        ][web:96][web:101][web:116][web:118][web:147][web:155]
+
+        constraints = [
+            "INDEX_ENTRIES_REFERENCE_EVENTS_BUT_DO_NOT_EMBED_RAW_NEURAL_DATA",
+            "INDEX_IS_APPEND_ONLY_WHEN_NEW_EVENTS_ARE_ADDED",
+            "DELETIONS_OR_MUTATIONS_OF_EXISTING_INDEX_ENTRIES_ARE_PROHIBITED"
+        ][web:147][web:155][web:156]
+    }
+
+    ###########################################################################
+    # 2. Logical index dimensions
+    ###########################################################################
+
+    dimensions {
+        primary_keys = [
+            "host_did",
+            "quarter"
+        ]
+
+        secondary_keys = [
+            "event_type",
+            "timestamp_utc"
+        ]
+
+        # Optional filters for more precise queries.
+        optional_filters = [
+            "consent_category",     # MENTAL_PRIVACY, THERAPEUTIC_MODULATION, etc.
+            "channel_id",           # e.g., CC_AFFECTIVE_STATE
+            "envelope_id"
+        ]
+    }
+
+    ###########################################################################
+    # 3. Index entry schema
+    ###########################################################################
+
+    index_entry_schema AuditIndexEntry {
+        fields_required = [
+            "index_entry_id",       # Unique ID for this index record
+            "host_did",
+            "bostrom_address",
+            "quarter",
+            "event_type",
+            "timestamp_utc",
+            "event_id",
+            "log_file_ref"          # Path to audit.host.<HOST>.<QUARTER>.aln
+        ]
+
+        fields_optional = [
+            "consent_category",
+            "channel_ids",
+            "envelope_id",
+            "clinical_indication",
+            "policy_id_or_proposal_id"
+        ]
+
+        integrity_fields = [
+            "event_entry_hash",     # Copy of event.entry_hash for quick verification
+            "index_prev_entry_hash",
+            "index_entry_hash"
+        ]
+
+        rules = [
+            "event_id_MUST_REFERENCE_EXISTING_EVENT_IN_LOG_FILE",
+            "event_entry_hash_MUST_MATCH_EVENT_RECORD_HASH",
+            "index_entry_hash_MUST_BE_COMPUTED_OVER_ALL_FIELDS_EXCEPT_index_prev_entry_hash"
+        ][web:147][web:155][web:156]
+    }
+
+    ###########################################################################
+    # 4. Chaining and immutability for the index
+    ###########################################################################
+
+    chaining_and_immutability {
+        # The index itself maintains a hash chain, separate from the events.[web:147][web:156][web:158]
+        rules = [
+            "FOR_GIVEN_HOST_AND_QUARTER_INDEX_ENTRIES_FORM_AN_APPEND_ONLY_CHAIN",
+            "index_prev_entry_hash_OF_FIRST_ENTRY_MAY_BE_ZERO_OR_INDEX_ROOT",
+            "ANY_CHANGE_TO_EXISTING_INDEX_ENTRY_BREAKS_HASH_CHAIN_AND_MUST_BE_TREATED_AS_TAMPERING"
+        ]
+
+        epoching = [
+            "INDEX_MAY_BE_SEGMENTED_INTO_EPOCHS_FOR_LARGE_LOGS",
+            "EACH_EPOCH_HAS_ITS_OWN_ROOT_HASH_ANCHORED_IN_CYBERCORE_OR_BOSTROM"
+        ]
+    }
+
+    ###########################################################################
+    # 5. Example index structure per host and quarter
+    ###########################################################################
+
+    index_file_schema HostQuarterIndexFile {
+        header_fields = [
+            "host_did",
+            "bostrom_address",
+            "quarter",
+            "schema_ref",           # /aln-audit-ledger/audit.index.schema.aln::NeurorightsAuditIndex_v1
+            "log_file_ref",         # /aln-audit-ledger/audit.host.<HOST>.<QUARTER>.aln
+            "created_at_utc",
+            "prev_index_hash"       # For chaining with previous quarter index
+        ]
+
+        entries = "LIST_OF_AuditIndexEntry"
+    }
+
+    ###########################################################################
+    # 6. Query guidance (for Java/Kotlin/CPP consumers)
+    ###########################################################################
+
+    query_guidance {
+        typical_queries = [
+            "GET_ALL_EVENTS_FOR_HOST_IN_QUARTER_ORDERED_BY_TIME",
+            "GET_ALL_EVENTS_OF_TYPE_FOR_HOST_IN_QUARTER",
+            "GET_ALL_CONSENT_EVENTS_FOR_HOST_IN_TIME_RANGE",
+            "GET_ALL_MODULATION_SESSIONS_FOR_GIVEN_ENVELOPE_ID"
+        ][web:155][web:157][web:159]
+
+        algorithmic_notes = [
+            "USE_PRIMARY_KEYS_TO_SELECT_INDEX_FILE_FOR_HOST_AND_QUARTER",
+            "FILTER_INDEX_ENTRIES_IN_MEMORY_BY_EVENT_TYPE_AND_OPTIONAL_FILTERS",
+            "FOLLOW_EVENT_ID_AND_LOG_FILE_REF_TO_LOAD_FULL_EVENT_RECORDS_ONLY_WHEN_NEEDED"
+        ]
+    }
+}
