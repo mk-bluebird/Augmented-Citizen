@@ -1,0 +1,3 @@
+# qpudatashards/dreamnet_plane_2026v1.aln
+destination-path,module,version,role,security-protocol,interop-standard,identity-mgmt,ai-agent-integration,device-type,authentication,digital-twin,edge-analytics,compliance,log-persistence
+vnodeDreamnet.core,DreamnetCore,1.0.0,SleepGatedXR,AES256-PostQ,REST,OIDCVital,MistralQwen,XREdge,FIDO2Portal,Enabled,SNNContentClass,GDPREUAI,HyperledgerVital
