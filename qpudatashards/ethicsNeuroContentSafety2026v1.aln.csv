@@ -1,0 +1,6 @@
+destination-path,module,version,role,security-protocol,interop-standard,identity-mgmt,ai-agent-integration,device-type,authentication,digital-twin,edge-analytics,compliance,log-persistence
+vnodeethicscontent-safety.aln,NeuroContentSafety,1.0.0,ContentGovernor,AES256-PostQ,ALN-PolicyAPI,OIDCVital,MistralQwen,ClusterNode,FIDO2-WebAuthn,Enabled,SNNContentClass,GDPREUAIHIPAA,HyperledgerVital
+vnodeethicsbci-safety-kernel.aln,BCIContentKernel,1.0.0,BCIStreamFilter,AES256-KernelBus,BCI-Bus-API,DIDVitalChain,VitalNetSafetyKernel,BCIEdge,DNAMFARole3,Enabled,SNNSignalRisk,FCC15MedDevice,KernelAudit
+vnodeethicsengine-bridge.unity,EngineSafetyUnity,1.0.0,GameEngineBridge,Argon2-TLS,HTTP3WebSocket,OAuthVital,GPTAugment,XREdge,FIDO2Portal,Enabled,None,CCPACOPPA,ImmutableEdgeLogs
+vnodeethicsfederated-classifier.aln,FedContentClass,1.0.0,FederatedFilterNode,ChaCha20-ZT,FL-gRPC,OIDC-Research,MistralQwen,EdgeServer,None,Enabled,SNNClassifier,OECDDataSov,CephRADOSLogs
+vnodeethicsgovernance-dashboard,NeuroGovernanceUI,1.0.0,TransparencyPortal,AES256-GCM,RESTGraphQL,WebAuthn,ClaudeEnhance,WebPortal,FIDO2Portal,Enabled,None,ISO42001NIST-AI,HyperledgerVital
