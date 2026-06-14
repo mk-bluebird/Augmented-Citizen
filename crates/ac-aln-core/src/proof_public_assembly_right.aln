@@ -1,0 +1,5 @@
+// crates/ac-aln-core/src/proof_public_assembly_right.aln
+// QPU.Datashard ALN row for ProofOfPublicAssemblyRight VC
+// Design: D Medium, NR Medium, EE High
+destination-path,module,version,role,security-protocol,interop-standard,identity-mgmt,ai-agent-integration,device-type,authentication,digital-twin,edge-analytics,compliance,log-persistence
+vnode.vitalnet.vc.proof-public-assembly,ProofOfPublicAssemblyRight,1.0.0,JournalistVC,AES256-PostQ,VC2.0-BBS+-SelectiveDisclosure,W3C-DID-VC,vc-rs,BciWearable,BiometricVital,Enabled,LoihiAlertSNN,EUCharterArt11|US-FirstAmendment|IEEE2410BiometricPrivacy|EUAIActHighRisk,HyperledgerVital
