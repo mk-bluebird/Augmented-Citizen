@@ -1,0 +1,63 @@
+// crates/cybercore-brain/src/qpu_datashard_cyberrank.aln
+// QPU.Datashard in ALN syntax for CyberRank governance
+// Design score: D = Low, NR = Medium, EE = High
+
+/*
+destination-path,plane,module,version,role,safety-weight,legal-weight,bio-weight,psych-weight,eco-weight,sovereignty-weight,design-score,neuro-risk,energy-efficiency
+vnodeinfrapoliciescybercore.brain.aln,Governance,CyberCoreBrain,1.0.0,CyberRankOS,0.30,0.25,0.20,0.10,0.10,0.05,D:Medium,NR:Medium,EE:High
+*/
+
+title CyberRankWeightsConfig
+weights.neurorights_focused {
+  w_safety: 0.30
+  w_legal: 0.25
+  w_bio: 0.20
+  w_psych: 0.10
+  w_eco: 0.10
+  w_sovereignty: 0.05
+}
+
+metrics.mapping.from_aln {
+  safety:
+    if compliance contains "EUAIAct" or "ISO26262" then 0.9 else 0.5
+  legal:
+    if compliance contains "GDPR" or "HIPAA" or "CCPA" then 0.9 else 0.4
+  bio:
+    if compliance contains "HIPAA" or "IEC62304" then 0.85 else 0.3
+  psych:
+    if role contains "Governance" or "Gov" then 0.8 else 0.4
+  eco:
+    if edge-analytics contains "SNN" then 0.9 else 0.5
+  sovereignty:
+    normalize S in [-100,100] to [0,1] via (S + 100)/200
+}
+
+sovereignty.score {
+  formula: S = L * 0.4 - V
+  variables:
+    L: local-control-percent
+    V: vendor-lock-in-percent
+  constraint:
+    S >= 0 required for cross-border data flows
+}
+
+safety.vectors {
+  design: "D:Medium"
+  neuro-risk: "NR:Medium"
+  energy-efficiency: "EE:High"
+}
+
+audit.routing {
+  sqlite:
+    tables: ["audit_records", "zkp_proofs", "bci_states", "log_anchors"]
+  anchor:
+    ledger: "OrganichainBostrom"
+    chain_id: "bostrom-mainnet"
+}
+
+graph TD
+  R[CyberRankOS] -->|reads| A[ALN Node Configs]
+  R -->|computes| M[Metrics Vector v]
+  R -->|applies| W[Weights w]
+  W -->|produces| S[Rank Scalar R]
+  S -->|gates| D[Deployment Eligibility]
