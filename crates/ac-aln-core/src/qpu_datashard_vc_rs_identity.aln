@@ -1,0 +1,53 @@
+// crates/ac-aln-core/src/qpu_datashard_vc_rs_identity.aln
+// QPU.Datashard for vc-rs identity mappings
+// Design score: D = Low, NR = Low, EE = High
+
+title VcRsIdentityLayer
+
+/*
+destination-path,module,version,role,security-protocol,identity-mgmt,compliance,safety-vectors
+vnodeqpudatashardsvc-rs.identity.aln,vc-rs,1.0.0,IdentityCore,AES256-PostQ-TLS,"W3C-VC2.0+DIDCore","GDPR,CCPA,eIDAS","D:Low;NR:Low;EE:High"
+*/
+
+w3c.did.core {
+  properties: ["id","controller","verificationMethod","service"]
+  vocab: "https://www.w3.org/ns/did#"
+}
+
+w3c.vc.data_model_2_0 {
+  properties: [
+    "@context","id","type","issuer","issuanceDate","expirationDate",
+    "credentialSubject","credentialSchema","proof"
+  ]
+  credentialSchema: {
+    type: "JsonSchema"
+    id: "https://schemas.augmented.city/xr-mobility-assistant.json"
+  }
+}
+
+xr.mobility.assistant.subject {
+  fields: {
+    resident_id: "string",
+    jurisdiction: "string",
+    mobility_tier: "enum[wheelchair,pedestrian,bicycle]",
+    emergency_consent: "boolean",
+    max_assist_speed_kmh: "u32<=40"
+  }
+}
+
+invariants {
+  vc_must_have_credentialSubject: true
+  vc_must_have_credentialSchema: true
+  xr_mobility_speed_limit_kmh: 40
+}
+
+safety.vectors {
+  design: "D:Low"
+  neuro-risk: "NR:Low"
+  energy-efficiency: "EE:High"
+}
+
+graph TD
+  DIDDoc[DidDocument] --> VC[VerifiableCredential]
+  VC --> XR[XR Mobility Assistant VC]
+  XR --> Policy[ac-aln-core NodeIdentityConfig]
