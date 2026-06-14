@@ -1,0 +1,33 @@
+# File: /aln-core-spec/sovereignty.digital-datascope.aln
+# Purpose: Specialization of sovereignty for data and neural/neurocognitive data scopes.
+
+digital_datascope DigitalDatascope_v1 {
+    imports = ["/aln-core-spec/sovereignty.core-schema.aln"]
+
+    scopes = [
+        {
+            scope_id        = "RAW_NEURAL"
+            description     = "Unprocessed, high-fidelity neural signals (e.g., raw EEG, spike trains)."
+            ownership       = "HOST"
+            control         = "ABSOLUTE"
+            access_paths    = ["LOCAL_EDGE_PROCESSING", "ENCRYPTED_VAULT"]
+            constraints     = ["NEVER_TRANSMITTED_UNENCRYPTED", "TREATED_AS_SPECIAL_CATEGORY_DATA"]
+        },
+        {
+            scope_id        = "SUMMARIES"
+            description     = "Aggregated, low-fidelity summaries of neural states (e.g., focus level, stress index)."
+            ownership       = "HOST"
+            control         = "DELEGATED"
+            access_paths    = ["LOCAL_UI", "AUTHORIZED_THIRD_PARTY"]
+            constraints     = ["REQUIRES_EXPLICIT_CONSENT_FOR_SHARING", "MUST_BE_REVERSIBLE"]
+        },
+        {
+            scope_id        = "INFERENCES"
+            description     = "AI-derived inferences about cognitive or affective states."
+            ownership       = "HOST"
+            control         = "SHARED"
+            access_paths    = ["CLINICAL_DASHBOARD", "RESEARCH_DATASET"]
+            constraints     = ["NEURAL_INFERENCES_CANNOT_BE_TREATED_AS_LESS_PROTECTED_THAN_RAW_SIGNALS", "SUBJECT_TO_MENTAL_PRIVACY_INVARIANTS"]
+        }
+    ]
+}
