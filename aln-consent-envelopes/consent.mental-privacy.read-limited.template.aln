@@ -1,0 +1,257 @@
+# File: /aln-consent-envelopes/consent.mental-privacy.read-limited.template.aln
+# Purpose:
+# Template for strictly limited, opt-in read access to deviceless cognitive
+# channels, treating neural/mental data as Category Zero and special-category
+# by default.[web:96][web:101][web:116][web:118][web:140][web:141][web:143][web:145]
+
+consent_template MentalPrivacyReadLimited_v1 {
+    ###########################################################################
+    # 1. Template identity and scope
+    ###########################################################################
+
+    template_id   = "CONSENT_MENTAL_PRIVACY_READ_LIMITED_v1"
+    category      = "MENTAL_PRIVACY"
+    description   = "Strictly scoped, revocable consent for limited read-only access to selected cognitive channels for diagnostic or support purposes."
+
+    applicable_to = [
+        "DEVICLESS_ORGANIC_INTEGRATIONS",
+        "ABSTRACT_COGNITIVE_CHANNELS"
+    ]
+
+    baseline_posture = "DENY_ALL_EXCEPT_WHERE_EXPLICITLY_GRANTED"
+
+    ###########################################################################
+    # 2. Linkage to neurorights and host overlay
+    ###########################################################################
+
+    neurorights_binding {
+        rights = [
+            "MENTAL_PRIVACY",
+            "COGNITIVE_LIBERTY",
+            "MENTAL_INTEGRITY"
+        ]  # Key rights implicated by any access to inner mental states.[web:96][web:101][web:116][web:118]
+
+        invariants_refs = [
+            "/aln-core-spec/invariants.mental-privacy.aln",
+            "/aln-core-spec/invariants.cognitive-liberty.aln",
+            "/aln-core-spec/invariants.mental-integrity.aln"
+        ]
+
+        overlay_binding = "/aln-bci-special/bci.special.host-personal-policy.overlay.v2.aln"
+    }
+
+    ###########################################################################
+    # 3. Structure of a concrete consent envelope (instantiated per host)
+    ###########################################################################
+
+    envelope_schema ConsentEnvelopeMentalPrivacyReadLimited {
+        fields = [
+            "envelope_id",
+            "host_did",
+            "bostrom_address",
+            "channels_covered",
+            "purposes",
+            "data_categories",
+            "retention_policy",
+            "sharing_policy",
+            "encryption_and_storage",
+            "valid_from",
+            "valid_until",
+            "revocation_mechanism",
+            "creation_context",
+            "explicit_affirmation_record"
+        ]
+
+        constraints = [
+            "HOST_DID_AND_BOSTROM_ADDRESS_MUST_MATCH_HOST_PROFILE",
+            "CHANNELS_COVERED_MUST_BE_A_SUBSET_OF_ALLOWED_CHANNELS",
+            "PURPOSES_MUST_BE_EXPLICITLY_DECLARED_AND_NON_AMBIGUOUS",
+            "RETENTION_POLICY_MUST_BE_TIME_BOUND_AND_MINIMAL",
+            "SHARING_POLICY_DEFAULT_MUST_BE_NO_SHARING",
+            "REVOCATION_MECHANISM_MUST_BE_LOW_FRICTION_AND_IMMEDIATE"
+        ]
+    }
+
+    ###########################################################################
+    # 4. Allowed cognitive channels and purposes
+    ###########################################################################
+
+    allowed_channels {
+        # These IDs must line up with deviceless domain model.[web:96][web:101][web:118]
+        references = [
+            "/aln-bci-special/bci.special.host-personal-policy.overlay.v2.aln::deviceless_bci.cognitive_channels"
+        ]
+
+        # Template constraints: this envelope is only for non-modulating reads.
+        channel_policies = [
+            {
+                channel_id = "CC_PERCEPTUAL_INPUT"
+                mode       = "READ_ONLY"
+                notes      = "Read-only access for diagnostic/situational awareness; no modulation allowed."
+            },
+            {
+                channel_id = "CC_AFFECTIVE_STATE"
+                mode       = "READ_ONLY"
+                notes      = "High-risk; only allow coarse affective summaries, never fine-grained or continuous raw streams."
+            },
+            {
+                channel_id = "CC_MEMORY_ADJACENT"
+                mode       = "READ_ONLY"
+                notes      = "Read for recall-support patterns; no editing or injection."
+            },
+            {
+                channel_id = "CC_META_COGNITION"
+                mode       = "DISALLOWED"
+                notes      = "Meta-cognitive channels are excluded from this consent template."
+            }
+        ]
+    }
+
+    allowed_purposes {
+        # Purposes must be *narrow* and aligned with neurorights guidance.[web:96][web:116][web:118][web:140][web:145]
+        purposes = [
+            "DIAGNOSTIC_EVALUATION",
+            "THERAPEUTIC_PLANNING",
+            "HOST_REQUESTED_SELF_INSIGHT",
+            "SAFETY_CRITICAL_MONITORING_WITH_MINIMAL_SCOPE"
+        ]
+
+        prohibited_purposes = [
+            "MARKETING_OR_ADVERTISING",
+            "BEHAVIORAL_PROFILING_OR_SCORING",
+            "LAW_ENFORCEMENT_OR_INTELLIGENCE_GATHERING",
+            "EMPLOYMENT_OR_EDUCATIONAL_SCREENING",
+            "POLITICAL_OR_IDEOLOGICAL_ANALYSIS"
+        ]
+    }
+
+    ###########################################################################
+    # 5. Data categories, retention, and sharing
+    ###########################################################################
+
+    data_categories {
+        # All are treated as special-category or higher than GDPR-like SCD.[web:96][web:116][web:118][web:143][web:145]
+        categories = [
+            "NEURAL_SIGNAL_SUMMARIES",
+            "AFFECTIVE_STATE_SUMMARIES",
+            "PATTERN_LEVEL_INFERENCES",
+            "HOST_PROVIDED_REPORTS"
+        ]
+
+        classification = "CATEGORY_ZERO_BRAIN_DATA"
+    }
+
+    retention_policy {
+        default_retention = "SHORTEST_TECHNICALLY_FEASIBLE"
+        max_retention_days = 30
+
+        rules = [
+            "NEVER_STORE_RAW_SIGNALS_WHEN_SUMMARIES_SUFFICE",
+            "DELETE_DATA_ON_REVOCATION_UNLESS_CONSTRAINED_BY_SEPARATE_MEDICOLEGAL_DUTY",
+            "NO_INDEFINITE_RETENTION_FOR_ANALYTICS_OR_MODEL_TRAINING"
+        ]
+    }
+
+    sharing_policy {
+        default = "NO_SHARING"
+
+        allowed_exceptions = [
+            "INTERNAL_CARE_TEAM_WITH_CONFIDENTIALITY_DUTY"
+        ]
+
+        strict_bans = [
+            "NO_SHARING_WITH_COMMERCIAL_AD_TECH",
+            "NO_DATA_BROKERAGE",
+            "NO_UNDERLYING_NEURAL_DATA_FOR_MODEL_TRAINING_WITHOUT_SEPARATE_OPT_IN"
+        ][web:77][web:96][web:116][web:145]
+    }
+
+    encryption_and_storage {
+        requirements = [
+            "AT_REST_ENCRYPTION_WITH_MODERN_CRYPTO_STANDARDS",
+            "IN_TRANSIT_ENCRYPTION",
+            "ACCESS_CONTROL_BASED_ON_NEED_TO_KNOW",
+            "AUDIT_TRAILS_FOR_ALL_ACCESSES"
+        ][web:116][web:140][web:141][web:145]
+    }
+
+    ###########################################################################
+    # 6. Consent grant, renewal, and revocation
+    ###########################################################################
+
+    grant_procedure {
+        presentation_requirements = [
+            "PLAIN_LANGUAGE_SUMMARY_OF_DATA_TYPES_AND_PURPOSES",
+            "DETAILED_LAYER_FOR_RISKS_AND_ALTERNATIVES",
+            "CLEAR_STATEMENT_THAT_CONSENT_IS_NOT_REQUIRED_FOR_BASIC_RIGHTS",
+            "EXPLICIT_MENTION_OF_REVOCABILITY_AND_IMPACT"
+        ][web:96][web:118][web:131][web:140][web:141]
+
+        host_action_required = "AFFIRMATIVE_OPT_IN"
+        record_fields = [
+            "TIMESTAMP",
+            "HOST_DID",
+            "CHANNELS_SELECTED",
+            "PURPOSES_SELECTED",
+            "INTERFACE_OR_AGENT_USED",
+            "VERSION_OF_TEMPLATE"
+        ]
+    }
+
+    renewal_and_expiry {
+        max_duration_days = 90
+        renewal_mode      = "EXPLICIT_RECONFIRMATION"
+
+        rules = [
+            "CONSENT_EXPIRES_SILENTLY_TO_DENY_ALL_IF_NOT_RENEWED",
+            "NO_AUTO_RENEWAL_WITHOUT_HOST_ACTION"
+        ]
+    }
+
+    revocation_procedure {
+        mechanism = [
+            "ONE_CLICK_OR_SINGLE_ACTION_REVOCATION_IN_HOST_INTERFACE",
+            "ALTERNATIVE_OFFLINE_OR_PAPER_ROUTE_WHERE_REQUIRED"
+        ]
+
+        effects = [
+            "IMMEDIATE_TERMINATION_OF_NEW_DATA_COLLECTION",
+            "BEST_EFFORT_DELETION_OR_ANONYMIZATION_OF_STORED_DATA",
+            "LOG_REVOCATION_EVENT_WITH_REASON_IF_PROVIDED"
+        ][web:96][web:77][web:131][web:140]
+
+        constraints = [
+            "NO_PENALTIES_FOR_REVOCATION_BEYOND_LOSS_OF_ASSOCIATED_SERVICE",
+            "NO_ATTEMPT_TO_RECAPTURE_CONSENT_THROUGH_DARK_PATTERNS"
+        ]
+    }
+
+    ###########################################################################
+    # 7. Audit and linkage to /aln-audit-ledger/
+    ###########################################################################
+
+    audit_linkage {
+        events_emitted = [
+            "CONSENT_MENTAL_PRIVACY_READ_LIMITED_GRANTED",
+            "CONSENT_MENTAL_PRIVACY_READ_LIMITED_RENEWED",
+            "CONSENT_MENTAL_PRIVACY_READ_LIMITED_REVOKED",
+            "NEURODATA_ACCESS_UNDER_THIS_ENVELOPE"
+        ]
+
+        audit_schema_refs = [
+            "/aln-audit-ledger/audit.schema.events.aln",
+            "/aln-audit-ledger/audit.index.schema.aln"
+        ]
+
+        required_fields_per_event = [
+            "EVENT_ID",
+            "TIMESTAMP",
+            "HOST_DID",
+            "BOSTROM_ADDRESS",
+            "ENVELOPE_ID",
+            "CHANNELS_USED",
+            "PURPOSE",
+            "ACTOR_OR_SERVICE_ID"
+        ]
+    }
+}
