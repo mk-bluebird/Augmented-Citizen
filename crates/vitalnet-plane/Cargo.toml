@@ -1,0 +1,14 @@
+# crates/vitalnet-plane/Cargo.toml
+[package]
+name = "vitalnet-plane"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+ac-aln-core = { path = "../ac-aln-core" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+uuid = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
