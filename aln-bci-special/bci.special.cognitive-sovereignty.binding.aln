@@ -1,0 +1,28 @@
+# File: /aln-bci-special/bci.special.cognitive-sovereignty.binding.aln
+# Purpose: Binding that connects BCI operations to the host's cognitive sovereignty claims.
+
+cognitive_sovereignty_binding CognitiveSovereigntyBinding_v1 {
+    imports = [
+        "/aln-core-spec/sovereignty.core-schema.aln",
+        "/aln-bci-special/bci.special.domain-model.aln"
+    ]
+
+    sovereignty_assertions = [
+        {
+            assertion_id = "CSA_HOST_PRIMACY"
+            description  = "The host remains the primary sovereign over all internal cognitive and affective states."
+            enforcement  = "ALL_EXTERNAL_MODULATION_REQUIRES_HOST_GATE"
+        },
+        {
+            assertion_id = "CSA_NO_ALIENATION"
+            description  = "Cognitive sovereignty cannot be permanently transferred or alienated to any platform or state."
+            enforcement  = "REJECT_IRREVOCABLE_DELEGATION"
+        }
+    ]
+
+    operation_mapping = {
+        "READ_SUMMARY"         = "DELEGATED_CONTROL",
+        "MODULATE_THERAPEUTIC" = "SHARED_CONTROL_WITH_HOST_OVERRIDE",
+        "ALTER_CORE_BELIEFS"   = "ABSOLUTE_HOST_CONTROL"
+    }
+}
