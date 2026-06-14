@@ -1,0 +1,3 @@
+# qpudatashards/cyberswarm_viability_2026v1.aln
+polytope-id,mode,a-matrix-json,b-vector-json
+cswarm-baseline,Baseline,"[[1,0,0,0,0,0,0],[-1,0,0,0,0,0,0]]","[1.0,0.0]"
