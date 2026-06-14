@@ -1,0 +1,27 @@
+# File: /aln-core-spec/invariants.mental-privacy.aln
+# Purpose: Invariants enforcing mental privacy regarding neural data access, retention, and sharing.
+
+mental_privacy_invariants MentalPrivacyInvariants_v1 {
+    conditions = [
+        {
+            condition_id = "MPI_EXPLICIT_CONSENT"
+            description  = "All neural data access requires explicit, revocable consent."
+            enforcement  = "CHECK_CONSENT_ENVELOPE_BEFORE_READ"
+        },
+        {
+            condition_id = "MPI_NO_SECONDARY_USE"
+            description  = "No undeclared secondary use of neural data is permitted."
+            enforcement  = "VERIFY_PURPOSE_MATCH"
+        },
+        {
+            condition_id = "MPI_DEFAULT_DENY"
+            description  = "Default state for all neural data access is DENY."
+            enforcement  = "REQUIRE_OPT_IN"
+        },
+        {
+            condition_id = "MPI_SPECIAL_CATEGORY"
+            description  = "Neural data is classified as special/sensitive data at all times."
+            enforcement  = "APPLY_ENHANCED_ENCRYPTION_AND_AUDIT"
+        }
+    ]
+}
