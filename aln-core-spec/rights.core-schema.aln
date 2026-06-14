@@ -1,0 +1,27 @@
+# File: /aln-core-spec/rights.core-schema.aln
+# Purpose: Defines the generic schema for rights objects, including identifiers, 
+# descriptions, scope, subjects, duties, and conflict-resolution rules.
+
+rights_schema RightsCoreSchema_v1 {
+    definition {
+        right_id            = "string"
+        name                = "string"
+        description         = "string"
+        category            = "enum[NEURORIGHTS, HEALTHCARE, DATA_PROTECTION, COGNITIVE_SOVEREIGNTY]"
+        applies_to          = "list[string]"
+        source_refs         = "list[string]"
+        duties              = "list[duty_object]"
+        conflict_resolution = "enum[HOST_OVERRIDE, SAFETY_FIRST, JURISDICTION_DEFAULT]"
+    }
+
+    constraints {
+        unique_id           = "right_id must be globally unique across all catalogs"
+        valid_categories    = "category must be one of the defined enums"
+        non_empty_desc      = "description must contain at least 50 characters"
+    }
+
+    relationships {
+        links_to_invariants  = "list[invariant_id]"
+        links_to_enforcement = "list[enforcement_hook_id]"
+    }
+}
