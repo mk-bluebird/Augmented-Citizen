@@ -1,0 +1,12 @@
+# crates/cyberorganic-os/Cargo.toml
+[package]
+name = "cyberorganic-os"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+ac-aln-core = { path = "../ac-aln-core" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
