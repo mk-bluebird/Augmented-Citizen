@@ -6,6 +6,7 @@ members = [
     "crates/econet-healthcare-guard",
     "crates/detox-interval-guard",
     "crates/organiccpu-scheduler",
+    "crates/augmented-id-guard",
 ]
 
 resolver = "2"
