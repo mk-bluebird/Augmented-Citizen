@@ -1,0 +1,14 @@
+# crates/ac-aln-core/Cargo.toml
+[package]
+name = "ac-aln-core"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+csv = { workspace = true }
+uuid = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+parking_lot = { workspace = true }
