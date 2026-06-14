@@ -7,6 +7,7 @@ members = [
     "crates/detox-interval-guard",
     "crates/organiccpu-scheduler",
     "crates/augmented-id-guard",
+    "crates/bioscale-upgrade-store",
 ]
 
 resolver = "2"
