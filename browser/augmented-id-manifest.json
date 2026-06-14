@@ -1,0 +1,22 @@
+{
+  "name": "Augmented-ID Host Agent",
+  "description": "Host-local browser agent for sovereign age verification using Augmented-ID.",
+  "version": "0.1.0",
+  "manifest_version": 3,
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "48": "icons/augid-48.png",
+    "128": "icons/augid-128.png"
+  }
+}
