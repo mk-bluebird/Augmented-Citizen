@@ -1,0 +1,13 @@
+# crates/cybercore-brain/Cargo.toml
+[package]
+name = "cybercore-brain"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+ac-aln-core = { path = "../ac-aln-core" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+parking_lot = { workspace = true }
