@@ -1,4 +1,7 @@
 // filename: crates/econet-healthcare-guard/src/lib.rs
+// edition: 2024
+// rust-version = "1.85"
+
 #![forbid(unsafe_code)]
 #![deny(clippy::all, clippy::pedantic)]
 
@@ -15,7 +18,8 @@ pub enum SovereignVerdict {
 /// Shards imported from sovereign-guards-core or adjacent crates.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct RohShard {
-    pub roh_scalar: f32, // 0.0..=1.0, hard ceiling 0.3
+    /// Risk-of-Harm scalar, 0.0..=1.0, hard ceiling 0.30.
+    pub roh_scalar: f32,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -30,6 +34,7 @@ pub struct SovereigntyShard {
     pub neurorights_ok: bool,
 }
 
+/// Econet contribution shard: healthcare is earned via eco/work/research.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct EconetContributionShard {
     /// Aggregate eco contribution from work/research over a rolling window.
@@ -38,7 +43,7 @@ pub struct EconetContributionShard {
     pub eco_budget_remaining_daily: f32,
     /// Responsibility-axis delta for this action (must be <= 0).
     pub delta_responsibility: f32,
-    /// Count of valid, DID-bound capability tokens (EVOLVE, BLOOD, ECOHELP, RAF).
+    /// Count of valid, DID-bound capability tokens (EVOLVE, BLOOD, ECOHELP, RAF, etc.).
     pub capability_tokens_held: u32,
     /// True only if all tokens are DID-bound, non-transferable, and earned.
     pub capability_tokens_valid: bool,
@@ -57,10 +62,10 @@ pub const ROH_CEILING: f32 = 0.30;
 pub const HEALTHCARE_SOFT_CEILING: f32 = 0.25;
 
 /// Healthcare-specific econet predicate:
-/// - action must not exceed eco budget,
-/// - responsibility delta must be <= 0 (non-regression),
+/// - eco_budget_remaining_daily must be non-negative,
+/// - delta_responsibility must be <= 0 (non-regression),
 /// - capability tokens must be DID-bound and earned,
-/// - eco contribution score must be positive.
+/// - eco contribution score must be strictly positive.
 pub fn econet_healthcare_ok(input: &CharterInputs) -> bool {
     let econ = &input.econet;
 
@@ -81,13 +86,14 @@ pub fn sovereignty_corridor_ok(input: &CharterInputs) -> bool {
 }
 
 /// Eco non-regression predicate:
-/// - EcoImpactScore_new >= EcoImpactScore_old.
+/// - EcoImpactScore_next ≥ EcoImpactScore_old.
 pub fn eco_non_regression_ok(input: &CharterInputs) -> bool {
     input.eco.eco_score_next_pred >= input.eco.eco_score_prev
 }
 
 /// Core AND-gate for healthcare:
 /// SovereigntyCorridorOK AND EcoNonRegressionOK AND EconetHealthcareOK AND RoH <= 0.30.
+/// Healthcare-specific soft ceiling can be enforced by the caller using HEALTHCARE_SOFT_CEILING.
 pub fn and_gate_healthcare(input: &CharterInputs) -> bool {
     let roh_ok = input.roh.roh_scalar <= ROH_CEILING;
     let sov_ok = sovereignty_corridor_ok(input);
@@ -108,12 +114,11 @@ pub struct HostLocalEconetHealthcareGuard;
 impl EconetHealthcareGuard for HostLocalEconetHealthcareGuard {
     fn evaluate_healthcare_step(&self, input: &CharterInputs) -> SovereignVerdict {
         if !and_gate_healthcare(input) {
-            // Any failure leads to automatic denial; external systems cannot override.
             return SovereignVerdict::AutoDenied;
         }
 
-        // Within invariants: healthcare may be auto-allowed if corridor is maintenance/repair.
-        // Higher-risk protocols can refine this to RequiresHostedApproval upstream.
+        // Within invariants: default to AutoAllowed; higher-risk protocols
+        // can refine to RequiresHostedApproval in upstream schedulers.
         SovereignVerdict::AutoAllowed
     }
 }
