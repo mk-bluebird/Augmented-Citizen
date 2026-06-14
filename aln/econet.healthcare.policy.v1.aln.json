@@ -1,0 +1,90 @@
+{
+  "context": "https://aln.cybercore.bostrom/v1",
+  "type": "econet.healthcare.policy.v1",
+  "id": "aln:policy:econet.healthcare.policy.v1::bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7",
+  "host_did": "did:aln:bostrom-organic-host",
+  "bostrom_address": "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7",
+  "aln_clause_id": "ALN.MIGRATION.CYBERCORE_AUTHORITY.v1",
+  "description": "Econet healthcare policy linking nanoswarm-mediated care to eco/work/research contributions under RoH <= 0.3 and eco non-regression.",
+  "rights_kernel": {
+    "neurorights_profile_id": "neuro.constitution.v1",
+    "bio_safety_envelope_id": "bio.safety.envelope.citizen.v1",
+    "eco_monotonicity_id": "eco.monotonicity.charter.v1",
+    "roh_ceiling_global": 0.30,
+    "strictest_wins": true
+  },
+  "econet_healthcare": {
+    "required_capability_tokens": [
+      "EVOLVE",
+      "BLOOD",
+      "ECOHELP",
+      "RAF_KNOWLEDGE_CREDIT"
+    ],
+    "tokens_non_transferable": true,
+    "tokens_did_bound": true,
+    "allowed_sources": [
+      "econet.contribution.research.v1",
+      "econet.contribution.fieldwork.v1",
+      "econet.contribution.repair.v1"
+    ],
+    "forbidden_sources": [
+      "coercive.social.credit",
+      "employer.punitive.scoring",
+      "police.scoring"
+    ],
+    "eco_budget_policy_id": "aln:eco.budget.config.v1",
+    "max_daily_healthcare_ecocost": 0.25,
+    "require_responsibility_non_regression": true
+  },
+  "healthcare_corridors": {
+    "maintenance_corridor_ids": [
+      "nanoswarm.detox.maintenance.v1",
+      "xr.neurovision.maintenance.v1"
+    ],
+    "repair_corridor_ids": [
+      "nanoswarm.detox.repair.v1",
+      "nanoswarm.uvrepair.brain.v1"
+    ],
+    "lifesupport_corridor_ids": [
+      "nanoswarm.cardio.support.v1"
+    ],
+    "modes_allowed": [
+      "REST",
+      "REHAB",
+      "MAINTENANCE"
+    ],
+    "modes_forbidden": [
+      "DREAM",
+      "HIGH_RISK",
+      "POLICE_MODE"
+    ],
+    "roh_band_healthcare": {
+      "global_ceiling": 0.30,
+      "healthcare_soft_ceiling": 0.25
+    }
+  },
+  "and_gate_predicates": {
+    "sovereignty_corridor_required": true,
+    "eco_non_regression_required": true,
+    "econet_healthcare_required": true,
+    "formula": "SovereigntyCorridorOK AND EcoNonRegressionOK AND EconetHealthcareOK AND RoH <= 0.30"
+  },
+  "evidence_bundle": {
+    "tags": [
+      "0xroh01a3",
+      "0xroh02be",
+      "0xeco05aa",
+      "0xeco06d4",
+      "0xsov0712",
+      "0xsov08bb",
+      "0xvc09f0",
+      "0xgov0a93",
+      "0xhc01ff",
+      "0xhc02c1"
+    ]
+  },
+  "migration_clause_binding": "ALN.MIGRATION.CYBERCORE_AUTHORITY.v1",
+  "norollback": true,
+  "nodowngrade": true,
+  "signature": "0xHOST_DID_SIGNATURE_PLACEHOLDER"
+}
