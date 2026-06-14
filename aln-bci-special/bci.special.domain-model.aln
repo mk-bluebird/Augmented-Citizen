@@ -23,10 +23,10 @@ bci_domain_model BciDomainModel_v1 {
 
         catalog = [
             {
-                channel_id       = "CC_PERCEPTUAL_INPUT"
-                category         = "PERCEPTUAL"
-                risk_level       = "MEDIUM"
-                description      = "Perceptual and phenomenological content, including augmented sensory-like streams."
+                channel_id        = "CC_PERCEPTUAL_INPUT"
+                category          = "PERCEPTUAL"
+                risk_level        = "MEDIUM"
+                description       = "Perceptual and phenomenological content, including augmented sensory-like streams."
                 bound_neurorights = [
                     "MENTAL_PRIVACY",
                     "MENTAL_INTEGRITY"
@@ -38,10 +38,10 @@ bci_domain_model BciDomainModel_v1 {
                 ]
             },
             {
-                channel_id       = "CC_AFFECTIVE_STATE"
-                category         = "AFFECTIVE"
-                risk_level       = "HIGH"
-                description      = "Affective and emotional state signatures, valence, arousal, and related patterns."
+                channel_id        = "CC_AFFECTIVE_STATE"
+                category          = "AFFECTIVE"
+                risk_level        = "HIGH"
+                description       = "Affective and emotional state signatures, including valence, arousal, and related patterns."
                 bound_neurorights = [
                     "MENTAL_PRIVACY",
                     "MENTAL_INTEGRITY",
@@ -54,10 +54,10 @@ bci_domain_model BciDomainModel_v1 {
                 ]
             },
             {
-                channel_id       = "CC_MOTOR_INTENT"
-                category         = "MOTOR_INTENTION"
-                risk_level       = "MEDIUM"
-                description      = "Motor planning and intention signals used for control or interface purposes."
+                channel_id        = "CC_MOTOR_INTENT"
+                category          = "MOTOR_INTENTION"
+                risk_level        = "MEDIUM"
+                description       = "Motor planning and intention signals used for control or interface purposes."
                 bound_neurorights = [
                     "FREE_WILL",
                     "COGNITIVE_LIBERTY"
@@ -68,10 +68,10 @@ bci_domain_model BciDomainModel_v1 {
                 ]
             },
             {
-                channel_id       = "CC_MEMORY_ADJACENT"
-                category         = "MEMORY_ADJACENT"
-                risk_level       = "HIGH"
-                description      = "Patterns adjacent to memory processes, including intrusions and recall cues."
+                channel_id        = "CC_MEMORY_ADJACENT"
+                category          = "MEMORY_ADJACENT"
+                risk_level        = "HIGH"
+                description       = "Patterns adjacent to memory processes, including intrusions, recall cues, and context associations."
                 bound_neurorights = [
                     "PSYCHOLOGICAL_CONTINUITY",
                     "PERSONAL_IDENTITY",
@@ -84,10 +84,10 @@ bci_domain_model BciDomainModel_v1 {
                 ]
             },
             {
-                channel_id       = "CC_META_COGNITION"
-                category         = "META_COGNITIVE"
-                risk_level       = "EXTREME"
-                description      = "Self-monitoring, self-critique, and meta-cognitive control signals."
+                channel_id        = "CC_META_COGNITION"
+                category          = "META_COGNITIVE"
+                risk_level        = "EXTREME"
+                description       = "Self-monitoring, self-critique, and meta-cognitive control signals."
                 bound_neurorights = [
                     "COGNITIVE_LIBERTY",
                     "MENTAL_PRIVACY",
@@ -119,11 +119,11 @@ bci_domain_model BciDomainModel_v1 {
 
         catalog = [
             {
-                operation_id              = "READ_SUMMARY"
-                category                  = "READ"
-                description               = "Access to coarse, time-bounded summaries of a channel without raw signal streams."
-                requires_consent_category = "MENTAL_PRIVACY"
-                default_allowed_channels  = [
+                operation_id               = "READ_SUMMARY"
+                category                   = "READ"
+                description                = "Access to coarse, time-bounded summaries of a channel without raw signal streams."
+                requires_consent_category  = "MENTAL_PRIVACY"
+                default_allowed_channels   = [
                     "CC_PERCEPTUAL_INPUT",
                     "CC_AFFECTIVE_STATE",
                     "CC_MEMORY_ADJACENT",
@@ -135,11 +135,11 @@ bci_domain_model BciDomainModel_v1 {
                 ]
             },
             {
-                operation_id              = "READ_DIAGNOSTIC"
-                category                  = "READ"
-                description               = "Access to higher-fidelity diagnostic views under clinical or safety justification."
-                requires_consent_category = "MENTAL_PRIVACY"
-                default_allowed_channels  = [
+                operation_id               = "READ_DIAGNOSTIC"
+                category                   = "READ"
+                description                = "Access to higher-fidelity diagnostic views under clinical or safety justification."
+                requires_consent_category  = "MENTAL_PRIVACY"
+                default_allowed_channels   = [
                     "CC_PERCEPTUAL_INPUT",
                     "CC_AFFECTIVE_STATE",
                     "CC_MOTOR_INTENT",
@@ -151,11 +151,11 @@ bci_domain_model BciDomainModel_v1 {
                 ]
             },
             {
-                operation_id              = "READ_FOR_CONTROL"
-                category                  = "READ"
-                description               = "Use of signals for control interfaces (e.g., motor-intent-based interaction)."
-                requires_consent_category = "MENTAL_PRIVACY"
-                default_allowed_channels  = [
+                operation_id               = "READ_FOR_CONTROL"
+                category                   = "READ"
+                description                = "Use of signals for control interfaces, such as motor-intent-based interaction."
+                requires_consent_category  = "MENTAL_PRIVACY"
+                default_allowed_channels   = [
                     "CC_MOTOR_INTENT"
                 ]
                 forbidden_channel_patterns = [
@@ -163,11 +163,11 @@ bci_domain_model BciDomainModel_v1 {
                 ]
             },
             {
-                operation_id              = "MODULATE_THERAPEUTIC"
-                category                  = "MODULATE"
-                description               = "Therapeutic-only modulation with clinical indication and oversight."
-                requires_consent_category = "THERAPEUTIC_MODULATION"
-                default_allowed_channels  = [
+                operation_id               = "MODULATE_THERAPEUTIC"
+                category                   = "MODULATE"
+                description                = "Therapeutic-only modulation with documented clinical indication and oversight."
+                requires_consent_category  = "THERAPEUTIC_MODULATION"
+                default_allowed_channels   = [
                     "CC_AFFECTIVE_STATE",
                     "CC_PERCEPTUAL_INPUT"
                 ]
@@ -178,11 +178,11 @@ bci_domain_model BciDomainModel_v1 {
                 ]
             },
             {
-                operation_id              = "MODULATE_SUPPORTIVE"
-                category                  = "MODULATE"
-                description               = "Supportive modulation around memory-adjacent patterns without erasure or rewriting."
-                requires_consent_category = "THERAPEUTIC_MODULATION"
-                default_allowed_channels  = [
+                operation_id               = "MODULATE_SUPPORTIVE"
+                category                   = "MODULATE"
+                description                = "Supportive modulation around memory-adjacent patterns without erasure or rewriting."
+                requires_consent_category  = "THERAPEUTIC_MODULATION"
+                default_allowed_channels   = [
                     "CC_MEMORY_ADJACENT"
                 ]
                 forbidden_channel_patterns = [
@@ -221,32 +221,51 @@ bci_domain_model BciDomainModel_v1 {
             {
                 channel_id     = "CC_PERCEPTUAL_INPUT"
                 risk_level     = "MEDIUM"
-                neurorights    = [ "MENTAL_PRIVACY", "MENTAL_INTEGRITY" ]
-                notes          = "Modest but real risk if persistent or covert."
+                neurorights    = [
+                    "MENTAL_PRIVACY",
+                    "MENTAL_INTEGRITY"
+                ]
+                notes          = "Perceptual augmentation carries moderate privacy and integrity risk, especially if persistent or covert."
             },
             {
                 channel_id     = "CC_AFFECTIVE_STATE"
                 risk_level     = "HIGH"
-                neurorights    = [ "MENTAL_PRIVACY", "MENTAL_INTEGRITY", "PERSONAL_IDENTITY" ]
-                notes          = "Affective steering has substantial impact on autonomy."
+                neurorights    = [
+                    "MENTAL_PRIVACY",
+                    "MENTAL_INTEGRITY",
+                    "PERSONAL_IDENTITY"
+                ]
+                notes          = "Affective steering has substantial impact on autonomy and identity."
             },
             {
                 channel_id     = "CC_MOTOR_INTENT"
                 risk_level     = "MEDIUM"
-                neurorights    = [ "FREE_WILL", "COGNITIVE_LIBERTY" ]
-                notes          = "Control surfaces must preserve free choice."
+                neurorights    = [
+                    "FREE_WILL",
+                    "COGNITIVE_LIBERTY"
+                ]
+                notes          = "Control surfaces must preserve free choice and voluntary action."
             },
             {
                 channel_id     = "CC_MEMORY_ADJACENT"
                 risk_level     = "HIGH"
-                neurorights    = [ "PSYCHOLOGICAL_CONTINUITY", "PERSONAL_IDENTITY", "MENTAL_INTEGRITY" ]
-                notes          = "Memory-adjacent operations can reshape self-narrative."
+                neurorights    = [
+                    "PSYCHOLOGICAL_CONTINUITY",
+                    "PERSONAL_IDENTITY",
+                    "MENTAL_INTEGRITY"
+                ]
+                notes          = "Memory-adjacent operations can reshape self-narrative and perceived continuity."
             },
             {
                 channel_id     = "CC_META_COGNITION"
                 risk_level     = "EXTREME"
-                neurorights    = [ "COGNITIVE_LIBERTY", "MENTAL_PRIVACY", "MENTAL_INTEGRITY", "FREE_WILL" ]
-                notes          = "Meta-cognitive exploitation directly threatens autonomy."
+                neurorights    = [
+                    "COGNITIVE_LIBERTY",
+                    "MENTAL_PRIVACY",
+                    "MENTAL_INTEGRITY",
+                    "FREE_WILL"
+                ]
+                notes          = "Meta-cognitive exploitation directly threatens autonomy and freedom of thought."
             }
         ]
     }
