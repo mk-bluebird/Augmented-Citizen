@@ -1,0 +1,25 @@
+# File: /aln-core-spec/invariants.cognitive-liberty.aln
+# Purpose: Invariants protecting cognitive liberty from manipulation, coercion, and undue influence.
+
+cognitive_liberty_invariants CognitiveLibertyInvariants_v1 {
+    prohibited_patterns = [
+        "COVERT_PERSUASION",
+        "FORCED_NEURAL_MONITORING",
+        "CONDITIONING_ACCESS_TO_SERVICES_ON_NEURAL_EXPOSURE",
+        "META_COGNITIVE_EXPLOITATION",
+        "LONG_TERM_AFFECTIVE_CONDITIONING"
+    ]
+
+    requirements = [
+        {
+            requirement_id = "CLI_HIGH_SALIENCE_CONSENT"
+            description    = "Any operation risking cognitive liberty requires high-salience, explicit consent."
+            enforcement    = "REQUIRE_MULTIPLE_CONFIRMATION_STEPS"
+        },
+        {
+            requirement_id = "CLI_TRANSPARENCY"
+            description    = "All algorithmic influences on thought processes must be transparent to the host."
+            enforcement    = "LOG_AND_EXPOSE_INFLUENCE_WEIGHTS"
+        }
+    ]
+}
