@@ -1,0 +1,30 @@
+# File: /aln-bci-special/bci.special.mental-privacy.envelope.aln
+# Purpose: Specialized envelope for mental-privacy posture across all BCI operations.
+
+mental_privacy_envelope MentalPrivacyEnvelope_v1 {
+    imports = ["/aln-core-spec/invariants.mental-privacy.aln"]
+
+    default_stance = "DENY_ALL"
+    
+    modes = [
+        {
+            mode_id            = "MPM_CLOSED"
+            description        = "No neural data leaves the local edge device."
+            allowed_operations = []
+        },
+        {
+            mode_id            = "MPM_READ_LIMITED"
+            description        = "Coarse summaries allowed for local UI and safety monitoring."
+            allowed_operations = ["READ_SUMMARY"]
+            constraints        = ["NO_RAW_SIGNAL_EXPORT", "LOCAL_PROCESSING_ONLY"]
+        },
+        {
+            mode_id            = "MPM_CLINICAL_DIAGNOSTIC"
+            description        = "High-fidelity data allowed for verified clinical contexts."
+            allowed_operations = ["READ_DIAGNOSTIC"]
+            constraints        = ["REQUIRE_CLINICAL_CONSENT", "ENCRYPTED_TRANSMISSION_ONLY"]
+        }
+    ]
+
+    host_current_mode = "MPM_CLOSED"
+}
