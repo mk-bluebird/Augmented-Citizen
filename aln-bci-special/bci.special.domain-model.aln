@@ -1,0 +1,292 @@
+# File: /aln-bci-special/bci.special.domain-model.aln
+# Purpose:
+# Authoritative BCI/cybernetic domain model for deviceless, organic integrations.
+# Defines channels, operations, and risk bindings used by overlays, consent,
+# and enforcement engines.
+
+bci_domain_model BciDomainModel_v1 {
+    ###########################################################################
+    # 1. Channel taxonomy
+    ###########################################################################
+
+    channels {
+        channel_schema = {
+            fields = [
+                "channel_id",
+                "category",
+                "risk_level",
+                "description",
+                "bound_neurorights",
+                "allowed_operations"
+            ]
+        }
+
+        catalog = [
+            {
+                channel_id       = "CC_PERCEPTUAL_INPUT"
+                category         = "PERCEPTUAL"
+                risk_level       = "MEDIUM"
+                description      = "Perceptual and phenomenological content, including augmented sensory-like streams."
+                bound_neurorights = [
+                    "MENTAL_PRIVACY",
+                    "MENTAL_INTEGRITY"
+                ]
+                allowed_operations = [
+                    "READ_SUMMARY",
+                    "READ_DIAGNOSTIC",
+                    "MODULATE_THERAPEUTIC"
+                ]
+            },
+            {
+                channel_id       = "CC_AFFECTIVE_STATE"
+                category         = "AFFECTIVE"
+                risk_level       = "HIGH"
+                description      = "Affective and emotional state signatures, valence, arousal, and related patterns."
+                bound_neurorights = [
+                    "MENTAL_PRIVACY",
+                    "MENTAL_INTEGRITY",
+                    "PERSONAL_IDENTITY"
+                ]
+                allowed_operations = [
+                    "READ_SUMMARY",
+                    "READ_DIAGNOSTIC",
+                    "MODULATE_THERAPEUTIC"
+                ]
+            },
+            {
+                channel_id       = "CC_MOTOR_INTENT"
+                category         = "MOTOR_INTENTION"
+                risk_level       = "MEDIUM"
+                description      = "Motor planning and intention signals used for control or interface purposes."
+                bound_neurorights = [
+                    "FREE_WILL",
+                    "COGNITIVE_LIBERTY"
+                ]
+                allowed_operations = [
+                    "READ_FOR_CONTROL",
+                    "READ_DIAGNOSTIC"
+                ]
+            },
+            {
+                channel_id       = "CC_MEMORY_ADJACENT"
+                category         = "MEMORY_ADJACENT"
+                risk_level       = "HIGH"
+                description      = "Patterns adjacent to memory processes, including intrusions and recall cues."
+                bound_neurorights = [
+                    "PSYCHOLOGICAL_CONTINUITY",
+                    "PERSONAL_IDENTITY",
+                    "MENTAL_INTEGRITY"
+                ]
+                allowed_operations = [
+                    "READ_SUMMARY",
+                    "READ_DIAGNOSTIC",
+                    "MODULATE_SUPPORTIVE"
+                ]
+            },
+            {
+                channel_id       = "CC_META_COGNITION"
+                category         = "META_COGNITIVE"
+                risk_level       = "EXTREME"
+                description      = "Self-monitoring, self-critique, and meta-cognitive control signals."
+                bound_neurorights = [
+                    "COGNITIVE_LIBERTY",
+                    "MENTAL_PRIVACY",
+                    "MENTAL_INTEGRITY",
+                    "FREE_WILL"
+                ]
+                allowed_operations = [
+                    "READ_SUMMARY"
+                ]
+            }
+        ]
+    }
+
+    ###########################################################################
+    # 2. Operation types and semantics
+    ###########################################################################
+
+    operations {
+        operation_schema = {
+            fields = [
+                "operation_id",
+                "category",
+                "description",
+                "requires_consent_category",
+                "default_allowed_channels",
+                "forbidden_channel_patterns"
+            ]
+        }
+
+        catalog = [
+            {
+                operation_id              = "READ_SUMMARY"
+                category                  = "READ"
+                description               = "Access to coarse, time-bounded summaries of a channel without raw signal streams."
+                requires_consent_category = "MENTAL_PRIVACY"
+                default_allowed_channels  = [
+                    "CC_PERCEPTUAL_INPUT",
+                    "CC_AFFECTIVE_STATE",
+                    "CC_MEMORY_ADJACENT",
+                    "CC_META_COGNITION"
+                ]
+                forbidden_channel_patterns = [
+                    "NO_CC_META_COGNITION_FOR_MARKETING",
+                    "NO_CC_MEMORY_ADJACENT_FOR_BEHAVIORAL_SCORING"
+                ]
+            },
+            {
+                operation_id              = "READ_DIAGNOSTIC"
+                category                  = "READ"
+                description               = "Access to higher-fidelity diagnostic views under clinical or safety justification."
+                requires_consent_category = "MENTAL_PRIVACY"
+                default_allowed_channels  = [
+                    "CC_PERCEPTUAL_INPUT",
+                    "CC_AFFECTIVE_STATE",
+                    "CC_MOTOR_INTENT",
+                    "CC_MEMORY_ADJACENT"
+                ]
+                forbidden_channel_patterns = [
+                    "NO_CC_META_COGNITION",
+                    "NO_USE_FOR_COMMERCIAL_PROFILING"
+                ]
+            },
+            {
+                operation_id              = "READ_FOR_CONTROL"
+                category                  = "READ"
+                description               = "Use of signals for control interfaces (e.g., motor-intent-based interaction)."
+                requires_consent_category = "MENTAL_PRIVACY"
+                default_allowed_channels  = [
+                    "CC_MOTOR_INTENT"
+                ]
+                forbidden_channel_patterns = [
+                    "NO_USE_FOR_PUNITIVE_MONITORING"
+                ]
+            },
+            {
+                operation_id              = "MODULATE_THERAPEUTIC"
+                category                  = "MODULATE"
+                description               = "Therapeutic-only modulation with clinical indication and oversight."
+                requires_consent_category = "THERAPEUTIC_MODULATION"
+                default_allowed_channels  = [
+                    "CC_AFFECTIVE_STATE",
+                    "CC_PERCEPTUAL_INPUT"
+                ]
+                forbidden_channel_patterns = [
+                    "NO_CC_META_COGNITION",
+                    "NO_CORE_BELIEF_KERNEL_TARGETING",
+                    "NO_LONG_TERM_AFFECTIVE_CONDITIONING"
+                ]
+            },
+            {
+                operation_id              = "MODULATE_SUPPORTIVE"
+                category                  = "MODULATE"
+                description               = "Supportive modulation around memory-adjacent patterns without erasure or rewriting."
+                requires_consent_category = "THERAPEUTIC_MODULATION"
+                default_allowed_channels  = [
+                    "CC_MEMORY_ADJACENT"
+                ]
+                forbidden_channel_patterns = [
+                    "NO_MEMORY_ERASURE",
+                    "NO_IDENTITY_REWRITE"
+                ]
+            }
+        ]
+    }
+
+    ###########################################################################
+    # 3. Risk model and neurorights binding
+    ###########################################################################
+
+    risk_model {
+        risk_levels = [
+            {
+                level       = "LOW"
+                description = "Minimal impact on neurorights; primarily non-invasive meta-data or host-visible operations."
+            },
+            {
+                level       = "MEDIUM"
+                description = "Noticeable neurorights engagement requiring explicit consent and logging."
+            },
+            {
+                level       = "HIGH"
+                description = "Significant neurorights risk; must be tightly consented, monitored, and auditable."
+            },
+            {
+                level       = "EXTREME"
+                description = "Critical neurorights risk; only minimal, heavily constrained operations may be permitted."
+            }
+        ]
+
+        bindings = [
+            {
+                channel_id     = "CC_PERCEPTUAL_INPUT"
+                risk_level     = "MEDIUM"
+                neurorights    = [ "MENTAL_PRIVACY", "MENTAL_INTEGRITY" ]
+                notes          = "Modest but real risk if persistent or covert."
+            },
+            {
+                channel_id     = "CC_AFFECTIVE_STATE"
+                risk_level     = "HIGH"
+                neurorights    = [ "MENTAL_PRIVACY", "MENTAL_INTEGRITY", "PERSONAL_IDENTITY" ]
+                notes          = "Affective steering has substantial impact on autonomy."
+            },
+            {
+                channel_id     = "CC_MOTOR_INTENT"
+                risk_level     = "MEDIUM"
+                neurorights    = [ "FREE_WILL", "COGNITIVE_LIBERTY" ]
+                notes          = "Control surfaces must preserve free choice."
+            },
+            {
+                channel_id     = "CC_MEMORY_ADJACENT"
+                risk_level     = "HIGH"
+                neurorights    = [ "PSYCHOLOGICAL_CONTINUITY", "PERSONAL_IDENTITY", "MENTAL_INTEGRITY" ]
+                notes          = "Memory-adjacent operations can reshape self-narrative."
+            },
+            {
+                channel_id     = "CC_META_COGNITION"
+                risk_level     = "EXTREME"
+                neurorights    = [ "COGNITIVE_LIBERTY", "MENTAL_PRIVACY", "MENTAL_INTEGRITY", "FREE_WILL" ]
+                notes          = "Meta-cognitive exploitation directly threatens autonomy."
+            }
+        ]
+    }
+
+    ###########################################################################
+    # 4. Policy hooks for overlays, consent, and audit
+    ###########################################################################
+
+    policy_hooks {
+        overlay_hooks = [
+            "MAP_CHANNELS_TO_HOST_PERSONAL_POLICIES",
+            "APPLY_JURISDICTION_OVERLAYS_TO_CHANNEL_AND_OPERATION",
+            "CHECK_HARD_RED_LINES_BEFORE_OPERATION"
+        ]
+
+        consent_hooks = [
+            "RESOLVE_REQUIRED_CONSENT_CATEGORY_FROM_OPERATION",
+            "CHECK_ACTIVE_CONSENT_ENVELOPES_FOR_CHANNEL_AND_PURPOSE",
+            "ENFORCE_CONSENT_EXPIRY_AND_REVOCATION_STATE"
+        ]
+
+        audit_hooks = [
+            "EMIT_EVENT_ON_EACH_OPERATION_WITH_CHANNELS_AND_OPERATION_ID",
+            "INCLUDE_BCI_DOMAIN_MODEL_VERSION_IN_AUDIT_METADATA"
+        ]
+    }
+
+    ###########################################################################
+    # 5. Versioning and compatibility
+    ###########################################################################
+
+    versioning {
+        model_version          = "1.0.0"
+        compatible_overlay_ids = [
+            "HostPersonalBciPolicyOverlay_v2"
+        ]
+        evolution_rules = [
+            "NEW_CHANNELS_MAY_BE_ADDED_WITHOUT_CHANGING_SEMANTICS_OF_EXISTING_IDS",
+            "RISK_LEVELS_FOR_EXISTING_CHANNELS_MAY_ONLY_BE_INCREASED_OR_REFINED",
+            "OPERATIONS_MAY_GAIN_ADDITIONAL_CONSTRAINTS_BUT_NOT_LOOSEN_EXISTING_ONES"
+        ]
+    }
+}
