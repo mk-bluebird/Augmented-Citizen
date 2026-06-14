@@ -1,0 +1,18 @@
+# filename: crates/econet-healthcare-guard/Cargo.toml
+[package]
+name = "econet-healthcare-guard"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "MIT OR Apache-2.0"
+authors = ["mk-bluebird <host@augmented-citizen.org>"]
+description = "Econet healthcare guard that AND-gates EconetHealthcareOK with SovereigntyCorridorOK and EcoNonRegressionOK"
+repository = "https://github.com/mk-bluebird/Augmented-Citizen"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+sovereign-guards-core = { path = "../sovereign-guards-core" }
+
+[features]
+default = []
