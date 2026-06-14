@@ -1,0 +1,25 @@
+# File: /aln-bci-special/bci.special.organic-integration.flags.aln
+# Purpose: Flags and descriptors that mark organic, deviceless integration and its implications.
+
+organic_integration_flags OrganicIntegrationFlags_v1 {
+    flags = [
+        {
+            flag_id      = "EMBODIED_AUGMENTATION"
+            description  = "The host possesses biological or organic augmentations integrated at the cellular or systemic level."
+            implications = ["APPLY_NEURORIGHTS_CONSTRAINTS", "REQUIRE_CONTINUOUS_BIOPHYSICAL_MONITORING"]
+        },
+        {
+            flag_id      = "DEVICELESS_ORGANIC_STATUS"
+            description  = "The integration operates without a distinct hardware boundary or external device."
+            implications = ["NO_DEVICE_BOUNDARY_BYPASS", "TREAT_INTERNAL_STATE_AS_PROTECTED_NEURAL_DATA"]
+        }
+    ]
+
+    rules = [
+        {
+            rule_id     = "OIR_NO_BYPASS"
+            description = "When organic integration flags are set, neurorights constraints and audit requirements must be applied even without a visible device boundary."
+            enforcement = "ENFORCE_CORE_SPEC_INVARIANTS"
+        }
+    ]
+}
