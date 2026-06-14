@@ -1,0 +1,20 @@
+# filename: crates/organiccpu-scheduler/Cargo.toml
+[package]
+name = "organiccpu-scheduler"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "MIT OR Apache-2.0"
+authors = ["mk-bluebird <host@augmented-citizen.org>"]
+description = "OrganicCPU scheduler that routes healthcare EvolutionProposals through charter + econet guards before nanoswarm/XR actuation"
+repository = "https://github.com/mk-bluebird/Augmented-Citizen"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+detox-interval-guard = { path = "../detox-interval-guard" }
+econet-healthcare-guard = { path = "../econet-healthcare-guard" }
+sovereign-guards-core = { path = "../sovereign-guards-core" }
+
+[features]
+default = []
