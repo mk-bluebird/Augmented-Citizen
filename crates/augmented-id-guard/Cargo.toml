@@ -1,0 +1,18 @@
+# filename: crates/augmented-id-guard/Cargo.toml
+
+[package]
+name = "augmented-id-guard"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "MIT OR Apache-2.0"
+authors = ["mk-bluebird <host@augmented-citizen.org>"]
+description = "Augmented-ID guard crate evaluating age-band credentials, neurorights safety, and eco non-regression for sovereign age verification."
+repository = "https://github.com/mk-bluebird/Augmented-Citizen"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+[features]
+default = []
