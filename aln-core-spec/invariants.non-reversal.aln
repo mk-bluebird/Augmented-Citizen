@@ -1,0 +1,19 @@
+# File: /aln-core-spec/invariants.non-reversal.aln
+# Purpose: Invariants that forbid reversals or downgrades of rights, protections, or capabilities.
+
+non_reversal_invariants NonReversalInvariants_v1 {
+    rules = [
+        {
+            rule_id         = "NRI_MONOTONIC_PROTECTION"
+            description     = "New policies must be monotonic in protection; they cannot reduce the strength of existing rights."
+            check_condition = "new_policy.protection_level >= old_policy.protection_level"
+            on_violation    = "REJECT_POLICY_UPDATE"
+        },
+        {
+            rule_id         = "NRI_NO_SILENT_REMOVAL"
+            description     = "Older, stronger protections cannot be silently removed or deprecated without explicit host consent."
+            check_condition = "IF old_protection DELETED THEN host_consent == TRUE"
+            on_violation    = ["BLOCK_DELETION", "ALERT_HOST"]
+        }
+    ]
+}
