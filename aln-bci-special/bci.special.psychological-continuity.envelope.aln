@@ -1,0 +1,15 @@
+# File: /aln-bci-special/bci.special.psychological-continuity.envelope.aln
+# Purpose: Envelope indicating how strongly continuity protections are enforced.
+
+psychological_continuity_envelope PsychologicalContinuityEnvelope_v1 {
+    imports = ["/aln-core-spec/invariants.psychological-continuity.aln"]
+
+    memory_operations_policy     = "NO_ERASURE"
+    identity_experiment_policy   = "HOST_EXCLUSIVE_INITIATION"
+    
+    required_consent_layers = [
+        "EXPLICIT_WRITTEN_CONSENT",
+        "COOLING_OFF_PERIOD_24H",
+        "CLINICAL_OVERSIGHT_VERIFICATION"
+    ]
+}
