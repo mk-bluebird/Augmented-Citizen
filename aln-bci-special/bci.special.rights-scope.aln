@@ -1,0 +1,30 @@
+# File: /aln-bci-special/bci.special.rights-scope.aln
+# Purpose: Defines how neurorights apply specifically to BCI domain elements.
+
+bci_rights_scope BciRightsScope_v1 {
+    imports = [
+        "/aln-bci-special/bci.special.domain-model.aln",
+        "/aln-core-spec/rights.catalog.neurorights.v1.aln"
+    ]
+
+    scope_matrix = [
+        {
+            channel_id        = "CC_PERCEPTUAL_INPUT"
+            operation_id      = "READ_SUMMARY"
+            applicable_rights = ["NR_MENTAL_PRIVACY"]
+            required_checks   = ["VERIFY_CONSENT_ENVELOPE", "CHECK_DATA_MINIMIZATION"]
+        },
+        {
+            channel_id        = "CC_AFFECTIVE_STATE"
+            operation_id      = "MODULATE_THERAPEUTIC"
+            applicable_rights = ["NR_MENTAL_INTEGRITY", "NR_MENTAL_PRIVACY", "NR_PERSONAL_IDENTITY"]
+            required_checks   = ["VERIFY_CLINICAL_INDICATION", "CHECK_THERMAL_CEILINGS", "ENFORCE_REVOCABILITY"]
+        },
+        {
+            channel_id        = "CC_META_COGNITION"
+            operation_id      = "READ_SUMMARY"
+            applicable_rights = ["NR_COGNITIVE_LIBERTY", "NR_MENTAL_PRIVACY", "NR_MENTAL_INTEGRITY"]
+            required_checks   = ["BLOCK_META_COGNITIVE_EXPLOITATION", "VERIFY_HIGH_SALIENCE_CONSENT"]
+        }
+    ]
+}
