@@ -1,0 +1,8 @@
+destination-path,module,version,role,security-protocol,interop-standard,identity-mgmt,ai-agent-integration,device-type,authentication,digital-twin,edge-analytics,compliance,log-persistence
+vnodeinfrafragmentshercules.kernel.mai,HerculesKernel,5.3.2,QuantumKernel,PQ-KyberDilithium,GraphQL-Fed,OAuthVital,MistralQwen,NeuromorphicNode,MultiFactorPQ,Enabled,SNNDrift,GDPREUAI,HyperledgerAudit
+vnodeinfrafragmentscyberorganic.biosensor.mai,CyberOrganicBio,5.3.2,BiosensorOrch,AES256-ChaCha20,MQTT-Secure,FIDO2-WebAuthn,ClaudeEnhance,BCIEdge,BiometricVital,Enabled,AkidaBio,HIPAAFCC,DIDChainStorage
+vnodeinfrafragmentsrealityos.scenegraph.mai,RealityOSScene,5.3.2,SpatialRuntime,Argon2-TLS,TSN-QoS,OIDCVital,GPTAugment,XREdge,FingerprintLife,Enabled,LoihiSpatial,NISTISO,DIDAuditLite
+vnodeinfrapoliciesmaster-policy.aln,MasterPolicy,5.3.2,SupervisoryGov,Kyber-Sign,ALNBridgeAPI,SHAP-AI,MistralQwen,ClusterNode,MultiFactorLife,Enabled,FAIRscore,EUAIActGDPR,LogChainFull
+vnodeinfracorealncore.aln,ALNCore,5.3.2,SystemBrain,ChaCha20-ZT,ZeroMQ-TLS,OAuthVital,ClaudeEnhance,QPUCore,BiometricVital,Enabled,SNNHealth,HIPAAPCI,HyperledgerVital
+vnodeinfraautomationALNDeploymentBridge.ps1,DeploymentBridge,5.3.2,CIOrch,AES512-PostQ,GraphSwitchX,FIDO2-WebAuthn,GPTAugment,ScriptNode,MultiFactorPQ,Disabled,None,NISTCSFISO,DIDVitalChain
+vnodeinfratestspolicytests,PolicyTests,5.3.2,ComplianceNode,Argon2-TLS,ALN-AuditTrail,OIDCVital,MistralQwen,TestEdge,FingerprintLife,Enabled,AkidaVital,GDPRFCC,LogChainFull
