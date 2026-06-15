@@ -1,0 +1,28 @@
+[package]
+name = "cybernano-intent"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "CyberNano intent stability and sovereign intent filtering primitives."
+readme = "README.md"
+authors = ["Augmented Citizen Contributors"]
+repository = "https://github.com/mk-bluebird/Augmented-Citizen"
+keywords = ["bci", "cybernetics", "nanorobotics", "safety", "intent"]
+categories = ["science", "concurrency", "embedded"]
+
+[lib]
+name = "cybernano_intent"
+path = "src/lib.rs"
+crate-type = ["rlib"]
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+thiserror = "1.0"
+
+# These are placeholders for your existing shared crates;
+# wire them up to your real paths when integrating.
+# cybercore-common = { path = "../cybercore-common" }
+# aln-blockchain = { path = "../aln-blockchain" }
+
+[dev-dependencies]
+serde_json = "1.0"
