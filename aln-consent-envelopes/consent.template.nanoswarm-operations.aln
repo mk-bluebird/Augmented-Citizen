@@ -1,0 +1,40 @@
+# File: aln-consent-envelopes/consent.template.nanoswarm-operations.aln
+# Destination: aln-consent-envelopes/consent.template.nanoswarm-operations.aln
+
+aln consent.template.nanoswarm-operations.v1
+
+meta
+  id consent.template.nanoswarm-operations.v1
+  version 1.0.0
+  description Consent template for nanoswarm operations respecting neurorights and detox corridors.
+  authoritybinding ALN.MIGRATION.CYBERCORE_AUTHORITY.v1
+  hostdid_field hostdid
+  bostromaddress_field bostrom_address
+endmeta
+
+struct NanoswarmConsentEnvelope
+  envelopeid        string
+  hostdid           string
+  bostrom_address   string
+  mission_classes   string   # Serialized list of allowed mission classes (DIAGNOSTIC, DETOX_SUPPORT, REPAIR).
+  forbidden_classes string   # Serialized list of forbidden mission classes (PAIN_AMPLIFICATION, FEAR_INDUCTION).
+  max_duty_fraction f32      # Max fraction of nanoswarm duty allowed under this envelope.
+  detox_envelope_id string   # Reference to bio.safety.envelope.detox.toxin-stack.v1.
+  valid_from        string   # RFC3339.
+  valid_until       string   # RFC3339.
+  revocation_mechanism string # Description/url of revocation channel.
+endstruct
+
+policy NanoswarmConsentTemplate
+  id "NANOSWARM_CONSENT_TEMPLATE_V1"
+  allowed_mission_classes "DIAGNOSTIC;DETOX_SUPPORT;REPAIR;MONITORING"
+  forbidden_mission_classes "PAIN_AMPLIFICATION;FEAR_INDUCTION;CONFLICT_GAMIFICATION;NEURAL_TRAINING_ON_HOST"
+  default_max_duty_fraction 0.25
+endpolicy
+
+constraints NanoswarmConsentEnvelope
+  require hostdid != ""
+  require bostrom_address != ""
+  require max_duty_fraction >= 0.0
+  require max_duty_fraction <= 1.0
+endconstraints
