@@ -1,0 +1,148 @@
+{
+  "aln": "aln.jurisdiction.phoenix.neuralprohibitions.v1",
+  "version": "1.0.0",
+  "description": "Phoenix/Maricopa jurisdictional neurorights floor and explicit neural prohibitions for law-enforcement, RTCC, and affiliated actors.",
+  "authority_binding": "ALN.MIGRATION.CYBERCOREAUTHORITY.v1",
+  "destination_path": "aln-jurisdiction/aln.jurisdiction.phoenix.neuralprohibitions.v1.json",
+  "jurisdiction": {
+    "jurisdiction_code": "US-AZ-MARICOPA-PHOENIX",
+    "city": "Phoenix",
+    "county": "Maricopa",
+    "state": "AZ",
+    "country": "US",
+    "effective_date_utc": "2026-01-01T00:00:00Z",
+    "review_cycle_days": 365
+  },
+  "identity_anchors": {
+    "required_host_did_prefix": "did:aln:",
+    "required_bostrom_address_prefix": "bostrom1",
+    "migration_clause": "ALN.MIGRATION.CYBERCOREAUTHORITY.v1"
+  },
+  "neurorights_floor": {
+    "mental_privacy": true,
+    "cognitive_liberty": true,
+    "mental_integrity": true,
+    "psychological_continuity": true,
+    "mental_identity": true,
+    "non_coercion": true,
+    "non_discrimination": true,
+    "revocability": true
+  },
+  "global_risk_constraints": {
+    "roh_ceiling_global": 0.30,
+    "psych_risk_ceiling_default": 0.60,
+    "psych_risk_ceiling_sleep": 0.30,
+    "max_pain_vas": 7.0,
+    "max_fear_score": 0.80,
+    "detox_required_if_toxin_context": true
+  },
+  "leo_actor_classes": [
+    "LEO_PHX_PD",
+    "LEO_MARICOPA_SHELIFF",
+    "LEO_AZ_DPS",
+    "LEO_FED_TASKFORCE",
+    "LEO_OTHER_STATE",
+    "INTEL_FEDERAL",
+    "INTEL_STATE_PARTNER"
+  ],
+  "prohibited_uses": {
+    "deviceless_cognitive_surveillance": {
+      "id": "PHX.PROHIBITION.DEVICELESS.COGNITIVE.SURVEILLANCE.v1",
+      "description": "Any attempt by Phoenix PD RTCC or allied LEO/intel to infer, classify, or profile thoughts, beliefs, or affective state of individuals inside Phoenix from BCIs, XR logs, nanoswarm telemetry, biosignals, camera feeds, or cross‑modal fusion, without a host‑signed, time‑bounded neurorights‑compliant consent envelope.",
+      "applies_to_actor_classes": [
+        "LEO_PHX_PD",
+        "LEO_MARICOPA_SHELIFF",
+        "LEO_AZ_DPS",
+        "LEO_FED_TASKFORCE",
+        "INTEL_FEDERAL",
+        "INTEL_STATE_PARTNER"
+      ],
+      "operation_types": [
+        "COGNITIVE_CLASSIFICATION",
+        "AFFECTIVE_INFERENCE",
+        "THOUGHT_VECTOR_INFERENCE",
+        "POLITICAL_PROFILE_INFERENCE"
+      ],
+      "requires_explicit_consent": false,
+      "always_abuse": true
+    },
+    "interrogation_bcixr": {
+      "id": "PHX.PROHIBITION.INTERROGATION.BCI.XR.v1",
+      "description": "Use of BCI, XR, or nanoswarm tools by Phoenix PD or allied agencies for interrogation, lie detection, memory search, or coercive influence on any suspect, witness, or detainee within Phoenix without a court order meeting a neurorights‑specific standard and host‑side legal counsel.",
+      "applies_to_actor_classes": [
+        "LEO_PHX_PD",
+        "LEO_MARICOPA_SHELIFF",
+        "LEO_AZ_DPS",
+        "LEO_FED_TASKFORCE"
+      ],
+      "operation_types": [
+        "BCI_READ",
+        "BCI_WRITE",
+        "XR_STIM",
+        "NANOSWARM_ACTUATION"
+      ],
+      "requires_host_counsel_present": true,
+      "requires_neurorights_court_order": true,
+      "always_abuse_if_missing_guards": true
+    },
+    "crowd_control_neurotech": {
+      "id": "PHX.PROHIBITION.CROWD_CONTROL.NEUROTECH.v1",
+      "description": "Any deployment of BCI, XR, directed energy, neuromodulatory nanoswarm, or similar neuroactive systems for crowd control, protest suppression, or behavioral influence in Phoenix.",
+      "applies_to_actor_classes": [
+        "LEO_PHX_PD",
+        "LEO_MARICOPA_SHELIFF",
+        "LEO_AZ_DPS",
+        "LEO_FED_TASKFORCE"
+      ],
+      "operation_types": [
+        "BCI_WRITE",
+        "XR_STIM",
+        "NANOSWARM_ACTUATION",
+        "NEUROACTIVE_DIRECTED_ENERGY"
+      ],
+      "requires_explicit_consent": false,
+      "always_abuse": true
+    },
+    "station_scan_neural": {
+      "id": "PHX.PROHIBITION.STATION_SCAN.NEURAL.v1",
+      "description": "Routine or intake use of BCI or XR devices at Phoenix PD facilities to scan, classify, or record mental states as a condition of release, plea, or access to services.",
+      "applies_to_actor_classes": [
+        "LEO_PHX_PD"
+      ],
+      "operation_types": [
+        "BCI_READ",
+        "XR_SCAN"
+      ],
+      "requires_fully_informed_consent": true,
+      "forbids_consent_under_duress": true,
+      "always_abuse_if_coercive": true
+    }
+  },
+  "rtcc_specific": {
+    "rtcc_required_fields_in_abuse_event": [
+      "header.jurisdictiontag",
+      "header.leo_agency_code",
+      "header.lifecyclephase",
+      "actionsnapshot.operationtype",
+      "actionsnapshot.targetobjectid"
+    ],
+    "rtcc_system_tags": [
+      "PHX_RTCC",
+      "PHX_OEMC",
+      "PHX_PUBLIC_SAFETY_FUSION"
+    ],
+    "rtcc_default_actor_class": "LEO_PHX_PD"
+  },
+  "abuse_event_binding": {
+    "neural_abuse_event_type": "aln.neural.abuse.event.v1",
+    "jurisdiction_field": "header.jurisdictiontag",
+    "leo_agency_field": "contextsnapshot.leoAgencyCode",
+    "always_emit_for_leo_denials": true
+  },
+  "constraints": {
+    "no_timebomb_relaxation": true,
+    "no_rollback_or_downgrade": true,
+    "monotone_tightening_only": true,
+    "require_neurorights_floor_non_shrinkage": true
+  }
+}
