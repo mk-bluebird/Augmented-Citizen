@@ -1,0 +1,289 @@
+-- destination-path: Augmented-Citizen/augmented_citizen.db
+-- This is a complete SQLite schema you can instantiate as a single .db file.
+-- AI‑chat can then query it with very short SELECTs to minimize token use.
+
+PRAGMA journal_mode = WAL;
+PRAGMA foreign_keys = ON;
+PRAGMA synchronous = NORMAL;
+
+----------------------------------------------------------------------
+-- 1. Core identity and sovereignty anchoring
+----------------------------------------------------------------------
+
+CREATE TABLE host_identity (
+  id                INTEGER PRIMARY KEY CHECK (id = 1),
+  host_did          TEXT    NOT NULL,
+  bostrom_address   TEXT    NOT NULL,
+  migration_clause  TEXT    NOT NULL,
+  created_utc       TEXT    NOT NULL,
+  updated_utc       TEXT    NOT NULL,
+  CHECK (bostrom_address = 'bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7'),
+  CHECK (migration_clause = 'ALN.MIGRATION.CYBERCORE_AUTHORITY.v1')
+);
+
+INSERT INTO host_identity (
+  id, host_did, bostrom_address, migration_clause, created_utc, updated_utc
+) VALUES (
+  1,
+  'did:aln:bostrom-organic-host',
+  'bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7',
+  'ALN.MIGRATION.CYBERCORE_AUTHORITY.v1',
+  '2026-06-14T21:35:00Z',
+  '2026-06-14T21:35:00Z'
+) ON CONFLICT(id) DO NOTHING;
+
+----------------------------------------------------------------------
+-- 2. ALN shard registry (minimal for AI‑chat crawling)
+----------------------------------------------------------------------
+
+CREATE TABLE aln_shard (
+  id               INTEGER PRIMARY KEY AUTOINCREMENT,
+  logical_id       TEXT    NOT NULL,  -- e.g. "aln.sovereign.host.kernel.v1"
+  kind             TEXT    NOT NULL,  -- "manifest" | "policy" | "telemetry" | "attestation" | "contract"
+  json_path        TEXT    NOT NULL,  -- relative path in repo, if any
+  summary          TEXT    NOT NULL,  -- short description for AI‑chat
+  created_utc      TEXT    NOT NULL,
+  updated_utc      TEXT    NOT NULL,
+  UNIQUE (logical_id)
+);
+
+CREATE INDEX idx_aln_shard_kind ON aln_shard(kind);
+
+----------------------------------------------------------------------
+-- 3. Neurorights profiles and constraints
+----------------------------------------------------------------------
+
+CREATE TABLE neurorights_profile (
+  id                INTEGER PRIMARY KEY AUTOINCREMENT,
+  profile_id        TEXT    NOT NULL,  -- e.g. "mentalintegrity.cl.v1"
+  source_law        TEXT    NOT NULL,  -- e.g. "CL:Art19, CA:SB1223, CO:HB24-1058, UNESCO:2024"
+  cognitive_liberty BOOLEAN NOT NULL,
+  mental_privacy    BOOLEAN NOT NULL,
+  mental_integrity  BOOLEAN NOT NULL,
+  identity_continuity BOOLEAN NOT NULL,
+  augmentation_continuity BOOLEAN NOT NULL,
+  project_continuity BOOLEAN NOT NULL,
+  no_score_from_inner_state BOOLEAN NOT NULL,
+  telemetry_outer_scalars_only BOOLEAN NOT NULL,
+  roh_ceiling_global REAL NOT NULL,    -- e.g. 0.30
+  roh_ceiling_exo   REAL NOT NULL,    -- e.g. 0.25
+  append_only       BOOLEAN NOT NULL, -- rights can only strengthen
+  created_utc       TEXT    NOT NULL,
+  UNIQUE (profile_id)
+);
+
+----------------------------------------------------------------------
+-- 4. Risk ceilings, psych‑risk, slavery‑risk (outer‑domain scalars)
+----------------------------------------------------------------------
+
+CREATE TABLE risk_envelope (
+  id                INTEGER PRIMARY KEY CHECK (id = 1),
+  roh_ceiling_global REAL NOT NULL,   -- RoH <= 0.30
+  roh_ceiling_exo    REAL NOT NULL,   -- exo band, e.g. 0.25
+  psych_soft_ceiling REAL NOT NULL,   -- e.g. 0.35
+  psych_hard_ceiling REAL NOT NULL,   -- e.g. 0.40
+  slavery_soft_ceiling REAL NOT NULL, -- e.g. 0.05
+  slavery_hard_ceiling REAL NOT NULL, -- e.g. 0.10
+  lifeforce_min      REAL NOT NULL,   -- normalized 0..1
+  eco_non_regression_required BOOLEAN NOT NULL,
+  updated_utc        TEXT NOT NULL,
+  CHECK (roh_ceiling_global <= 0.30),
+  CHECK (roh_ceiling_exo    <= roh_ceiling_global),
+  CHECK (psych_soft_ceiling <= psych_hard_ceiling),
+  CHECK (slavery_soft_ceiling <= slavery_hard_ceiling)
+);
+
+INSERT INTO risk_envelope (
+  id, roh_ceiling_global, roh_ceiling_exo,
+  psych_soft_ceiling, psych_hard_ceiling,
+  slavery_soft_ceiling, slavery_hard_ceiling,
+  lifeforce_min, eco_non_regression_required, updated_utc
+) VALUES (
+  1, 0.30, 0.25,
+  0.35, 0.40,
+  0.05, 0.10,
+  0.60, 1, '2026-06-14T21:35:00Z'
+) ON CONFLICT(id) DO NOTHING;
+
+-- Lightweight time‑series of outer‑domain risk scalars for AI‑chat.
+CREATE TABLE risk_snapshot (
+  id                INTEGER PRIMARY KEY AUTOINCREMENT,
+  taken_utc         TEXT    NOT NULL,
+  roh               REAL    NOT NULL,
+  psych_risk_index  REAL    NOT NULL,
+  slavery_risk_score REAL   NOT NULL,
+  lifeforce_band    REAL    NOT NULL,
+  eco_impact_score  REAL    NOT NULL,
+  source            TEXT    NOT NULL   -- e.g. "evolution-window", "daily-health"
+);
+
+CREATE INDEX idx_risk_snapshot_time ON risk_snapshot(taken_utc);
+
+----------------------------------------------------------------------
+-- 5. Evolution windows and monotonicity audit
+----------------------------------------------------------------------
+
+CREATE TABLE evolution_window (
+  id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+  window_id           TEXT    NOT NULL,  -- e.g. "evo-2026-06-14T00:00Z"
+  started_utc         TEXT    NOT NULL,
+  ended_utc           TEXT,
+  roh_before          REAL    NOT NULL,
+  roh_after           REAL,
+  lifeforce_before    REAL    NOT NULL,
+  lifeforce_after     REAL,
+  eco_score_before    REAL    NOT NULL,
+  eco_score_after     REAL,
+  capabilities_before REAL    NOT NULL,  -- abstract scalar 0..1
+  capabilities_after  REAL,
+  monotone_ok         BOOLEAN,
+  eco_non_reg_ok      BOOLEAN,
+  roh_ceiling_respected BOOLEAN,
+  evidence_bundle_id  TEXT    NOT NULL,  -- hex id like "0xroh01a3"
+  notes               TEXT,
+  UNIQUE (window_id)
+);
+
+CREATE INDEX idx_evo_window_time ON evolution_window(started_utc);
+
+----------------------------------------------------------------------
+-- 6. Evidence bundles (10‑tag pattern, outer‑domain only)
+----------------------------------------------------------------------
+
+CREATE TABLE evidence_bundle (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  bundle_id     TEXT    NOT NULL,   -- external hex id, e.g. "0xroh01a3"
+  description   TEXT    NOT NULL,
+  created_utc   TEXT    NOT NULL,
+  onchain_tx    TEXT,              -- Organichain/ALN chain tx id, opaque
+  tag1          TEXT, tag2 TEXT, tag3 TEXT, tag4 TEXT, tag5 TEXT,
+  tag6          TEXT, tag7 TEXT, tag8 TEXT, tag9 TEXT, tag10 TEXT,
+  CHECK (
+    tag1  IS NOT NULL AND tag2  IS NOT NULL AND tag3  IS NOT NULL AND
+    tag4  IS NOT NULL AND tag5  IS NOT NULL AND tag6  IS NOT NULL AND
+    tag7  IS NOT NULL AND tag8  IS NOT NULL AND tag9  IS NOT NULL AND
+    tag10 IS NOT NULL
+  ),
+  UNIQUE (bundle_id)
+);
+
+CREATE INDEX idx_evidence_bundle_tx ON evidence_bundle(onchain_tx);
+
+----------------------------------------------------------------------
+-- 7. NOCOERCIVEROLLBACKS / regression policy (host‑beneficial only)
+----------------------------------------------------------------------
+
+CREATE TABLE regression_policy (
+  id                  INTEGER PRIMARY KEY CHECK (id = 1),
+  must_not_regress    TEXT    NOT NULL, -- JSON list of host‑centric invariants
+  may_regress         TEXT    NOT NULL, -- JSON list of third‑party privileges
+  updated_utc         TEXT    NOT NULL
+);
+
+INSERT INTO regression_policy (
+  id, must_not_regress, may_regress, updated_utc
+) VALUES (
+  1,
+  '["host_augmentation_continuity","host_mental_integrity","host_mental_privacy","host_cognitive_liberty","host_identity_continuity"]',
+  '["third_party_data_access","corporate_debug_hooks","telemetry_sampling_resolution"]',
+  '2026-06-14T21:35:00Z'
+) ON CONFLICT(id) DO NOTHING;
+
+----------------------------------------------------------------------
+-- 8. Job classification and psych/slavery‑risk guard decisions
+----------------------------------------------------------------------
+
+CREATE TABLE job_class (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  code          TEXT    NOT NULL,  -- e.g. "ExternalWork", "MedicalTrial"
+  description   TEXT    NOT NULL,
+  slavery_forbidden BOOLEAN NOT NULL, -- true => structurally unexecutable
+  UNIQUE (code)
+);
+
+INSERT INTO job_class (code, description, slavery_forbidden) VALUES
+  ('ExternalWork', 'Generic external work request', 0),
+  ('DataLabeling', 'Data labeling or annotation', 0),
+  ('ContentModeration', 'Content moderation workloads', 0),
+  ('SurveillanceMonitoring', 'Surveillance / monitoring roles', 1),
+  ('MedicalTrial', 'Medical or neuromorphic trial', 0),
+  ('NeuroEvaluation', 'Neuro-evaluation or diagnostic job', 0),
+  ('Other', 'Other or unspecified job class', 0)
+ON CONFLICT(code) DO NOTHING;
+
+CREATE TABLE psych_slavery_guard (
+  id                 INTEGER PRIMARY KEY AUTOINCREMENT,
+  job_id             TEXT    NOT NULL,
+  job_class_code     TEXT    NOT NULL REFERENCES job_class(code),
+  jurisdiction       TEXT    NOT NULL, -- e.g. "US_CA", "CL", "EU"
+  evaluated_utc      TEXT    NOT NULL,
+  psych_risk_index   REAL    NOT NULL, -- 0..1
+  slavery_risk_score REAL    NOT NULL, -- 0..1
+  decision           TEXT    NOT NULL, -- "Approve" | "Deny"
+  code               TEXT    NOT NULL, -- "Approve" | "DenyPsychSoft" | "DenySlaveryHard" ...
+  neurorights_profile_id TEXT NOT NULL,
+  zk_attest_id       TEXT,             -- ALN attestation logical id
+  notes              TEXT
+);
+
+CREATE INDEX idx_psych_guard_job ON psych_slavery_guard(job_id);
+CREATE INDEX idx_psych_guard_time ON psych_slavery_guard(evaluated_utc);
+
+----------------------------------------------------------------------
+-- 9. Simple ALN JSON cache for AI‑chat (optional, token‑efficient)
+----------------------------------------------------------------------
+
+CREATE TABLE aln_json_cache (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  logical_id   TEXT    NOT NULL, -- matches aln_shard.logical_id
+  short_blob   TEXT    NOT NULL, -- compact JSON string, no raw EEG
+  updated_utc  TEXT    NOT NULL,
+  UNIQUE (logical_id)
+);
+
+----------------------------------------------------------------------
+-- 10. Minimal views for low‑token AI‑chat queries
+----------------------------------------------------------------------
+
+-- Current effective ceilings as a single row.
+CREATE VIEW v_current_risk_limits AS
+SELECT
+  r.roh_ceiling_global,
+  r.roh_ceiling_exo,
+  r.psych_soft_ceiling,
+  r.psych_hard_ceiling,
+  r.slavery_soft_ceiling,
+  r.slavery_hard_ceiling,
+  r.lifeforce_min,
+  r.eco_non_regression_required
+FROM risk_envelope AS r
+WHERE r.id = 1;
+
+-- Last known risk snapshot (for “what is my state now?”).
+CREATE VIEW v_last_risk_snapshot AS
+SELECT *
+FROM risk_snapshot
+ORDER BY datetime(taken_utc) DESC
+LIMIT 1;
+
+-- Last 32 evolution windows with monotonicity flags.
+CREATE VIEW v_recent_evolution AS
+SELECT
+  window_id,
+  started_utc,
+  ended_utc,
+  roh_before,
+  roh_after,
+  lifeforce_before,
+  lifeforce_after,
+  eco_score_before,
+  eco_score_after,
+  capabilities_before,
+  capabilities_after,
+  monotone_ok,
+  eco_non_reg_ok,
+  roh_ceiling_respected,
+  evidence_bundle_id
+FROM evolution_window
+ORDER BY datetime(started_utc) DESC
+LIMIT 32;
