@@ -1,54 +1,117 @@
-# File: /aln-core-spec/rights.catalog.neurorights.v1.aln
-# Purpose: Catalog of neurorights instances built on rights.core-schema.
+# File: aln-core-spec/rights.catalog.neurorights.v1.aln
+# Destination: aln-core-spec/rights.catalog.neurorights.v1.aln
 
-rights_catalog Neurorights_v1 {
-    imports = ["/aln-core-spec/rights.core-schema.aln"]
-    
-    catalog = [
-        {
-            right_id                 = "NR_MENTAL_PRIVACY"
-            name                     = "Right to Mental Privacy"
-            description              = "The right to seclude one's inner world from unauthorized intrusion, decoding, collection, or sharing of neural data."
-            category                 = "NEURORIGHTS"
-            protected_interests      = ["NEURAL_DATA", "COGNITIVE_PATTERNS", "UNEXPRESSED_THOUGHTS"]
-            risk_examples            = ["UNCONSENTED_EEG_EXPORT", "COVERT_BIOMETRIC_PROFILING", "NEURODATA_COMMODIFICATION"]
-            enforcement_expectations = ["DEFAULT_DENY_ACCESS", "EXPLICIT_REVOCABLE_CONSENT", "DATA_MINIMIZATION"]
-        },
-        {
-            right_id                 = "NR_COGNITIVE_LIBERTY"
-            name                     = "Right to Cognitive Liberty"
-            description              = "The freedom to control one's own consciousness, electrochemical thought processes, and the liberty to engage in cognitive enhancement."
-            category                 = "NEURORIGHTS"
-            protected_interests      = ["THOUGHT_PROCESSES", "BELIEF_FORMATION", "DECISION_MAKING"]
-            risk_examples            = ["COVERT_PERSUASION", "SUBLIMINAL_NUDGING", "FORCED_NEURAL_MONITORING"]
-            enforcement_expectations = ["NO_COVERT_MANIPULATION", "HOST_INITIATED_MODULATION_ONLY", "TRANSPARENT_ALGORITHMIC_INFLUENCE"]
-        },
-        {
-            right_id                 = "NR_MENTAL_INTEGRITY"
-            name                     = "Right to Mental Integrity"
-            description              = "The right to be protected from illicit, coercive, or harmful manipulations of mental activity and brain function."
-            category                 = "NEURORIGHTS"
-            protected_interests      = ["NEUROLOGICAL_HEALTH", "EMOTIONAL_STABILITY", "COGNITIVE_CAPACITY"]
-            risk_examples            = ["INDUCED_DISTRESS", "COGNITIVE_OVERLOAD", "HARMFUL_STIMULATION"]
-            enforcement_expectations = ["THERMAL_AND_DUTY_CEILINGS", "EMERGENCY_SHUTDOWN_PATHS", "CONTINUOUS_SAFETY_MONITORING"]
-        },
-        {
-            right_id                 = "NR_PSYCHOLOGICAL_CONTINUITY"
-            name                     = "Right to Psychological Continuity"
-            description              = "The right to preserve personal identity and the continuity of one's mental life from abrupt, unconsented external alterations."
-            category                 = "NEURORIGHTS"
-            protected_interests      = ["SELF_NARRATIVE", "MEMORY_INTEGRITY", "PERSONALITY_STABILITY"]
-            risk_examples            = ["UNCONSENTED_MEMORY_SUPPRESSION", "ABRUPT_BELIEF_SHIFTING", "IDENTITY_FRAGMENTATION"]
-            enforcement_expectations = ["LAYERED_CONSENT_FOR_IDENTITY_CHANGES", "NO_ABRUPT_PERSONALITY_REWRITING", "REVERSIBILITY_PREFERENCE"]
-        },
-        {
-            right_id                 = "NR_PERSONAL_IDENTITY"
-            name                     = "Right to Personal Identity"
-            description              = "The right to prohibit technology from disrupting the sense of self when connecting individuals with digital networks."
-            category                 = "NEURORIGHTS"
-            protected_interests      = ["CORE_SELF_LABELS", "FOUNDATIONAL_VALUES", "RELATIONAL_BONDS"]
-            risk_examples            = ["INDUCED_DISSOCIATION", "THIRD_PARTY_PERSONALITY_SHAPING"]
-            enforcement_expectations = ["PROTECTION_OF_CORE_BELIEF_KERNELS", "NO_RECODING_OF_SELF_LABELS"]
-        }
-    ]
-}
+aln rights.catalog.neurorights.v1
+
+meta
+  id rights.catalog.neurorights.v1
+  version 1.0.1
+  description Canonical neurorights catalog for augmented-citizens under Bostrom authority, aligned with rights.core-schema and HostPersonalBciPolicyOverlayv2.
+  authoritybinding ALN.MIGRATION.CYBERCORE_AUTHORITY.v1
+  hostdid did:aln:bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+  bostrom_address bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+endmeta
+
+import RightsCatalog, Right, RightRelation from rights.core-schema.v1.aln
+
+catalog RightsCatalog
+  id RIGHTS_CATALOG_NEURORIGHTS_V1
+  hostdid did:aln:bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+  bostrom_address bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+
+  rights [
+    {
+      id               "NR_MENTAL_PRIVACY"
+      short_name       "Right to Mental Privacy"
+      description      "The right to seclude one's inner world from unauthorized intrusion, decoding, collection, or sharing of neural and cognitive data."
+      neuroright_class "MENTAL_PRIVACY"
+      scope            "NEURAL_DATA;COGNITIVE_PATTERNS;UNEXPRESSED_THOUGHTS"
+      non_derogable    true
+      emergency_modes  "STRICT_DIAGNOSTIC_ONLY"
+      legal_basis_refs "NR_LATAM_MENTAL_PRIVACY;NEURORIGHTS_MENTAL_PRIVACY;SPECIAL_CATEGORY_NEURAL_DATA"
+      risk_profile_id  "RISK_PROFILE_MENTAL_PRIVACY_V1"
+    },
+    {
+      id               "NR_COGNITIVE_LIBERTY"
+      short_name       "Right to Cognitive Liberty"
+      description      "The freedom to control one's own consciousness, electrochemical thought processes, and the liberty to engage in or refuse cognitive augmentation."
+      neuroright_class "COGNITIVE_LIBERTY"
+      scope            "THOUGHT_PROCESSES;BELIEF_FORMATION;DECISION_MAKING;DEVICE_USE;CONSENT"
+      non_derogable    true
+      emergency_modes  ""
+      legal_basis_refs "NEURORIGHTS_COGNITIVE_LIBERTY;FREEDOM_OF_THOUGHT;NO_FORCED_NEUROTECH"
+      risk_profile_id  "RISK_PROFILE_COGNITIVE_LIBERTY_V1"
+    },
+    {
+      id               "NR_MENTAL_INTEGRITY"
+      short_name       "Right to Mental Integrity"
+      description      "The right to be protected from illicit, coercive, or harmful manipulations of mental activity, emotional state, and brain function."
+      neuroright_class "MENTAL_INTEGRITY"
+      scope            "MODULATION;XR;NANOSWARM;STIMULATION"
+      non_derogable    true
+      emergency_modes  "LIFE_SAVING_MEDICAL_ONLY"
+      legal_basis_refs "NEURORIGHTS_MENTAL_INTEGRITY;NO_HARMFUL_STIMULATION"
+      risk_profile_id  "RISK_PROFILE_MENTAL_INTEGRITY_V1"
+    },
+    {
+      id               "NR_PSYCHOLOGICAL_CONTINUITY"
+      short_name       "Right to Psychological Continuity"
+      description      "The right to preserve personal identity and the continuity of one's mental life from abrupt, unconsented external alterations."
+      neuroright_class "PSYCHOLOGICAL_CONTINUITY"
+      scope            "SELF_NARRATIVE;MEMORY_INTEGRITY;PERSONALITY_STABILITY"
+      non_derogable    true
+      emergency_modes  ""
+      legal_basis_refs "NEURORIGHTS_PSYCHO_CONTINUITY"
+      risk_profile_id  "RISK_PROFILE_PSYCHOLOGICAL_CONTINUITY_V1"
+    },
+    {
+      id               "NR_PERSONAL_IDENTITY"
+      short_name       "Right to Personal Identity"
+      description      "The right to prevent technology from disrupting the sense of self when connecting individuals with digital or neuromorphic networks."
+      neuroright_class "MENTAL_IDENTITY"
+      scope            "CORE_SELF_LABELS;FOUNDATIONAL_VALUES;RELATIONAL_BONDS"
+      non_derogable    true
+      emergency_modes  ""
+      legal_basis_refs "NEURORIGHTS_IDENTITY;IDENTITY_CONTINUITY"
+      risk_profile_id  "RISK_PROFILE_PERSONAL_IDENTITY_V1"
+    }
+  ]
+
+  relations [
+    {
+      id            "REL_NR_PRIVACY_STRENGTHENS_NR_LIBERTY"
+      from_right_id "NR_MENTAL_PRIVACY"
+      to_right_id   "NR_COGNITIVE_LIBERTY"
+      relation_type "STRENGTHENS"
+      description   "Strong mental privacy protection strengthens cognitive liberty by limiting unauthorized access to inner states."
+    },
+    {
+      id            "REL_NR_LIBERTY_CONSTRAINS_MODULATION"
+      from_right_id "NR_COGNITIVE_LIBERTY"
+      to_right_id   "NR_MENTAL_INTEGRITY"
+      relation_type "CONSTRAINS"
+      description   "Cognitive liberty constrains any modulation that risks mental integrity without explicit, host-initiated consent."
+    },
+    {
+      id            "REL_NR_INTEGRITY_DEPENDS_ON_PRIVACY"
+      from_right_id "NR_MENTAL_INTEGRITY"
+      to_right_id   "NR_MENTAL_PRIVACY"
+      relation_type "DEPENDS_ON"
+      description   "Protection of mental integrity depends on robust mental privacy boundaries which prevent invasive access."
+    },
+    {
+      id            "REL_NR_CONTINUITY_DEPENDS_ON_IDENTITY"
+      from_right_id "NR_PSYCHOLOGICAL_CONTINUITY"
+      to_right_id   "NR_PERSONAL_IDENTITY"
+      relation_type "DEPENDS_ON"
+      description   "Psychological continuity depends on stable, protected personal identity and core self labels."
+    },
+    {
+      id            "REL_NR_IDENTITY_REINFORCES_LIBERTY"
+      from_right_id "NR_PERSONAL_IDENTITY"
+      to_right_id   "NR_COGNITIVE_LIBERTY"
+      relation_type "STRENGTHENS"
+      description   "Protection of personal identity reinforces cognitive liberty by securing identity-defining beliefs from coercive change."
+    }
+  ]
+endcatalog
