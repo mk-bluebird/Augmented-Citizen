@@ -1,0 +1,49 @@
+# File: aln-core-spec/events.core-schema.aln
+# Destination: aln-core-spec/events.core-schema.aln
+
+aln-schema events.core-schema.v1
+
+meta
+  id events.core-schema.v1
+  version 1.0.0
+  description Core event schema for neurorights-relevant operations and audits.
+  authoritybinding ALN.MIGRATION.CYBERCORE_AUTHORITY.v1
+  hostdid_field hostdid
+  bostromaddress_field bostrom_address
+endmeta
+
+struct EventHeader
+  eventid         string  # Unique event id (e.g., ULID).
+  hostdid         string  # Host DID.
+  bostrom_address string  # Bostrom account address.
+  timestamputc    string  # RFC3339 UTC timestamp.
+  event_type      string  # E.g., RIGHTS_UPDATE, CONSENT_UPDATE, NEURODATA_ACCESS, MODULATION_APPLIED.
+  jurisdiction    string  # E.g., US-AZ-MARICOPA.
+endstruct
+
+struct RightsUpdateEvent
+  header          EventHeader
+  rights_catalog  string  # Reference to rights catalog id.
+  change_summary  string  # Human-readable description of change.
+endstruct
+
+struct ConsentUpdateEvent
+  header          EventHeader
+  envelope_id     string  # Consent envelope id.
+  change_type     string  # GRANT, REVOKE, RENEW.
+  scope_summary   string  # Summary of affected scopes.
+endstruct
+
+struct NeurodataAccessEvent
+  header          EventHeader
+  channel_id      string  # Logical channel id.
+  purpose         string  # Declared purpose.
+  consent_id      string  # Consent envelope id used.
+  data_category   string  # E.g., NEURAL_SUMMARY, AFFECT_SUMMARY.
+endstruct
+
+constraints EventHeader
+  require hostdid != ""
+  require bostrom_address != ""
+  require event_type != ""
+endconstraints
