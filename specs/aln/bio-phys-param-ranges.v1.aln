@@ -1,0 +1,101 @@
+aln
+destination-path mk-bluebird/Cybercore/specs/aln/bio-phys-param-ranges.v1.aln
+
+particle aln.bio-phys-param-ranges.v1
+kind bio.phys.param.range
+version 1
+
+record BioPhysParamRangeV1
+  paramId        string
+  hostDid        string
+  bostromAddress string
+  distType       string    LogNormal, Normal, Uniform
+  mean           float
+  stdDev         float
+  ci95Lower      float
+  ci95Upper      float
+  unit           string
+  evidenceTags   string10
+
+constraint BioPhysParamRangeV1.hostDid.binding
+  hostDid did:aln:organic-host
+
+constraint BioPhysParamRangeV1.bostrom.binding
+  bostromAddress bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+
+constraint BioPhysParamRangeV1.ci.order
+  ci95Lower mean
+  mean ci95Upper
+
+constraint BioPhysParamRangeV1.std.nonnegative
+  stdDev 0.0
+
+constraint BioPhysParamRangeV1.evidenceTags.len
+  len(evidenceTags) 10
+
+invariant BioPhysParamRangeV1.SovereignBinding
+  hostDid did:aln:organic-host
+  bostromAddress bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+
+clause BioPhysParamRangeV1.ALN.MIGRATION.CYBERCOREAUTHORITY.v1
+  ALN.MIGRATION.CYBERCOREAUTHORITY.v1
+
+record BloodViscosityRangeV1
+  base BioPhysParamRangeV1
+
+constraint BloodViscosityRangeV1.paramId.fixed
+  base.paramId BLOOD_VISCOSITY_EVIDENCE
+
+record ThermalConductivityRangeV1
+  base BioPhysParamRangeV1
+
+constraint ThermalConductivityRangeV1.paramId.fixed
+  base.paramId THERMAL_CONDUCTIVITY_RANGE
+
+record Il6SensitivityRangeV1
+  base BioPhysParamRangeV1
+
+constraint Il6SensitivityRangeV1.paramId.fixed
+  base.paramId IL6_SENSITIVITY_BOUND
+
+record NanoswarmAdhesionRangeV1
+  base BioPhysParamRangeV1
+
+constraint NanoswarmAdhesionRangeV1.paramId.fixed
+  base.paramId NANO_ADHESION_EVIDENCE
+
+record CorticalHeatingRateRangeV1
+  base BioPhysParamRangeV1
+
+constraint CorticalHeatingRateRangeV1.paramId.fixed
+  base.paramId CORTICAL_HEATING_RATE
+
+record NeuromorphDutyEnvelopeRangeV1
+  base BioPhysParamRangeV1
+
+constraint NeuromorphDutyEnvelopeRangeV1.paramId.fixed
+  base.paramId NEUROMORPH_DUTY_ENVELOPE
+
+record HrvStressIndexRangeV1
+  base BioPhysParamRangeV1
+
+constraint HrvStressIndexRangeV1.paramId.fixed
+  base.paramId HRV_STRESS_INDEX_RANGE
+
+record ThetaCognitiveLoadRangeV1
+  base BioPhysParamRangeV1
+
+constraint ThetaCognitiveLoadRangeV1.paramId.fixed
+  base.paramId THETA_COGNITIVE_LOAD_RANGE
+
+record MicrovascularShearRangeV1
+  base BioPhysParamRangeV1
+
+constraint MicrovascularShearRangeV1.paramId.fixed
+  base.paramId MICROVASCULAR_SHEAR_RANGE
+
+record SwarmEmiCorridorRangeV1
+  base BioPhysParamRangeV1
+
+constraint SwarmEmiCorridorRangeV1.paramId.fixed
+  base.paramId SWARM_EMI_CORRIDOR
