@@ -1,0 +1,6 @@
+aln,cybernano,intent-stability-policy,v1
+metric,domain,module,op,threshold,unit,source
+s_intent_min,host,SovereignIntentFilter,,0.85,scalar,phoenix-neuro-constitution-2026
+max_high_risk_fraction,host,SovereignIntentFilter,,0.10,fraction,ethics-review-2026-01
+w_intent,host,RoHKERNEL,,0.15,weight,roh-kernel-v4
+s_intent_evolution_floor,host,EvolutionWindowGuard,,0.00,delta,constitution-non-reduction
