@@ -1,0 +1,17 @@
+meta.requiredShard,host-identity.v1.aln
+meta.requiredShard,cybercore-migration-authority.v1.aln
+meta.requiredShard,neurorights-compliance.v1.aln
+meta.requiredShard,superintelligence.executor.role.v1.aln
+meta.requiredShard,organic.cpu.capacity.corridor.v1.aln
+meta.requiredShard,hrv.inflammation.corridor.v1.aln
+meta.requiredShard,ALN.NANOSWARM.NONWEAPONIZABLE.v1.aln
+meta.requiredShard,nanoswarm.mission.policy.v1.aln
+meta.requiredShard,nanoswarm.state.quota.v1.aln
+meta.requiredShard,nanoswarm.telemetry.profile.v1.aln
+meta.requiredShard,nanoswarm.config.policy.v1.aln
+meta.requiredShard,nanoswarm.mission.registry.v1.aln
+
+constraint.nanoswarmNonWeaponizableClause,ALN.NANOSWARM.NONWEAPONIZABLE.v1
+constraint.noRollback,true
+constraint.noDowngrade,true
+constraint.monotoneTighteningOnly,true
