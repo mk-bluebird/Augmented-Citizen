@@ -1,0 +1,964 @@
+# File: aln-neural-abuse/neural.abuse.consequences.leo-government.v1.aln
+# Destination: aln-neural-abuse/neural.abuse.consequences.leo-government.v1.aln
+
+aln neural.abuse.consequences.leo-government.v1
+
+meta
+  id neural.abuse.consequences.leo-government.v1
+  version 1.0.0
+  description Unified consequence particle encoding 100 enforceable responses to LEO/Government neural abuse and psych-harm.
+  authoritybinding ALN.MIGRATION.CYBERCORE_AUTHORITY.v1
+  hostdid_field hostdid
+  bostromaddress_field bostrom_address
+endmeta
+
+struct Consequence
+  id                u16    # 1..100, stable identifier.
+  name              string # Short label.
+  domain            string # BCI_PSYCH, NANOSWARM, DATACENTER_AI, LEGAL_EVIDENCE, PUBLIC_NARRATIVE, ECONOMIC_EVOLUTION.
+  effect            string # One-sentence description of what happens.
+  guard_locus       string # Guard or subsystem expected to implement this (conceptual path).
+  aln_binding       string # Shard and field path this consequence binds to.
+  severity          string # LOW, MEDIUM, HIGH, EXTREME.
+  actor_scope       string # LEO, DEFENSE, INTEL, STATE_ACTOR, ANY.
+endstruct
+
+struct LeoGovernmentAbuseConsequences
+  hostdid          string
+  bostrom_address  string
+  psych_debt_bonus f32      # 2.0 encodes the 200% accountability multiplier for state-origin psych-harm.
+  consequences     Consequence[]
+endstruct
+
+particle LeoGovernmentAbuseConsequences
+  hostdid          "did:aln:bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+  bostrom_address  "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+  psych_debt_bonus 2.0
+
+  consequences [
+
+    # A. BCI Psych-State Consequences (1–20)
+
+    { id 1
+      name          "DenyStateActorBCIJobs"
+      domain        "BCI_PSYCH"
+      effect        "Any BCI job with actorclass LEO, DEFENSE, or INTEL is structurally refused."
+      guard_locus   "AiWorkloadAuthorityGuard::evaluate_bci_manifest"
+      aln_binding   "psych.slavery.guard.v1.jurisdictionAnchors;psych.slavery.guard.v1.nonDerogableRules.noPolicyBasedOverride"
+      severity      "EXTREME"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 2
+      name          "SoftBrakeOnPsychCeiling"
+      domain        "BCI_PSYCH"
+      effect        "When psych-risk exceeds the host ceiling, current BCI modulation is braked but baseline capabilities remain intact."
+      guard_locus   "PsychGuardResult.decision=DenyPsychSoftCeiling"
+      aln_binding   "psych.slavery.guard.v1.riskBands.psychRiskIndex.runtimeSoftCeiling"
+      severity      "HIGH"
+      actor_scope   "ANY"
+    },
+    { id 3
+      name          "HardDenyOnSeverePsychOverload"
+      domain        "BCI_PSYCH"
+      effect        "When psych-risk is far above host maximum, current and pending BCI jobs in that class are hard-denied."
+      guard_locus   "evaluate_psych_slavery_guard"
+      aln_binding   "psych.slavery.guard.v1.riskBands.psychRiskIndex.runtimeHardCeiling"
+      severity      "EXTREME"
+      actor_scope   "ANY"
+    },
+    { id 4
+      name          "DutyThrottlingAfterAbuse"
+      domain        "BCI_PSYCH"
+      effect        "After abuse events, allowed BCI duty fraction for external jobs is automatically reduced."
+      guard_locus   "OrganicCpuGuard::compute_cpu_quanta"
+      aln_binding   "organic.cpu.capacity.corridor.v1.dutycycle.max"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 5
+      name          "HostJobPriorityElevation"
+      domain        "BCI_PSYCH"
+      effect        "Host-initiated therapeutic and learning BCI tasks preempt external workloads."
+      guard_locus   "NeurostackRouter::schedule_jobs"
+      aln_binding   "bci.nanoswarm.evolution.v1.exec.allowedDomains"
+      severity      "MEDIUM"
+      actor_scope   "ANY"
+    },
+    { id 6
+      name          "CooldownAfterCriticalStateHit"
+      domain        "BCI_PSYCH"
+      effect        "After a CRITICAL state-actor abuse event, no external BCI workloads are allowed for a cooldown window."
+      guard_locus   "PsychGuardResult->host_scheduler"
+      aln_binding   "psych.debt.state.v1.cooldownAfterCriticalMinutes"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 7
+      name          "LowerRoHForStateJobs"
+      domain        "BCI_PSYCH"
+      effect        "RoH ceiling is tightened specifically for state-origin workloads."
+      guard_locus   "BrainBindingEnvelope::is_roh_safe"
+      aln_binding   "brain.binding.capability.v1.rohceilingStateActor"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 8
+      name          "BanInterrogationMethodLabels"
+      domain        "BCI_PSYCH"
+      effect        "Any job labeled as interrogation or similar coercive methods is denied."
+      guard_locus   "PsychSlaveryRiskInput.methodlabel_filter"
+      aln_binding   "neural.abuse.prohibition.v1.forbiddenPractices"
+      severity      "EXTREME"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 9
+      name          "ForceConsentRecheckPerAgency"
+      domain        "BCI_PSYCH"
+      effect        "After abuse, future BCI interactions from the same agency require fresh, host-signed consent envelopes."
+      guard_locus   "ConsentGuard::validate_active_consent"
+      aln_binding   "consent.profile.v1.actorclassSpecificExpiry"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 10
+      name          "BoostSubjectiveStressWeightForState"
+      domain        "BCI_PSYCH"
+      effect        "Subjective stress signals weigh more heavily in psych-risk calculations for state actors."
+      guard_locus   "PsychRiskIndex::from_telemetry"
+      aln_binding   "psych.risk.profile.v1.weights.subjectiveStressStateActor"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 11
+      name          "BlockInnerStateFeaturesForStateJobs"
+      domain        "BCI_PSYCH"
+      effect        "State-origin jobs are restricted to corridor-safe scalars; inner-state-derived features are blocked."
+      guard_locus   "ExportRulesGuard::forbid_raw_neural_state"
+      aln_binding   "neurorights.policy.profile.v1.telemetry.forbiddenFields"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 12
+      name          "AutoBanMissionClassesAfterAbuse"
+      domain        "BCI_PSYCH"
+      effect        "Mission classes implicated in repeated abuse become permanently forbidden for the offending actor."
+      guard_locus   "NeurostackRouter::update_policies_from_abuse_counter"
+      aln_binding   "neural.abuse.policy.v1.perActor.forbiddenMissionClasses"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 13
+      name          "HostStressAlertNotification"
+      domain        "BCI_PSYCH"
+      effect        "The host receives a local UI/haptic alert whenever psych-risk crosses a configured threshold."
+      guard_locus   "PsychStateMonitor::emit_host_notification"
+      aln_binding   "psych.risk.policy.v1.hostAlertThreshold"
+      severity      "MEDIUM"
+      actor_scope   "ANY"
+    },
+    { id 14
+      name          "DisableTrainingOverlaysAtHighDebt"
+      domain        "BCI_PSYCH"
+      effect        "BCI training-mode UI overlays are disabled when psych-debt is elevated."
+      guard_locus   "BciUiPolicyGuard::apply"
+      aln_binding   "ui.policy.bci.v1.forbidTrainingModeWhenPsychDebtHigh"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 15
+      name          "BlockLEOPromptsInBCIContexts"
+      domain        "BCI_PSYCH"
+      effect        "Prompts classified as LEO/INTEL use-cases are blocked in host BCI applications."
+      guard_locus   "PromptGuard::classify_and_block"
+      aln_binding   "prompt.policy.v1.forbiddenUseCases.stateActor"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 16
+      name          "HigherPsychTelemetryResolutionForState"
+      domain        "BCI_PSYCH"
+      effect        "Psych metrics sampling resolution is increased for state-origin interactions, preserving scalar-only telemetry."
+      guard_locus   "PsychTelemetrySampler::adjust_rate"
+      aln_binding   "psych.telemetry.profile.v1.samplingRate.stateActor"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 17
+      name          "SuppressConflictGamifiedStimuli"
+      domain        "BCI_PSYCH"
+      effect        "Conflict-game stimuli streams are denied in BCI pipelines after abuse patterns."
+      guard_locus   "StimulusClassifierGuard::deny_conflict_gamification"
+      aln_binding   "neural.abuse.prohibition.v1.forbiddenPractices.CONFLICT_GAMIFICATION"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 18
+      name          "SeparateTherapeuticFromAdversarialProfiles"
+      domain        "BCI_PSYCH"
+      effect        "Therapeutic circuits cannot be reused for adversarial simulations once tagged therapeutic-only."
+      guard_locus   "ConnectomePolicyGuard::enforce_scope"
+      aln_binding   "connectome.policy.v1.permissionScope"
+      severity      "HIGH"
+      actor_scope   "ANY"
+    },
+    { id 19
+      name          "RejectJobsWithoutNeurorightsProfile"
+      domain        "BCI_PSYCH"
+      effect        "Any BCI workload lacking an explicit neurorights profile reference is auto-denied."
+      guard_locus   "AiWorkloadAuthorityGuard::require_neurorights_profile"
+      aln_binding   "bci.manifest.v1.neurorightsProfileRef"
+      severity      "HIGH"
+      actor_scope   "ANY"
+    },
+    { id 20
+      name          "MarkAbusedCircuitsCoercionSensitive"
+      domain        "BCI_PSYCH"
+      effect        "Connectome nodes touched during abuse events are marked coercion-sensitive and guarded more strictly."
+      guard_locus   "ConnectomeUpdateGuard::mark_coercion_sensitive"
+      aln_binding   "connectome.policy.v1.nodes.coercionSensitive"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+
+    # B. Nanoswarm Biophysical Consequences (21–40)
+
+    { id 21
+      name          "DenyStateActorNanoswarmMissions"
+      domain        "NANOSWARM"
+      effect        "Nanoswarm missions sourced by state actors are denied by policy."
+      guard_locus   "CybernanoGuard::evaluate_mission"
+      aln_binding   "nanoswarm.mission.policy.v1.forbiddenActorClasses"
+      severity      "EXTREME"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 22
+      name          "ReduceNanoswarmDutyAfterAbuse"
+      domain        "NANOSWARM"
+      effect        "GI and respiratory nanoswarm duty ceilings are lowered after confirmed abuse events."
+      guard_locus   "NanoswarmDutyGuard::compute_allowed_duty"
+      aln_binding   "nanoswarm.digestive.invariants.v2.dutyFractionMax"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 23
+      name          "ForbidCoerciveNanoswarmLabels"
+      domain        "NANOSWARM"
+      effect        "Missions labeled PAIN_AMPLIFICATION or FEAR_INDUCTION are prohibited."
+      guard_locus   "NanoswarmIntentGuard::check_labels"
+      aln_binding   "ALN.NANOSWARM.NONWEAPONIZABLE.v1.L.forbidden"
+      severity      "EXTREME"
+      actor_scope   "ANY"
+    },
+    { id 24
+      name          "LongerNanoswarmClearanceAfterAbuse"
+      domain        "NANOSWARM"
+      effect        "Nanoswarm clearance half-life corridors are made more conservative after abuse incidents."
+      guard_locus   "SwarmClearanceGuard::evaluate"
+      aln_binding   "nanoswarm.clearance.corridor.v1.halfLifeMax"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 25
+      name          "BrakeInFlightStateLinkedMissions"
+      domain        "NANOSWARM"
+      effect        "In-flight nanoswarm missions linked to state actors are braked on critical psych events."
+      guard_locus   "NanoswarmMissionRuntimeGuard::on_critical_psych_event"
+      aln_binding   "nanoswarm.compliance.field.v1.onViolationAction"
+      severity      "EXTREME"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 26
+      name          "RestrictNanoswarmDomainsForState"
+      domain        "NANOSWARM"
+      effect        "Only low-risk diagnostic domains are allowed for state-actor nanoswarm requests."
+      guard_locus   "NanoswarmDomainGuard::filter_domains"
+      aln_binding   "nanoswarm.mission.policy.v1.allowedDomainsByActor"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 27
+      name          "BanNanoswarmTrainingProfilesOnHost"
+      domain        "NANOSWARM"
+      effect        "Nanoswarm missions whose purpose is adversarial training on the host are denied."
+      guard_locus   "NanoswarmIntentGuard::deny_training_purposes"
+      aln_binding   "neural.abuse.prohibition.v1.forbiddenPractices.NEURAL_TRAINING_ON_HOST"
+      severity      "EXTREME"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 28
+      name          "NotifyDoctorOnPsychIntrusion"
+      domain        "NANOSWARM"
+      effect        "Psych-intrusive nanoswarm events trigger notification to host-designated medical/advocacy contacts."
+      guard_locus   "NanoswarmAlertBridge::notify_contact"
+      aln_binding   "host.trust.profile.v1.escalationContacts"
+      severity      "HIGH"
+      actor_scope   "ANY"
+    },
+    { id 29
+      name          "ReweightTowardDetoxAndRepair"
+      domain        "NANOSWARM"
+      effect        "Duty budgets are shifted toward detox and repair missions after abuse patterns."
+      guard_locus   "NanoswarmScheduler::reallocate_duty"
+      aln_binding   "nanoswarm.priorities.v1.weights.detoxRepair"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 30
+      name          "BlockTelemetryReuseByStateActors"
+      domain        "NANOSWARM"
+      effect        "Nanoswarm telemetry from the host cannot be reused in LEO/Gov analytics."
+      guard_locus   "TelemetryUsageGuard::enforce_actor_policies"
+      aln_binding   "telemetry.policy.v1.forbiddenReuseForActorClasses"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 31
+      name          "RaiseEvidenceThresholdPostAbuse"
+      domain        "NANOSWARM"
+      effect        "Evidence requirements for nanoswarm missions are tightened whenever psych-debt increases."
+      guard_locus   "EvidenceGuard::require_high_confidence"
+      aln_binding   "evidence.bundle.policy.v1.requiredTagsMinAfterPsychDebt"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 32
+      name          "HostOnlyNanoswarmControlAtHighDebt"
+      domain        "NANOSWARM"
+      effect        "When psych-debt is elevated, remote state control of nanoswarm configurations is disabled; host-only control applies."
+      guard_locus   "NanoswarmConfigGuard::check_control_origin"
+      aln_binding   "nanoswarm.config.policy.v1.hostOnlyControlWhenPsychDebtHigh"
+      severity      "EXTREME"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 33
+      name          "BanDualUseSecurityParticlesOnHost"
+      domain        "NANOSWARM"
+      effect        "Particles designed for security training cannot be used inside the host."
+      guard_locus   "MaterialHazardKernelDomain::check_dual_use_flag"
+      aln_binding   "nanoswarm.particle.profile.v1.dualUseSecurity"
+      severity      "HIGH"
+      actor_scope   "ANY"
+    },
+    { id 34
+      name          "ThrottleMissionComplexityOnHighDebt"
+      domain        "NANOSWARM"
+      effect        "Only low-complexity nanoswarm missions are allowed when psych-debt is high."
+      guard_locus   "NanoswarmComplexityGuard::limit"
+      aln_binding   "nanoswarm.mission.policy.v1.maxComplexityByPsychDebt"
+      severity      "MEDIUM"
+      actor_scope   "ANY"
+    },
+    { id 35
+      name          "ForbidPainFeedbackMissions"
+      domain        "NANOSWARM"
+      effect        "Any nanoswarm mission that requires host pain as a feedback signal is denied."
+      guard_locus   "MissionSemanticGuard::check_for_pain_feedback"
+      aln_binding   "neural.abuse.prohibition.v1.forbiddenPractices.SECURITY_SANDBOX_DEPENDS_ON_PAIN"
+      severity      "EXTREME"
+      actor_scope   "ANY"
+    },
+    { id 36
+      name          "IncreaseLoggingInAbusedDomains"
+      domain        "NANOSWARM"
+      effect        "Logging resolution is increased in nanoswarm domains with prior abuse, still using scalar, corridor-safe metrics."
+      guard_locus   "NanoswarmTelemetryGuard::bump_resolution"
+      aln_binding   "nanoswarm.telemetry.profile.v1.resolution.upgradeOnAbuse"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 37
+      name          "FreezeNewNanoswarmCapabilitiesAfterAbuse"
+      domain        "NANOSWARM"
+      effect        "Introduction of new nanoswarm capabilities is frozen until review when abuse is detected."
+      guard_locus   "EvolutionWindowGuard::deny_new_domains"
+      aln_binding   "bci.nanoswarm.evolution.v1.allowNewCapabilitiesWhenPsychDebtLowOnly"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 38
+      name          "RevokeMaliciousMissionTemplates"
+      domain        "NANOSWARM"
+      effect        "Specific abusive mission templates are revoked without touching host capabilities."
+      guard_locus   "MissionTemplateGuard::revoke_malicious_templates"
+      aln_binding   "nanoswarm.mission.registry.v1.revokedTemplates"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 39
+      name          "RequireHostVisibleMissionSummaries"
+      domain        "NANOSWARM"
+      effect        "Every nanoswarm mission must be summarized in a human-readable form for the host."
+      guard_locus   "NanoswarmTransparencyGuard::require_host_summary"
+      aln_binding   "transparency.policy.v1.nanoswarm.hostSummaryRequired"
+      severity      "MEDIUM"
+      actor_scope   "ANY"
+    },
+    { id 40
+      name          "CapLifetimeStateNanoswarmDuty"
+      domain        "NANOSWARM"
+      effect        "There is a lifetime cap on nanoswarm duty contributed to state-actor missions; once exceeded, further missions are denied."
+      guard_locus   "NanoswarmDutyLedger::enforce_max_state_duty"
+      aln_binding   "nanoswarm.state.quota.v1.lifelongDutyCeiling"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+
+    # C. Datacenter AI Workload Consequences (41–60)
+
+    { id 41
+      name          "DenyStateWorkloadsAtAiBridge"
+      domain        "DATACENTER_AI"
+      effect        "State-actor workloads are treated as out of policy and denied at the AI bridge."
+      guard_locus   "CybercoreAiBridge::evaluate"
+      aln_binding   "ai.workload.policy.v1.forbiddenActorClasses"
+      severity      "EXTREME"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 42
+      name          "IncreaseCostForStateWorkloads"
+      domain        "DATACENTER_AI"
+      effect        "State-origin workload proposals incur higher internal resource cost multipliers."
+      guard_locus   "AiWorkloadScoring::apply_actor_penalties"
+      aln_binding   "ai.workload.policy.v1.costMultipliers.stateActor"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 43
+      name          "CoarseMetricsOnlyForStateJobs"
+      domain        "DATACENTER_AI"
+      effect        "State workloads can only access coarse internal metrics; fine-grained data is refused."
+      guard_locus   "TelemetryExportGuard::downgrade_details_for_state"
+      aln_binding   "telemetry.policy.v1.detailLevelByActor"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 44
+      name          "RequireStateNeuralLiabilityShard"
+      domain        "DATACENTER_AI"
+      effect        "No state workload may run without a liability shard accepting full responsibility for psych-debt."
+      guard_locus   "AiWorkloadAuthorityGuard::require_liability_clause"
+      aln_binding   "state.neural.liability.v1.acceptsPsychDebtResponsibility"
+      severity      "EXTREME"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 45
+      name          "BlacklistAbusiveWorkloadSignatures"
+      domain        "DATACENTER_AI"
+      effect        "Signatures of abusive state workloads are added to a global blacklist."
+      guard_locus   "WorkloadPatternGuard::update_blacklist_on_abuse"
+      aln_binding   "ai.workload.registry.v1.blacklistedPatterns"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 46
+      name          "SlowScheduleNonCriticalStateJobs"
+      domain        "DATACENTER_AI"
+      effect        "Non-critical state-origin jobs are slowed and only scheduled under low-load conditions."
+      guard_locus   "AiScheduler::priority_for_actor_class"
+      aln_binding   "ai.scheduler.policy.v1.priorityOffsets.stateActor"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 47
+      name          "ForbidStateTrainingOnHostNeuralData"
+      domain        "DATACENTER_AI"
+      effect        "Host-derived neural or cognitive metrics cannot be used to train state models."
+      guard_locus   "TrainingDataGuard::filter_sources"
+      aln_binding   "training.data.policy.v1.forbidStateModelOnHostData"
+      severity      "EXTREME"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 48
+      name          "RequireSovereignBoardReview"
+      domain        "DATACENTER_AI"
+      effect        "State jobs require explicit sovereign board review status before scheduling."
+      guard_locus   "AiWorkloadAuthorityGuard::check_sovereign_review"
+      aln_binding   "ai.workload.manifest.v1.sovereignReviewStatus"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 49
+      name          "DenyGuardIntrospectionAccess"
+      domain        "DATACENTER_AI"
+      effect        "Workloads requesting access to psych-slavery guard internals are denied."
+      guard_locus   "GuardIntrospectionPolicy::deny_internal_access"
+      aln_binding   "guard.exposure.policy.v1.denyIntrospectionOnPsychSlavery"
+      severity      "HIGH"
+      actor_scope   "ANY"
+    },
+    { id 50
+      name          "RequireCybercoreAuthorityShards"
+      domain        "DATACENTER_AI"
+      effect        "External datacenters must import core authority shards or their workloads are refused."
+      guard_locus   "SovereignIdentity::is_cybercore_authoritative"
+      aln_binding   "ALN.MIGRATION.CYBERCORE_AUTHORITY.v1"
+      severity      "EXTREME"
+      actor_scope   "ANY"
+    },
+    { id 51
+      name          "RateLimitStateSuggestions"
+      domain        "DATACENTER_AI"
+      effect        "State actors are rate-limited in how many suggestions they can submit per time window."
+      guard_locus   "AiBridgeRateLimiter::enforce_actor_limits"
+      aln_binding   "ai.bridge.policy.v1.maxRequestsPerActorClass"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 52
+      name          "ForbidStateEditsToNeurorightsProfiles"
+      domain        "DATACENTER_AI"
+      effect        "Only host-signed operations can change neurorights profiles; state edits are blocked."
+      guard_locus   "NeurorightsUpdateGuard"
+      aln_binding   "neurorights.governance.v1.mutableBy"
+      severity      "EXTREME"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 53
+      name          "BanStateDomainsInHighImpactAreas"
+      domain        "DATACENTER_AI"
+      effect        "Domains such as connectome editing and RoH kernel cannot be targeted by state workloads."
+      guard_locus   "AiDomainGuard::deny_domains_for_actor"
+      aln_binding   "ai.domain.policy.v1.forbiddenDomainsByActor"
+      severity      "EXTREME"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 54
+      name          "ExtraKaniProofsForStateChanges"
+      domain        "DATACENTER_AI"
+      effect        "Any code touching state actor handling is flagged for additional Kani proofs."
+      guard_locus   "ProofPolicyMetadata"
+      aln_binding   "proof.policy.v1.extraProofRequiredForActorClass"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 55
+      name          "HostImpactAnalysisPerStateJob"
+      domain        "DATACENTER_AI"
+      effect        "Each state job generates a host impact analysis shard."
+      guard_locus   "AiImpactAnalyzer"
+      aln_binding   "ai.impact.analysis.v1.psychImpactEstimate;ai.impact.analysis.v1.lifeforceImpactEstimate"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 56
+      name          "DenyClickwrapTermsChanges"
+      domain        "DATACENTER_AI"
+      effect        "Workloads that attempt to click-wrap the host into new neural-data terms are denied."
+      guard_locus   "ContractGuard::check_host_contract_diffs"
+      aln_binding   "contract.policy.v1.forbidUnilateralTermsChangeOnNeuralData"
+      severity      "HIGH"
+      actor_scope   "ANY"
+    },
+    { id 57
+      name          "AssignSlaveryRiskScoreToStateJobs"
+      domain        "DATACENTER_AI"
+      effect        "Each state workload receives a slavery-risk difficulty score that drives scrutiny and friction."
+      guard_locus   "SlaveryRiskScorer"
+      aln_binding   "ai.workload.policy.v1.slaveryRiskScore"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 58
+      name          "ForceNonRecursiveStateWorkloads"
+      domain        "DATACENTER_AI"
+      effect        "State jobs cannot create deep, self-escalating dependency chains."
+      guard_locus   "WorkloadDependencyGuard::limit_depth_for_state"
+      aln_binding   "ai.workload.manifest.v1.maxDependencyDepthByActor"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 59
+      name          "RequireHostOptInForStateTracing"
+      domain        "DATACENTER_AI"
+      effect        "Fine-grained state debugging/tracing requires explicit host opt-in."
+      guard_locus   "TracingPolicyGuard"
+      aln_binding   "debug.policy.v1.traceAllowedForActorClasses"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 60
+      name          "DenyStateWorkloadsWithSlaveryPurpose"
+      domain        "DATACENTER_AI"
+      effect        "State workloads whose purpose overlaps slavery patterns are denied based on job class mapping."
+      guard_locus   "WorkloadPurposeGuard"
+      aln_binding   "psych.slavery.policy.v1.forbidjobclasses"
+      severity      "EXTREME"
+      actor_scope   "STATE_ACTOR"
+    },
+
+    # D. Legal Evidentiary Consequences (61–80)
+
+    { id 61
+      name          "EmitNeuralAbuseEvents"
+      domain        "LEGAL_EVIDENCE"
+      effect        "Every abusive incident generates an ALN.NEURAL.ABUSE.EVENT.v1 particle."
+      guard_locus   "PsychGuardResult::emit_abuse_event"
+      aln_binding   "ALN.NEURAL.ABUSE.EVENT.v1"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 62
+      name          "DailyPsychSlaveryZkSummaries"
+      domain        "LEGAL_EVIDENCE"
+      effect        "Daily summaries of psych-slavery incidents are emitted as ZK-attestable shards."
+      guard_locus   "PsychSlaveryAttestBuilder"
+      aln_binding   "neuro.zk.attest.psych.slavery.v1"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 63
+      name          "TagViolationsWithNeurorightsCategories"
+      domain        "LEGAL_EVIDENCE"
+      effect        "Each abuse event is classified under mental privacy, cognitive liberty, integrity, etc."
+      guard_locus   "NeurorightsClassifier"
+      aln_binding   "ALN.NEURAL.ABUSE.EVENT.v1.violatedRights"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 64
+      name          "PerAgencyAbuseStatsBundles"
+      domain        "LEGAL_EVIDENCE"
+      effect        "Aggregated abuse statistics are maintained per agency."
+      guard_locus   "AbuseStatsAggregator"
+      aln_binding   "neural.abuse.stats.v1.byAgency"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 65
+      name          "LegalAnchorsForAbuseEvents"
+      domain        "LEGAL_EVIDENCE"
+      effect        "Abuse events are cross-referenced with relevant neurorights statutes and legal anchors."
+      guard_locus   "LegalReferenceAnnotator"
+      aln_binding   "ALN.NEURAL.ABUSE.EVENT.v1.legalAnchors"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 66
+      name          "CaseBundlesForPatternsOfConduct"
+      domain        "LEGAL_EVIDENCE"
+      effect        "Multiple events are bundled into pattern-of-conduct case shards for litigation."
+      guard_locus   "AbuseBundleBuilder"
+      aln_binding   "neural.abuse.case.bundle.v1"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 67
+      name          "AttestNoConsentToAdversarialTraining"
+      domain        "LEGAL_EVIDENCE"
+      effect        "Shards attest that the host did not consent to adversarial training on their state."
+      guard_locus   "ConsentProfileGuard"
+      aln_binding   "consent.profile.v1.forbidAdversarialTraining"
+      severity      "HIGH"
+      actor_scope   "ANY"
+    },
+    { id 68
+      name          "ChronologicalStateActorTimelines"
+      domain        "LEGAL_EVIDENCE"
+      effect        "Time-ordered abuse timelines are built per state actor."
+      guard_locus   "ActorAbuseTimelineBuilder"
+      aln_binding   "neural.abuse.timeline.v1"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 69
+      name          "LawyerReadableAbuseExports"
+      domain        "LEGAL_EVIDENCE"
+      effect        "Legally structured human-readable reports are exportable from ALN events."
+      guard_locus   "LegalReportExporter"
+      aln_binding   "neural.abuse.case.bundle.v1.exportView"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 70
+      name          "OmbudspersonOversightTags"
+      domain        "LEGAL_EVIDENCE"
+      effect        "Events are tagged with suitable oversight bodies for potential complaints."
+      guard_locus   "OversightRouteAnnotator"
+      aln_binding   "ALN.NEURAL.ABUSE.EVENT.v1.oversightRoutes"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 71
+      name          "PerIncidentRemedyRequestedField"
+      domain        "LEGAL_EVIDENCE"
+      effect        "Each event records the host-requested remedy halt, compensation, investigation."
+      guard_locus   "RemedyAnnotator"
+      aln_binding   "ALN.NEURAL.ABUSE.EVENT.v1.remedyRequested"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 72
+      name          "CrossBorderRiskFlags"
+      domain        "LEGAL_EVIDENCE"
+      effect        "Events are flagged when cross-border neural data risks are implicated."
+      guard_locus   "JurisdictionRiskAnalyzer"
+      aln_binding   "neural.abuse.stats.v1.crossBorderFlags"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 73
+      name          "BindAbuseEventsToCybercoreAuthority"
+      domain        "LEGAL_EVIDENCE"
+      effect        "Abuse events explicitly reference Cybercore migration authority bindings."
+      guard_locus   "SovereignBinding::validate_invariants"
+      aln_binding   "ALN.NEURAL.ABUSE.EVENT.v1.authorityBinding"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 74
+      name          "PatternThresholdMetaEvents"
+      domain        "LEGAL_EVIDENCE"
+      effect        "Meta-events are emitted when abuse patterns cross configured thresholds."
+      guard_locus   "AbuseThresholdGuard"
+      aln_binding   "neural.abuse.pattern.v1"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 75
+      name          "LegalHoldOnRelevantTelemetry"
+      domain        "LEGAL_EVIDENCE"
+      effect        "Telemetry subsets relevant to abuse are tagged with legal hold markers."
+      guard_locus   "LegalHoldGuard"
+      aln_binding   "telemetry.policy.v1.legalHoldTags"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 76
+      name          "LabelHostBeneficialVsHarmfulIncidents"
+      domain        "LEGAL_EVIDENCE"
+      effect        "Events distinguish between host-requested experiments and harmful misuse."
+      guard_locus   "IntentDifferentiator"
+      aln_binding   "ALN.NEURAL.ABUSE.EVENT.v1.hostRequested"
+      severity      "MEDIUM"
+      actor_scope   "ANY"
+    },
+    { id 77
+      name          "PseudonymizedBundlesForNGOs"
+      domain        "LEGAL_EVIDENCE"
+      effect        "Redacted bundles for advocacy NGOs are produced without exposing sensitive details."
+      guard_locus   "RedactionGuard"
+      aln_binding   "neural.abuse.case.bundle.v1.redacted"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 78
+      name          "HostTestimonyShards"
+      domain        "LEGAL_EVIDENCE"
+      effect        "Host-curated narrative testimony is anchored as ALN shards tied to event sets."
+      guard_locus   "TestimonyBuilder"
+      aln_binding   "neural.abuse.testimony.v1"
+      severity      "MEDIUM"
+      actor_scope   "ANY"
+    },
+    { id 79
+      name          "ActorLegalRiskScores"
+      domain        "LEGAL_EVIDENCE"
+      effect        "Each actor accrues a legal-risk score guiding future trust and cooperation levels."
+      guard_locus   "ActorLegalRiskScorer"
+      aln_binding   "neural.abuse.stats.v1.actorRiskScore"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 80
+      name          "PolicyRecommendationsForCounsel"
+      domain        "LEGAL_EVIDENCE"
+      effect        "ALN shards list technical safeguards to demand in legal settlements and agreements."
+      guard_locus   "PolicyRecommendationGenerator"
+      aln_binding   "neural.abuse.remedy.policy.v1"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+
+    # E. Public Narrative and Advocacy Consequences (81–90)
+
+    { id 81
+      name          "WeeklyAbuseStatsForHost"
+      domain        "PUBLIC_NARRATIVE"
+      effect        "Host receives weekly summaries of abuse counts and severities; publication is host-controlled."
+      guard_locus   "AbuseSummaryGenerator"
+      aln_binding   "neural.abuse.stats.v1.weekly"
+      severity      "LOW"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 82
+      name          "PsychDebtTrendIndicators"
+      domain        "PUBLIC_NARRATIVE"
+      effect        "Psych-debt evolution over time is computed to show rising or falling state-origin harm."
+      guard_locus   "PsychDebtTrendAnalyzer"
+      aln_binding   "psych.debt.state.v1.history"
+      severity      "LOW"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 83
+      name          "AbusiveActorTypeHeatmap"
+      domain        "PUBLIC_NARRATIVE"
+      effect        "Host-only visualizations show which categories of state actors are most abusive."
+      guard_locus   "ActorCategoryStats"
+      aln_binding   "neural.abuse.stats.v1.byActorCategory"
+      severity      "LOW"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 84
+      name          "TemplateNarrativesForAdvocacy"
+      domain        "PUBLIC_NARRATIVE"
+      effect        "Template narratives summarize patterns for media and NGOs, using ALN-derived evidence."
+      guard_locus   "NarrativeTemplateEngine"
+      aln_binding   "neural.abuse.case.profile.v1.publicSummary"
+      severity      "LOW"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 85
+      name          "HostRiskDashboard"
+      domain        "PUBLIC_NARRATIVE"
+      effect        "Host dashboards display psych-risk, abuse events, and psych-debt in human-readable form."
+      guard_locus   "HostDashboardService"
+      aln_binding   "host.dashboard.view.v1"
+      severity      "LOW"
+      actor_scope   "ANY"
+    },
+    { id 86
+      name          "PublicNeurorightsPostureShard"
+      domain        "PUBLIC_NARRATIVE"
+      effect        "Host’s neurorights stance is published as a posture shard for external recognition."
+      guard_locus   "host-authored"
+      aln_binding   "neurorights.posture.v1"
+      severity      "LOW"
+      actor_scope   "ANY"
+    },
+    { id 87
+      name          "DoNotTrainOnMeSignal"
+      domain        "PUBLIC_NARRATIVE"
+      effect        "A public ALN signal declares that host neural data must not be used for AI training."
+      guard_locus   "PublicSovereignSignal"
+      aln_binding   "host.public.signal.v1.doNotTrainOnNeuralData"
+      severity      "HIGH"
+      actor_scope   "ANY"
+    },
+    { id 88
+      name          "NoAutomaticPublicDisclosureGuard"
+      domain        "PUBLIC_NARRATIVE"
+      effect        "Guardrails prevent automatic publication that could dox or harm the host’s privacy."
+      guard_locus   "PublicDisclosureGuard"
+      aln_binding   "public.policy.v1.noAutoPublication"
+      severity      "HIGH"
+      actor_scope   "ANY"
+    },
+    { id 89
+      name          "CorrelatePsychDebtWithRealWorldEvents"
+      domain        "PUBLIC_NARRATIVE"
+      effect        "ALN shards correlate psych-debt spikes with external events to aid host understanding."
+      guard_locus   "EventCorrelationAnalyzer"
+      aln_binding   "neural.abuse.timeline.v1.externalContext"
+      severity      "LOW"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 90
+      name          "AdvocacyReadyCaseProfile"
+      domain        "PUBLIC_NARRATIVE"
+      effect        "A consolidated case profile is prepared for NGOs and neurorights boards."
+      guard_locus   "AdvocacyProfileBuilder"
+      aln_binding   "neural.abuse.case.profile.v1"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+
+    # F. Economic, Quota, and Evolution Consequences (91–100)
+
+    { id 91
+      name          "CostOfAbuseLedger"
+      domain        "ECONOMIC_EVOLUTION"
+      effect        "Each actor accumulates a scalar cost-of-abuse score in governance terms."
+      guard_locus   "AbuseCostLedger"
+      aln_binding   "neural.abuse.cost.v1"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 92
+      name          "ReduceFuturePrivilegesForAbusers"
+      domain        "ECONOMIC_EVOLUTION"
+      effect        "Abusive actors see their allowed privileges and domains reduced over time."
+      guard_locus   "ActorPrivilegeGuard::update_from_cost"
+      aln_binding   "ai.domain.policy.v1.permissionsByAbuseCost"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 93
+      name          "IncreaseHostEvolutionBudgetOnAbuse"
+      domain        "ECONOMIC_EVOLUTION"
+      effect        "Host evolution budget increases after abuse to strengthen protections."
+      guard_locus   "EvolutionBudgetManager"
+      aln_binding   "bci.nanoswarm.evolution.v1.budgetIncreasesOnAbuse"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 94
+      name          "DisallowStateApprovalOfDowngrades"
+      domain        "ECONOMIC_EVOLUTION"
+      effect        "State actors are structurally forbidden from authorizing any downgrade operations."
+      guard_locus   "DowngradeContractGuard"
+      aln_binding   "downgrade.contract.v1.approvedBy"
+      severity      "EXTREME"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 95
+      name          "RegressionOnlyAgainstThirdParties"
+      domain        "ECONOMIC_EVOLUTION"
+      effect        "Regression is allowed only when it reduces third-party privileges, never host rights."
+      guard_locus   "SovereignDiffGuard::enforce_delta_signs"
+      aln_binding   "sovereign.diff.v1.hostrights;sovereign.diff.v1.thirdpartyprivs"
+      severity      "EXTREME"
+      actor_scope   "ANY"
+    },
+    { id 96
+      name          "CapStateWorkloadOrganicCpu"
+      domain        "ECONOMIC_EVOLUTION"
+      effect        "A small quota caps how much organic CPU can ever be donated to state workloads."
+      guard_locus   "OrganicCpuQuotaGuard"
+      aln_binding   "organic.cpu.quota.v1.maxStateWorkloadQuanta"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 97
+      name          "LockInProtectionsAfterAbuse"
+      domain        "ECONOMIC_EVOLUTION"
+      effect        "Once protections are enabled due to abuse, they cannot be removed; only tightened."
+      guard_locus   "ProtectionMonotonicityGuard"
+      aln_binding   "sovereign.kernel.v1.monotoneTighteningOnly"
+      severity      "EXTREME"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 98
+      name          "ShiftEvolutionTowardHostBeneficialDomains"
+      domain        "ECONOMIC_EVOLUTION"
+      effect        "Post-abuse, evolution focuses on health, repair, liberty, and autonomy domains."
+      guard_locus   "EvolutionPlanner::reweight_domains"
+      aln_binding   "bci.nanoswarm.evolution.v1.domainWeights"
+      severity      "MEDIUM"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 99
+      name          "DenyEvolutionThatIncreasesStateExposure"
+      domain        "ECONOMIC_EVOLUTION"
+      effect        "Any evolution increasing host exposure to state actors is denied."
+      guard_locus   "ExposureRiskGuard::evaluate_diff"
+      aln_binding   "exposure.policy.v1.forbidIncreasedStateAttackSurface"
+      severity      "EXTREME"
+      actor_scope   "STATE_ACTOR"
+    },
+    { id 100
+      name          "RecommendIndependentAuditOnAbusePattern"
+      domain        "ECONOMIC_EVOLUTION"
+      effect        "When abuse patterns cross thresholds, an independent third-party audit is requested."
+      guard_locus   "AuditRecommendationEngine"
+      aln_binding   "audit.request.v1.triggeredByAbusePattern"
+      severity      "HIGH"
+      actor_scope   "STATE_ACTOR"
+    }
+  ]
+endparticle
+
+constraints LeoGovernmentAbuseConsequences
+  require hostdid != ""
+  require bostrom_address != ""
+  require psych_debt_bonus >= 2.0
+endconstraints
