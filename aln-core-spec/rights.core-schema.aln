@@ -1,27 +1,61 @@
-# File: /aln-core-spec/rights.core-schema.aln
-# Purpose: Defines the generic schema for rights objects, including identifiers, 
+# File: aln-core-spec/rights.core-schema.aln
+# Purpose: Defines the generic schema for rights objects, including identifiers,
 # descriptions, scope, subjects, duties, and conflict-resolution rules.
 
-rights_schema RightsCoreSchema_v1 {
-    definition {
-        right_id            = "string"
-        name                = "string"
-        description         = "string"
-        category            = "enum[NEURORIGHTS, HEALTHCARE, DATA_PROTECTION, COGNITIVE_SOVEREIGNTY]"
-        applies_to          = "list[string]"
-        source_refs         = "list[string]"
-        duties              = "list[duty_object]"
-        conflict_resolution = "enum[HOST_OVERRIDE, SAFETY_FIRST, JURISDICTION_DEFAULT]"
-    }
+aln-schema rights.core-schema.v1
 
-    constraints {
-        unique_id           = "right_id must be globally unique across all catalogs"
-        valid_categories    = "category must be one of the defined enums"
-        non_empty_desc      = "description must contain at least 50 characters"
-    }
+meta
+  id              rights.core-schema.v1
+  version         1.1.0
+  description     Core schema for neurorights and related rights primitives for augmented-citizens.
+  authoritybinding ALN.MIGRATION.CYBERCORE_AUTHORITY.v1
+  hostdid_field   hostdid
+  bostromaddress_field bostrom_address
+endmeta
 
-    relationships {
-        links_to_invariants  = "list[invariant_id]"
-        links_to_enforcement = "list[enforcement_hook_id]"
-    }
-}
+struct Duty
+  id              string   # Stable duty identifier.
+  description     string   # Duty description.
+  bearer          string   # HOST, PROVIDER, STATE, DEVICE_OPERATOR, AI_SYSTEM.
+  action          string   # VERB describing what must be done or avoided.
+  scope           string   # Scope where duty applies.
+endstruct
+
+struct Right
+  id                string   # Stable machine identifier, e.g., MENTAL_PRIVACY.
+  name              string   # Human-readable name of the right.
+  description       string   # Plain-language description of the right.
+  category          string   # NEURORIGHTS, HEALTHCARE, DATA_PROTECTION, COGNITIVE_SOVEREIGNTY.
+  applies_to        string   # Serialized list of subject types or assets this right applies to.
+  source_refs       string   # Serialized list of external legal/ethical references.
+  duties            Duty[]   # Duties associated with this right.
+  conflict_resolution string # HOST_OVERRIDE, SAFETY_FIRST, JURISDICTION_DEFAULT.
+  neuroright_class  string   # MENTAL_PRIVACY, COGNITIVE_LIBERTY, MENTAL_INTEGRITY, PSYCHOLOGICAL_CONTINUITY, MENTAL_IDENTITY, OTHER.
+  scope             string   # Domain where this right applies, e.g., NEURAL_DATA, MODULATION, OTA, LEDGER, DEVICE.
+  non_derogable     bool     # True if the right cannot be reduced by any policy or consent artifact.
+  emergency_modes   string   # Serialized list of emergency override labels if any.
+  legal_basis_refs  string   # Serialized list of citation identifiers to external legal / ethical sources.
+  risk_profile_id   string   # Optional reference to a risk profile shard.
+endstruct
+
+struct RightRelation
+  id                string   # Relation identifier.
+  from_right_id     string   # Source right id.
+  to_right_id       string   # Target right id.
+  relation_type     string   # STRENGTHENS, CONSTRAINS, DEPENDS_ON, CONFLICTS_WITH.
+  description       string   # Human-readable explanation of this relation.
+endstruct
+
+struct RightsCatalog
+  id                string   # Catalog id, e.g., RIGHTS_CATALOG_NEURORIGHTS_V1.
+  hostdid           string   # Sovereign host DID.
+  bostrom_address   string   # Bound Bostrom account address.
+  rights            Right[]  # All rights in this catalog.
+  relations         RightRelation[] # Cross-right relations.
+endstruct
+
+constraints RightsCatalog
+  require id != ""
+  require hostdid != ""
+  require bostrom_address != ""
+endconstraints
