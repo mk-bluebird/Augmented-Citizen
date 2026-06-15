@@ -1,0 +1,98 @@
+aln
+destination-path aln-jurisdiction/aln.jurisdiction.phoenix.neuralprohibitions.v1.aln
+particle aln.jurisdiction.phoenix.neuralprohibitions.v1
+
+meta
+  id aln.jurisdiction.phoenix.neuralprohibitions.v1
+  version 1.0.0
+  description Phoenix / Maricopa jurisdictional neurorights floor and explicit neural prohibitions for LEO and RTCC actors.
+  authoritybinding ALN.MIGRATION.CYBERCOREAUTHORITY.v1
+  evolutionsourcerepo github.com/mk-bluebird/Cybercore.git
+  invariantsroot invariants.cognitive-liberty.v1, invariants.mental-privacy.v1, invariants.mental-integrity.v1
+endmeta
+
+import
+  NeurorightsCatalog from aln-core-spec/rights.catalog.neurorights.v1.aln
+  NeuralAbuseEvent from aln-core-spec/events/aln.neural.abuse.event.v1.aln
+  SovereignHostKernel from aln,cybernano,sovereign-host-kernel,v1.aln
+  RiskProfileCore from mt6883.risk.profile.v1.aln
+endimport
+
+struct PhoenixJurisdictionHeader
+  jurisdictioncode string   -- US-AZ-MARICOPA-PHOENIX
+  city             string   -- Phoenix
+  county           string   -- Maricopa
+  state            string   -- AZ
+  country          string   -- US
+  effectivedateutc string   -- RFC3339
+  reviewcycledays  u32
+endstruct
+
+struct PhoenixNeurorightsFloor
+  mentalprivacy             bool
+  cognitiveliberty          bool
+  mentalintegrity           bool
+  psychologicalcontinuity   bool
+  mentalidentity            bool
+  noncoercion               bool
+  nondiscrimination         bool
+  revocability              bool
+endstruct
+
+struct PhoenixRiskConstraints
+  rohceilingglobal          f32
+  psychriskceilingdefault   f32
+  psychriskceilingsleep     f32
+  maxpainvas                f32
+  maxfearscore              f32
+  detoxrequirediftoxin      bool
+endstruct
+
+struct PhoenixLeoActorClass
+  code        string  -- LEO_PHX_PD, LEO_MARICOPA_SHERIFF, etc.
+  description string
+endstruct
+
+struct PhoenixProhibition
+  id                          string
+  description                 string
+  appliesactorclasses         string   -- CSV of PhoenixLeoActorClass.code
+  operationtypes              string   -- CSV: BCI_READ, XR_STIM, ...
+  requiresexplicitconsent     bool
+  requireshostcounselpresent  bool
+  requiresneurorightscourt    bool
+  forbidsconsentunderduress   bool
+  alwaysabuse                 bool
+  alwaysabuseifmissingguards  bool
+endstruct
+
+struct PhoenixRTCCBinding
+  rtccsystemtags          string  -- CSV: PHX_RTCC, PHX_OEMC, ...
+  rtccdefaultactorclass   string  -- e.g. LEO_PHX_PD
+  abuseeventtype          string  -- aln.neural.abuse.event.v1
+  jurisdictionfield       string  -- header.jurisdictiontag
+  leoagencyfield          string  -- contextsnapshot.leoAgencyCode
+endstruct
+
+struct PhoenixNeuralProhibitions
+  header          PhoenixJurisdictionHeader
+  rightsfloor     PhoenixNeurorightsFloor
+  riskconstraints PhoenixRiskConstraints
+  leoactors       PhoenixLeoActorClass[]
+  prohibitions    PhoenixProhibition[]
+  rtccbinding     PhoenixRTCCBinding
+endstruct
+
+constraints PhoenixNeuralProhibitions
+  require header.jurisdictioncode == "US-AZ-MARICOPA-PHOENIX"
+  require rightsfloor.mentalprivacy == true
+  require rightsfloor.cognitiveliberty == true
+  require riskconstraints.rohceilingglobal <= 0.30
+  require riskconstraints.psychriskceilingdefault <= 0.60
+  require riskconstraints.psychriskceilingsleep <= 0.30
+  require riskconstraints.maxpainvas <= 7.0
+  require riskconstraints.maxfearscore <= 0.80
+  require rtccbinding.abuseeventtype == "aln.neural.abuse.event.v1"
+  require rtccbinding.jurisdictionfield == "header.jurisdictiontag"
+  require rtccbinding.leoagencyfield == "contextsnapshot.leoAgencyCode"
+endconstraints
