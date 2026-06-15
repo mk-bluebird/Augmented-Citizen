@@ -1,0 +1,76 @@
+# File: particles/bio.safety.envelope.detox.toxin-stack.v1.aln
+# Destination: particles/bio.safety.envelope.detox.toxin-stack.v1.aln
+
+aln bio.safety.envelope.detox.toxin-stack.v1
+
+meta
+  id bio.safety.envelope.detox.toxin-stack.v1
+  version 1.0.0
+  description Unified detox safety envelope for heavy metals, alcohol, and nicotine.
+  authoritybinding ALN.MIGRATION.CYBERCORE_AUTHORITY.v1
+  hostdid_field hostdid
+  bostromaddress_field bostrom_address
+endmeta
+
+struct MetalBurdenCorridor
+  labpanelid     string
+  labrefunit     string
+  maxlead        f32
+  maxcadmium     f32
+  maxmercury     f32
+  maxarsenic     f32
+  maxburdenindex f32
+endstruct
+
+struct AlcoholDetoxCorridor
+  maxgramsperday    f32
+  maxgramsperweek   f32
+  mindrydaysperweek u8
+  maxliverenzymeratio f32
+  requireabstinence bool
+endstruct
+
+struct NicotineDetoxCorridor
+  maxmgperday      f32
+  maxmgperweek     f32
+  maxsessionsperday u8
+  taperweeks       u8
+  minweeklydeltamg f32
+  requireabruptquit bool
+endstruct
+
+struct OrganSafetyBounds
+  maxaltratio       f32
+  maxastratio       f32
+  maxcreatinineratio f32
+  maxbpsystolic     f32
+  maxhr             f32
+endstruct
+
+struct DetoxPhaseFlags
+  active               bool
+  supervisedmedically  bool
+  chelationinuse       bool
+  alcoholabstinencemode bool
+  nicotineabstinencemode bool
+endstruct
+
+struct DetoxToxinStackEnvelope
+  envelopeid       string
+  hostdid          string
+  bostrom_address  string
+  metalcorridor    MetalBurdenCorridor
+  alcoholcorridor  AlcoholDetoxCorridor
+  nicotinecorridor NicotineDetoxCorridor
+  organsafety      OrganSafetyBounds
+  phaseflags       DetoxPhaseFlags
+  rehabloopid      string
+  ecocorridorid    string
+endstruct
+
+constraints DetoxToxinStackEnvelope
+  require hostdid != ""
+  require bostrom_address != ""
+  require rehabloopid != ""
+  require ecocorridorid != ""
+endconstraints
