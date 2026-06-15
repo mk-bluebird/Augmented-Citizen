@@ -1,0 +1,7 @@
+aln,cybernano,neural-skill-catalogue,v2
+token_id,group,name,risk_class,max_roh_delta,requires_consent,source
+t_neurocalm,therapy,neurocalm,low,0.00,false,clin-evidence-2026-02
+t_focus_up,therapy,focus-up,medium,0.02,true,clin-evidence-2026-03
+t_override_pain,coercive,override-pain,high,0.08,true,ethics-review-2026-01
+t_forced_motion,coercive,forced-motion,high,0.10,true,ethics-review-2026-01
+...
