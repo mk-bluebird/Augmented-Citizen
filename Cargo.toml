@@ -11,6 +11,7 @@ members = [
     "crates/augmented-id-guard",
     "crates/bioscale-upgrade-store",
     "crates/drone-kernel",
+    "crates/cybernano-intent",
 
     # InfraNet / VitalNet / ALN planes
     "crates/ac-aln-core",
