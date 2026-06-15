@@ -12,6 +12,7 @@ members = [
     "crates/bioscale-upgrade-store",
     "crates/drone-kernel",
     "crates/cybernano-intent",
+    "crates/biophysical-blockchains",
 
     # InfraNet / VitalNet / ALN planes
     "crates/ac-aln-core",
