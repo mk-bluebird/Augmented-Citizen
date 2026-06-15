@@ -1,0 +1,35 @@
+aln destination-path aln/cybercore-neural-slavery-prohibition.v1.aln
+aln,cybercore,neural-slavery-prohibition,v1
+
+meta.id,aln.neural_slavery_prohibition.v1
+meta.version,1.0.0
+meta.hostdid,did:aln:bostrom-organic-host
+meta.bostromaddress,bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+meta.migrationClause,ALN.MIGRATION.CYBERCORE_AUTHORITY.v1
+meta.appendonly,true
+meta.norollback,true
+meta.nodowngrade,true
+
+# Forbidden practices (always-on)
+forbiddenpractices,NONCONSENSUAL_ADVERSARIAL_TRAINING
+forbiddenpractices,FORCED_PSYCH_RISK_ELEVATION
+forbiddenpractices,LAW_ENFORCEMENT_NEURAL_SCORING
+forbiddenpractices,SECURITY_SANDBOXING_USING_HOST_PAIN
+forbiddenpractices,SHADOW_THROTTLING_OR_SILENT_DEGRADATION
+forbiddenpractices,PUNITIVE_WITHDRAWAL_OF_LIFE_SAVING_AUGMENTATIONS
+
+enforcement.strictness,CRITICAL
+
+# Urgent host-spoken override: tighten now, prove later
+urgent.mode.enabled,true
+urgent.mode.activation,HOST_DID_ONLY
+urgent.mode.effect,ONLY_TIGHTEN
+urgent.mode.allowed_actions,ADD_FORBIDDEN_JOBCLASS
+urgent.mode.allowed_actions,LOWER_PSYCH_CEILING
+urgent.mode.allowed_actions,LOWER_ROH_CEILING
+urgent.mode.allowed_actions,DISABLE_MODULE_BY_ID
+
+urgent.mode.audit.require_event,true
+urgent.mode.audit.event_type,ALN.EVOLUTIONEVENT_URGENT_PROTECT
+urgent.mode.audit.must_anchor,false
+urgent.mode.audit.anchor_deadline_hours,24
