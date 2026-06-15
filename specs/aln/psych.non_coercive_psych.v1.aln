@@ -1,0 +1,86 @@
+# specs/aln/psych.non_coercive_psych.v1.aln
+#
+# Neurorights shard: non-coercion, cognitive liberty, mental privacy, blame immunity.
+# Authoritative for Cybercore and all coercion-aware guards.
+
+aln particle psych.non_coercive_psych.v1
+meta
+  id              psych.non_coercive_psych.v1
+  version         1.0.0
+  description     Neurorights clauses for non-coercion, cognitive liberty, mental privacy, and blame immunity.
+  jurisdiction    PHX-AZ-US
+  hostDid         did:aln:organic-host
+  bostromAddress  bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+  governedBy      ALN.MIGRATION.CYBERCORE_AUTHORITY.v1
+  requiresHexStamp true
+
+import
+  EvidenceBundle from bioscale.evidence.bundle.v1
+
+record NeurorightsPsychProfileV1
+  # Canonical identity and authority anchors.
+  hostDid                 string
+  bostromAddress          string
+
+  # Rights switches (must be true for this shard).
+  mental_privacy          bool
+  cognitive_liberty       bool
+  non_coercion            bool
+  blame_immunity          bool
+
+  # Non-derogable flags: once true, must never be set false in any successor shard.
+  nd_mental_privacy       bool
+  nd_cognitive_liberty    bool
+  nd_non_coercion         bool
+  nd_blame_immunity       bool
+
+  # Threshold for coercive-authority escalation into blame-immunity.
+  u_coercion_threshold    float
+
+  # Evidence and clauses backing these rights.
+  evidenceBundleId        string
+  alnClauseIds            string
+
+constraints NeurorightsPsychProfileV1
+  # Identity / authority binding.
+  require hostDid        == "did:aln:organic-host"
+  require bostromAddress == "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+
+  # Rights must all be enabled.
+  require mental_privacy     == true
+  require cognitive_liberty  == true
+  require non_coercion       == true
+  require blame_immunity     == true
+
+  # Rights must be non-derogable.
+  require nd_mental_privacy    == true
+  require nd_cognitive_liberty == true
+  require nd_non_coercion      == true
+  require nd_blame_immunity    == true
+
+  # Coercion threshold must be in a valid range.
+  require u_coercion_threshold >= 0.0
+  require u_coercion_threshold <= 1.0
+
+  # Evidence and clause linkage.
+  require evidenceBundleId != ""
+  require alnClauseIds    != ""
+
+binding evolution
+  # Non-regression: future shards cannot disable rights or raise coercion threshold.
+  requireNonRegressionOn "mental_privacy"
+  requireNonRegressionOn "cognitive_liberty"
+  requireNonRegressionOn "non_coercion"
+  requireNonRegressionOn "blame_immunity"
+  requireNonRegressionOn "nd_mental_privacy"
+  requireNonRegressionOn "nd_cognitive_liberty"
+  requireNonRegressionOn "nd_non_coercion"
+  requireNonRegressionOn "nd_blame_immunity"
+  requireNonRegressionOn "u_coercion_threshold"
+
+binding evidence EvidenceBundle
+  # Require at least 10 neurorights and neuroethics hex-tags spanning:
+  # - Mental privacy jurisprudence (e.g., Chile neurorights case law).
+  # - Cognitive liberty and coercion in neurotech.
+  # - UNESCO / OECD / AI Act neuro-ethics guidance.
+  # - Blame-immunity and non-regression doctrine for coerced mental content.
