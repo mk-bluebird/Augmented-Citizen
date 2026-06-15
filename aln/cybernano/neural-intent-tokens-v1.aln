@@ -1,0 +1,9 @@
+aln,neural,intent_token_set,v1
+token_set_id,host_intent_tokens_v1
+allowed_tokens,REST,LOG_HOSTILE,ASK_STATE,SWITCH_MODE,PAUSE_DUTY
+max_token_count,16
+neurorights_binding,aln.neuro.constitution.v1
+sko_skill_catalogue,aln.neural_skill_catalogue.v1
+roh_ceiling_binding,aln.cybernano.roh-corridor.v3
+modebind,host,KernelSelector,,NEURAL_INTENT,,Any,kernel-map-v1
+auditbind,host,ALNChain,,googolswarmtxid0x72da09f3,,Any,audit-spec-v1
