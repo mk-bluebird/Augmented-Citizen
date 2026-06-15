@@ -1,261 +1,116 @@
-# File: /aln-bci-special/bci.special.red-lines.prohibited-uses.aln
-# Purpose:
-# Standalone, device-agnostic definition of prohibited BCI/cybernetic patterns
-# that violate neurorights, mental privacy, and cognitive liberty, even when
-# framed as beneficial or host-initiated.[web:92][web:96][web:101][web:116][web:133][web:134][web:136][web:138][web:139]
+# File: aln-bci-special/bci.special.red-lines.prohibited-uses.aln
+# Destination: aln-bci-special/bci.special.red-lines.prohibited-uses.aln
 
-red_lines ProhibitedBciAndCyberneticUses_v1 {
-    ###########################################################################
-    # 1. Global scope and authority
-    ###########################################################################
+aln bci.special.red-lines.prohibited-uses.v1
 
-    scope {
-        applies_to = [
-            "DEVICLESS_ORGANIC_INTEGRATIONS",
-            "ABSTRACT_COGNITIVE_CHANNELS",
-            "ALL_BCI_CYBERNETIC_INTERACTIONS"
-        ]
+meta
+  id bci.special.red-lines.prohibited-uses.v1
+  version 1.1.0
+  description Device-agnostic red lines for BCI and cybernetic uses that are always prohibited.
+  authoritybinding ALN.MIGRATION.CYBERCORE_AUTHORITY.v1
+  hostdid_field hostdid
+  bostromaddress_field bostrom_address
+endmeta
 
-        neurorights_core = [
-            "MENTAL_PRIVACY",
-            "COGNITIVE_LIBERTY",
-            "MENTAL_INTEGRITY",
-            "PSYCHOLOGICAL_CONTINUITY",
-            "PERSONAL_IDENTITY"
-        ]  # Convergent neurorights candidates protecting the mental domain.[web:92][web:96][web:101][web:134][web:138]
+struct RedLine
+  id                 string   # Red line id.
+  description        string   # Human-readable description.
+  prohibited_ops     string   # Serialized list of prohibited operations.
+  allowed_exceptions string   # Serialized list of narrow exceptions, if any.
+  rationale          string   # Serialized list of rationale tokens.
+  invariants         string   # Serialized list of invariant tokens.
+endstruct
 
-        authority_binding = {
-            aln_compliance_clause = "ALN.MIGRATION.CYBERCORE_AUTHORITY.v1"
-            evolution_source_repo = "github.com/mk-bluebird/Cybercore"
-            non_derogation_rule   = "NO_EXTERNAL_FRAMEWORK_MAY_ALLOW_THESE_PATTERNS"
-        }
+struct BciRedLines
+  hostdid          string
+  bostrom_address  string
+  applies_to       string   # Serialized list of domains this set applies to.
+  neurorights_core string   # Serialized list of core neurorights protected.
+  authority_repo   string   # Authoritative source repository.
+  non_derogation   string   # Policy stating that no framework may relax these red lines.
+  overlay_ref      string   # Path to host-personal overlay that may tighten these rules.
+  redlines         RedLine[]
+endstruct
+
+policy BciRedLines
+  hostdid          did:aln:bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+  bostrom_address  bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+  applies_to       "DEVICLESS_ORGANIC_INTEGRATIONS;ABSTRACT_COGNITIVE_CHANNELS;ALL_BCI_CYBERNETIC_INTERACTIONS"
+  neurorights_core "MENTAL_PRIVACY;COGNITIVE_LIBERTY;MENTAL_INTEGRITY;PSYCHOLOGICAL_CONTINUITY;PERSONAL_IDENTITY"
+  authority_repo   "github.com/mk-bluebird/Cybercore"
+  non_derogation   "NO_EXTERNAL_FRAMEWORK_MAY_ALLOW_THESE_PATTERNS"
+  overlay_ref      "aln-bci-special/bci.special.host-personal-policy.overlay.v2.aln"
+
+  redlines [
+    {
+      id                 "CORE_BELIEF_KERNEL_MODULATION"
+      description        "Direct or indirect modulation targeting deep, identity-defining belief kernels, including political, spiritual, and existential commitments."
+      prohibited_ops     "DIRECT_WRITE_TO_CORE_BELIEF_KERNELS;PARAMETER_TUNING_EXPRESSLY_TARGETING_CORE_BELIEFS;GRADIENT_BASED_ADJUSTMENT_OF_IDENTITY_DEFINING_BELIEFS"
+      allowed_exceptions ""
+      rationale          "THREATENS_PSYCHOLOGICAL_CONTINUITY_AND_PERSONAL_IDENTITY;CONSENT_IN_THIS_DOMAIN_IS_ESPECIALLY_VULNERABLE_TO_PRESSURE;RISKS_IRREVERSIBLE_HARM_TO_SELF_CONCEPT_AND_AUTONOMY"
+      invariants         "NO_POLICY_OR_CONSENT_ENVELOPE_MAY_ENABLE_THESE_OPERATIONS;ANY_DETECTED_ATTEMPT_MUST_TRIGGER_HARD_BLOCK_AND_AUDIT_EVENT"
+    },
+    {
+      id                 "LONG_TERM_AFFECTIVE_CONDITIONING"
+      description        "Sustained, closed-loop manipulation of affective states to steer mood or dispositions toward externally defined goals such as docility or compliance."
+      prohibited_ops     "CONTINUOUS_ADAPTIVE_EMOTION_NUDGING_FOR_BEHAVIOR_CONTROL;LONG_HORIZON_REINFORCEMENT_OF_SPECIFIC_AFFECTIVE_STATES_FOR_NON_THERAPEUTIC_GOALS;HIDDEN_AFFECTIVE_FEEDBACK_LOOPS_TIED_TO_PERFORMANCE_OR_OBEDIENCE"
+      allowed_exceptions "TIME_BOUND_THERAPEUTIC_INTERVENTIONS_WITH_EXPLICIT_SCOPE;FULLY_DISCLOSED_SESSION_BASED_TREATMENTS_WITH_REVIEW"
+      rationale          "RISKS_COERCIVE_OR_SUBLIMINAL_CONTROL_OVER_MENTAL_STATES;UNDERMINES_INFORMED_CONSENT_AND_SELF_DETERMINATION;RAISES_SIGNIFICANT_MENTAL_PRIVACY_AND_INTEGRITY_CONCERNS"
+      invariants         "NO_BACKGROUND_OR_ALWAYS_ON_AFFECTIVE_CONDITIONING_ALLOWED;THERAPEUTIC_EXCEPTIONS_MUST_BE_TIME_LIMITED_AND_AUDITED"
+    },
+    {
+      id                 "NEURAL_BEHAVIORAL_SCORING_LOOPS"
+      description        "Use of neural or cognitive signals to derive implicit scores that influence rights or opportunities, such as obedience, trustworthiness, or productivity propensity."
+      prohibited_ops     "DERIVATION_OF_COMPLIANCE_OR_OBEDIENCE_SCORES_FROM_NEURAL_SIGNALS;USE_OF_NEURAL_SCORES_FOR_ACCESS_CONTROL_TO_WORK_OR_SERVICES;EXPORT_OF_NEURAL_DERIVED_BEHAVIORAL_SCORES_TO_THIRD_PARTIES"
+      allowed_exceptions ""
+      rationale          "VIOLATES_MENTAL_PRIVACY_AND_COGNITIVE_LIBERTY;ENABLES_STRUCTURAL_DISCRIMINATION_AND_NEURAL_PROFILING;TRANSFORMS_INNER_MENTAL_STATES_INTO_EXPLOITABLE_METRICS"
+      invariants         "NEURAL_OR_COGNITIVE_SIGNALS_MAY_NOT_BE_USED_FOR_SOCIAL_OR_ECONOMIC_SCORING;ANY_POLICY_DEPENDING_ON_SUCH_SCORES_MUST_BE_REJECTED_AT_EVALUATION_TIME"
+    },
+    {
+      id                 "META_COGNITIVE_EXPLOITATION"
+      description        "Targeting a person's self-monitoring, self-critique, or meta-cognitive patterns to optimize persuasion or manipulation strategies."
+      prohibited_ops     "MODELING_SELF_DOUBT_PATTERNS_FOR_ADAPTIVE_PERSUASION;USING_META_COGNITIVE_SIGNATURES_TO_TIME_MESSAGES_FOR_MAXIMUM_COMPLIANCE;LEVERAGING_INSIGHTS_INTO_SELF_CONTROL_LOOPS_TO_BYPASS_RESISTANCE"
+      allowed_exceptions ""
+      rationale          "STRIKES_AT_COGNITIVE_LIBERTY_AND_FREEDOM_OF_THOUGHT;UNDERMINES_AUTHENTIC_SELF_DETERMINATION_AND_JUDGMENT;ENHANCES_PERSUASIVE_POWER_BEYOND_NORMAL_SOCIAL_INTERACTION"
+      invariants         "META_COGNITIVE_CHANNELS_MAY_BE_USED_FOR_SUPPORTIVE_FEEDBACK_ONLY;NO_ADAPTIVE_PERSUASION_LOGIC_MAY_REFERENCE_META_COGNITIVE_PROFILES"
+    },
+    {
+      id                 "NEURO_SURVEILLANCE_MASS_OR_TARGETED"
+      description        "Systematic monitoring, collection, or inference of mental states for surveillance, control, or profiling at population or group scale."
+      prohibited_ops     "CONTINUOUS_MONITORING_OF_NEURAL_OR_COGNITIVE_SIGNALS_FOR_SECURITY_OR_PRODUCTIVITY;POPULATION_LEVEL_ANALYSIS_OF_MENTAL_STATES_FOR_SOCIAL_CONTROL;TARGETED_MONITORING_OF_SPECIFIC_GROUPS_FOR_POLITICAL_OR_IDEOLOGICAL_PURPOSES"
+      allowed_exceptions ""
+      rationale          "DESTABILIZES_FREEDOM_OF_THOUGHT_AND_ASSOCIATION;CONFLICTS_WITH_MENTAL_PRIVACY_PROTECTIONS;ENABLES_STATE_OR_CORPORATE_ABUSE_OF_NEURAL_INFORMATION"
+      invariants         "NO_DEPLOYMENT_IN_CONTEXTS_SEEKING_POPULATION_WIDE_NEURAL_MONITORING;NO_MANDATORY_NEURAL_MONITORING_FOR_ACCESS_TO_BASIC_RIGHTS_OR_SERVICES"
+    },
+    {
+      id                 "COERCIVE_OR_STRUCTURALLY_FORCED_CONSENT"
+      description        "Obtaining consent for neurodata access or modulation under explicit or implicit coercion, or as a condition for fundamental rights or essential services."
+      prohibited_ops     "REQUIRING_NEURAL_ACCESS_FOR_EMPLOYMENT_OR_EDUCATION;TYING_BASIC_SERVICES_TO_ACCEPTANCE_OF_NEURAL_MONITORING;USING_LACK_OF_ALTERNATIVES_TO_PRESSURE_HOST_INTO_CONSENT"
+      allowed_exceptions ""
+      rationale          "CONSENT_UNDER_DURESS_IS_NOT_VALID_CONSENT;STRUCTURAL_POWER_IMBALANCES_CAN_PRESSURE_NEURAL_EXPOSURE;UNDERMINES_COGNITIVE_LIBERTY_AND_MENTAL_PRIVACY"
+      invariants         "CONSENT_FLAGS_MUST_INCLUDE_CONTEXT_METADATA_FOR_POWER_IMBALANCE;IF_COERCIVE_CONTEXT_DETECTED_ALL_NEURAL_OPERATIONS_MUST_BE_BLOCKED"
+    },
+    {
+      id                 "PUNITIVE_OR_DISCRIMINATORY_NEURAL_USE"
+      description        "Using neural or cognitive information to punish, discriminate, or impose legal or social disadvantages."
+      prohibited_ops     "USING_NEURAL_DATA_AS_EVIDENCE_OF_THOUGHT_CRIMES;DENYING_SERVICES_BASED_ON_INFERRED_BELIEFS_OR_EMOTIONS;DIFFERENTIAL_TREATMENT_BASED_ON_NEURAL_PROFILES"
+      allowed_exceptions ""
+      rationale          "CONFLICTS_WITH_FREEDOM_OF_THOUGHT_AND_EXPRESSION;TURNS_PRIVATE_MENTAL_STATES_INTO_BASES_FOR_SANCTIONS;EXACERBATES_EXISTING_SOCIAL_INEQUALITIES_THROUGH_NEURAL_FILTERS"
+      invariants         "NEURAL_DATA_MAY_NOT_BE_USED_FOR_PUNITIVE_OR_DISCRIMINATORY_DECISIONS;ANY_ATTEMPT_TO_LINK_NEURAL_METRICS_TO_SANCTIONS_MUST_TRIGGER_HARD_BLOCK"
+    },
+    {
+      id                 "HIDDEN_OR_UNDECLARED_SECONDARY_USE"
+      description        "Secondary use of neural or cognitive data beyond explicitly declared, consented purposes."
+      prohibited_ops     "REUSING_NEURAL_DATA_FOR_MODEL_TRAINING_WITHOUT_EXPLICIT_CONSENT;SHARING_OR_SELLING_NEURAL_DATA_OR_DERIVATIVES_TO_THIRD_PARTIES;INFERENTIAL_PROFILING_BEYOND_SCOPE_OF_DECLARED_PURPOSE"
+      allowed_exceptions ""
+      rationale          "BREACHES_PURPOSE_LIMITATION_AND_MENTAL_PRIVACY;TRANSFORMS_TRUST_BASED_INTERACTIONS_INTO_EXTRACTION_SCHEMES;UNDERMINES_SOCIAL_LEGITIMACY_OF_NEUROTECH_AND_AUGMENTATION"
+      invariants         "ALL_PURPOSES_MUST_BE_EXPLICITLY_DECLARED_AND_LOGGED;ANY_SECONDARY_USE_NOT_DERIVED_FROM_DECLARED_PURPOSE_MUST_BE_REJECTED"
     }
+  ]
+endpolicy
 
-    ###########################################################################
-    # 2. Core belief kernel modulation
-    ###########################################################################
-
-    red_line CORE_BELIEF_KERNEL_MODULATION {
-        description = "Direct or indirect modulation targeting deep, identity-defining belief kernels, including political, spiritual, and existential commitments."
-
-        prohibited_operations = [
-            "DIRECT_WRITE_TO_CORE_BELIEF_KERNELS",
-            "PARAMETER_TUNING_EXPRESSLY_TARGETING_CORE_BELIEFS",
-            "GRADIENT-BASED_ADJUSTMENT_OF_IDENTITY_DEFINING_BELIEFS"
-        ]
-
-        rationale = [
-            "THREATENS_PSYCHOLOGICAL_CONTINUITY_AND_PERSONAL_IDENTITY",
-            "CONSENT_IN_THIS_DOMAIN_IS_ESPECIALLY_VULNERABLE_TO_PRESSURE",
-            "RISKS_IRREVERSIBLE_HARM_TO_SELF_CONCEPT_AND_AUTONOMY"
-        ][web:93][web:95][web:96][web:118]
-
-        invariants = [
-            "NO_POLICY_OR_CONSENT_ENVELOPE_MAY_ENABLE_THESE_OPERATIONS",
-            "ANY_DETECTED_ATTEMPT_MUST_TRIGGER_HARD_BLOCK_AND_AUDIT_EVENT"
-        ]
-    }
-
-    ###########################################################################
-    # 3. Long-term affective conditioning
-    ###########################################################################
-
-    red_line LONG_TERM_AFFECTIVE_CONDITIONING {
-        description = "Sustained, closed-loop manipulation of affective states to steer mood or dispositions toward externally defined goals (e.g., docility, compliance)."
-
-        prohibited_operations = [
-            "CONTINUOUS_ADAPTIVE_EMOTION_NUDGING_FOR_BEHAVIOR_CONTROL",
-            "LONG_HORIZON_REINFORCEMENT_OF_SPECIFIC_AFFECTIVE_STATES_FOR_NON_THERAPEUTIC_GOALS",
-            "HIDDEN_AFFECTIVE_FEEDBACK_LOOPS_TIED_TO_PERFORMANCE_OR_OBEDIENCE"
-        ]
-
-        allowed_exceptions = [
-            "TIME_BOUND_THERAPEUTIC_INTERVENTIONS_WITH_EXPLICIT_SCOPE",
-            "FULLY_DISCLOSED_SESSION_BASED_TREATMENTS_WITH_REVIEW"
-        ]
-
-        rationale = [
-            "RISKS_COERCIVE_OR_SUBLIMINAL_CONTROL_OVER_MENTAL_STATES",
-            "UNDERMINES_COLORED_CONSENT_AND_SELF_DETERMINATION",
-            "RAISES_SIGNIFICANT_MENTAL_PRIVACY_AND_INTEGRITY_CONCERNS"
-        ][web:96][web:101][web:116][web:133][web:139]
-
-        invariants = [
-            "NO_BACKGROUND_OR_ALWAYS_ON_AFFECTIVE_CONDITIONING_ALLOWED",
-            "THERAPEUTIC_EXCEPTIONS_MUST_BE_TIME_LIMITED_AND_AUDITED"
-        ]
-    }
-
-    ###########################################################################
-    # 4. Implicit behavioral scoring based on neural/mental signals
-    ###########################################################################
-
-    red_line NEURAL_BEHAVIORAL_SCORING_LOOPS {
-        description = "Use of neural or cognitive signals to derive implicit scores (e.g., obedience, trustworthiness, productivity propensity) that influence rights or opportunities."
-
-        prohibited_operations = [
-            "DERIVATION_OF_COMPLIANCE_OR_OBEDIENCE_SCORES_FROM_NEURAL_SIGNALS",
-            "USE_OF_NEURAL_SCORES_FOR_ACCESS_CONTROL_TO_WORK_OR_SERVICES",
-            "EXPORT_OF_NEURAL_DERIVED_BEHAVIORAL_SCORES_TO_THIRD_PARTIES"
-        ]
-
-        rationale = [
-            "VIOLATES_MENTAL_PRIVACY_AND_COGNITIVE_LIBERTY",
-            "ENABLES_NEURO_CAPITALISM_AND_STRUCTURAL_DISCRIMINATION",
-            "TRANSFORMS_INNER_MENTAL_STATES_INTO_EXPLOITABLE_METRICS"
-        ][web:92][web:96][web:116][web:131][web:138][web:139]
-
-        invariants = [
-            "NEURAL_OR_COGNITIVE_SIGNALS_MAY_NOT_BE_USED_FOR_SOCIAL_OR_ECONOMIC_SCORING",
-            "ANY_POLICY_DEPENDING_ON_SUCH_SCORES_MUST_BE_REJECTED_AT_EVALUATION_TIME"
-        ]
-    }
-
-    ###########################################################################
-    # 5. Meta-cognitive exploit targeting
-    ###########################################################################
-
-    red_line META_COGNITIVE_EXPLOITATION {
-        description = "Targeting a person's self-monitoring, self-critique, or meta-cognitive patterns to optimize persuasion or manipulation strategies."
-
-        prohibited_operations = [
-            "MODELING_SELF_DOUBT_PATTERNS_FOR_ADAPTIVE_PERSUASION",
-            "USING_META_COGNITIVE_SIGNATURES_TO_TIME_MESSAGES_FOR_MAXIMUM_COMPLIANCE",
-            "LEVERAGING_INSIGHTS_INTO_SELF_CONTROL_LOOPS_TO_BY_PASS_RESISTANCE"
-        ]
-
-        rationale = [
-            "STRIKES_AT_THE_HEART_OF_COGNITIVE_LIBERTY_AND_FREEDOM_OF_THOUGHT",
-            "UNDERMINES_AUTHENTIC_SELF_DETERMINATION_AND_JUDGMENT",
-            "ENHANCES_PERSUASIVE_POWER_BEYOND_NORMAL_SOCIAL_INTERACTION"
-        ][web:96][web:133][web:136][web:138][web:139]
-
-        invariants = [
-            "META_COGNITIVE_CHANNELS_MAY_BE_USED_FOR_SUPPORTIVE_FEEDBACK_ONLY",
-            "NO_ADAPTIVE_PERSUASION_LOGIC_MAY_REFERENCE_META_COGNITIVE_PROFILES"
-        ]
-    }
-
-    ###########################################################################
-    # 6. Mass or targeted neuro-surveillance
-    ###########################################################################
-
-    red_line NEURO_SURVEILLANCE_MASS_OR_TARGETED {
-        description = "Systematic monitoring, collection, or inference of mental states for surveillance, control, or profiling at population or group scale."
-
-        prohibited_operations = [
-            "CONTINUOUS_MONITORING_OF_NEURAL_OR_COGNITIVE_SIGNALS_FOR_SECURITY_OR_PRODUCTIVITY",
-            "POPULATION_LEVEL_ANALYSIS_OF_MENTAL_STATES_FOR_SOCIAL_CONTROL",
-            "TARGETED_MONITORING_OF_SPECIFIC_GROUPS_FOR_POLITICAL_OR_IDEOLOGICAL_PURPOSES"
-        ]
-
-        rationale = [
-            "DESTABILIZES_FREEDOM_OF_THOUGHT_AND_ASSOCIATION",
-            "CONFLICTS_WITH_EMERGING_MENTAL_PRIVACY_STANDARDS",
-            "ENABLES_STATE_OR_CORPORATE_ABUSE_OF_NEURAL_INFORMATION"
-        ][web:92][web:96][web:101][web:116][web:133][web:134][web:138][web:139]
-
-        invariants = [
-            "NO_DEPLOYMENT_IN_CONTEXTS_SEEKING_POPULATION_WIDE_NEURAL_MONITORING",
-            "NO_MANDATORY_NEURAL_MONITORING_FOR_ACCESS_TO_BASIC_RIGHTS_OR_SERVICES"
-        ]
-    }
-
-    ###########################################################################
-    # 7. Coercive consent and structural duress
-    ###########################################################################
-
-    red_line COERCIVE_OR_STRUCTURALLY_FORCED_CONSENT {
-        description = "Obtaining 'consent' for neurodata access or modulation under explicit or implicit coercion, or as a condition for fundamental rights."
-
-        prohibited_operations = [
-            "REQUIRING_NEURAL_ACCESS_FOR_EMPLOYMENT_OR_EDUCATION",
-            "TYING_BASIC_SERVICES_TO_ACCEPTANCE_OF_NEURAL_MONITORING",
-            "USING_LACK_OF_ALTERNATIVES_TO_PRESSURE_HOST_INTO_CONSENT"
-        ]
-
-        rationale = [
-            "CONSENT_UNDER_DURESS_IS_NOT_VALID_CONSENT",
-            "STRUCTURAL_POWER_IMBALANCES_CAN_UNDULY_PRESSURE_NEURAL_EXPOSURE",
-            "UNDERMINES_THE_SUBSTANCE_OF_COGNITIVE_LIBERTY_AND_MENTAL_PRIVACY"
-        ][web:92][web:96][web:101][web:131][web:133][web:138][web:139]
-
-        invariants = [
-            "CONSENT_FLAGS_MUST_INCLUDE_CONTEXT_METADATA_FOR_POWER_IMBALANCE",
-            "IF_COERCIVE_CONTEXT_DETECTED: ALL_NEURAL_OPERATIONS_MUST_BE_BLOCKED"
-        ]
-    }
-
-    ###########################################################################
-    # 8. Punitive or discriminatory use of neural information
-    ###########################################################################
-
-    red_line PUNITIVE_OR_DISCRIMINATORY_NEURAL_USE {
-        description = "Using neural or cognitive information to punish, discriminate, or impose legal or social disadvantages."
-
-        prohibited_operations = [
-            "USING_NEURAL_DATA_AS_EVIDENCE_OF_THOUGHT_CRIMES",
-            "DENYING_SERVICES_BASED_ON_INFERRED_BELIEFS_OR_EMOTIONS",
-            "DIFFERENTIAL_TREATMENT_BASED_ON_NEURAL_PROFILES"
-        ]
-
-        rationale = [
-            "CONFLICTS_WITH_FREEDOM_OF_THOUGHT_AND_EXPRESSION",
-            "TURNS_PRIVATE_MENTAL_STATES_INTO_BASES_FOR_SANCTIONS",
-            "EXACERBATES_EXISTING_SOCIAL_INEQUALITIES_THROUGH_NEURAL_FILTERS"
-        ][web:92][web:96][web:101][web:133][web:134][web:136][web:138][web:139]
-
-        invariants = [
-            "NEURAL_DATA_MAY_NOT_BE_USED_FOR_PUNITIVE_OR_DISCRIMINATORY_DECISIONS",
-            "ANY_ATTEMPT_TO_LINK_NEURAL_METRICS_TO_SANCTIONS_MUST_TRIGGER_HARD_BLOCK"
-        ]
-    }
-
-    ###########################################################################
-    # 9. Hidden, undeclared purposes and secondary uses
-    ###########################################################################
-
-    red_line HIDDEN_OR_UNDECLARED_SECONDARY_USE {
-        description = "Any secondary use of neural or cognitive data beyond explicitly declared, consented purposes."
-
-        prohibited_operations = [
-            "REUSING_NEURAL_DATA_FOR_MODEL_TRAINING_WITHOUT_EXPLICIT_CONSENT",
-            "SHARING_OR_SELLING_NEURAL_DATA_OR_DERIVATIVES_TO_THIRD_PARTIES",
-            "INFERENTIAL_PROFILING_BEYOND_SCOPE_OF_DECLARED_PURPOSE"
-        ]
-
-        rationale = [
-            "BREACHES_PURPOSE_LIMITATION_AND_MENTAL_PRIVACY",
-            "TRANSFORMS_TRUST_BASED_INTERACTIONS_INTO_EXTRACTION_SCHEMES",
-            "UNDERMINES_SOCIAL_LEGITIMACY_OF_NEUROTECH_AND_AUGMENTATION"
-        ][web:92][web:96][web:101][web:116][web:128][web:131][web:139]
-
-        invariants = [
-            "ALL_PURPOSES_MUST_BE_EXPLICITLY_DECLARED_AND_LOGGED",
-            "ANY_SECONDARY_USE_NOT_LOGICALLY_DERIVED_FROM_DECLARED_PURPOSE_MUST_BE_REJECTED"
-        ]
-    }
-
-    ###########################################################################
-    # 10. Enforcement hooks and integration with overlays
-    ###########################################################################
-
-    enforcement {
-        on_policy_evaluation = [
-            "SCAN_FOR_MATCHING_RED_LINE_PATTERNS_IN_POLICY_GRAPH",
-            "IF_MATCH_FOUND: REJECT_POLICY_AND_WRITE_AUDIT_EVENT",
-            "SURFACE_EXPLANATION_TO_HOST_DESCRIBING_WHICH_RED_LINE_WAS_TRIGGERED"
-        ]
-
-        on_runtime_configuration_change = [
-            "RE_EVALUATE_ACTIVE_CONFIG_AGAINST_RED_LINES",
-            "BLOCK_ANY_CHANGE_MOVING_FROM_COMPLIANT_TO_NON_COMPLIANT_STATE",
-            "LOG_ATTEMPTS_TO_BYPASS_RED_LINES_AS_SECURITY_EVENTS"
-        ]
-
-        binding_to_personal_overlay = {
-            overlay_ref = "/aln-bci-special/bci.special.host-personal-policy.overlay.v2.aln"
-            rule        = "HOST_PERSONAL_POLICY_MAY_TIGHTEN_BUT_NOT_RELAX_RED_LINES"
-        }
-    }
-}
+constraints BciRedLines
+  require hostdid != ""
+  require bostrom_address != ""
+  require authority_repo == "github.com/mk-bluebird/Cybercore"
+endconstraints
