@@ -1,0 +1,202 @@
+aln destination-path aln-core-speceventsaln.neural.abuse.event.v1.aln
+
+particle aln.neural.abuse.event.v1
+
+meta
+  id               aln.neural.abuse.event.v1
+  version          1.0.0
+  description      Canonical ALN event schema for neurorights-violating neural abuse, coercion, and surveillance across BCI, XR, nanoswarm, and deviceless cognitive channels.
+  authoritybinding ALN.MIGRATION.CYBERCORE_AUTHORITY.v1
+  evolutionsourcerepo github.com/mk-bluebird/Cybercore
+  host_did_field   hostdid
+  bostrom_address_field bostromaddress
+  invariants_root  invariants.cognitive-liberty.v1, invariants.mental-privacy.v1, invariants.mental-integrity.v1, invariants.psychological-continuity.v1
+endmeta
+
+import
+  HostProfile          from aln-core-spechost.core-schema.aln
+  RightsCore           from aln-core-specrights.core-schema.aln
+  NeurorightsCatalog   from aln-core-specrights.catalog.neurorights.v1.aln
+  SovereigntyCore      from aln-core-specsovereignty.core-schema.aln
+  ConsentCore          from aln-core-specconsent.core-schema.aln
+  EventsCore           from aln-core-specevents.core-schema.aln
+  CognitiveCandyKernel from psych.cognitive-candy.kernel.v1.aln
+  SovereignHostKernel  from aln,cybernano,sovereign-host-kernel,v1.aln
+  RiskProfileCore      from mt6883.risk.profile.v1.aln
+  RISKEventCore        from mt6883.risk.event.core.v1.aln
+  BciSpecialRedLines   from aln-bci-specialbci.special.red-lines.prohibited-uses.aln
+  DetoxToxinEnvelope   from bio.safety.envelope.detox.toxin-stack.v1.aln
+endimport
+
+struct NeuralAbuseEventHeader
+  event_id            string    ; globally unique abuse-event id (e.g. ULID)
+  hostdid             string    ; W3C DID bound to sovereign host wallet
+  bostromaddress      string    ; bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7 or host-bound variant
+  brainip_token_id    string    ; pseudonymous BrainIP token or handle, never raw BrainIP
+  timestamp_utc       string    ; RFC3339 UTC timestamp
+  jurisdiction_tag    string    ; e.g. CL-SANTIAGO-NEURORIGHTS, US-AZ-PHOENIX-HEALTHCARE
+  device_id           string    ; logical device id (e.g. MT6883, XR-HMD-CLASS-A), can be pseudonymous
+  device_type         string    ; EEG_NONINVASIVE, BCI_INVASIVE, XR_REHAB, NANOSWARM, DEVICLESS, OTHER
+  abuse_channel       string    ; CCPERCEPTUALINPUT, CCAFFECTIVESTATE, CCMEMORYADJACENT, CCMETACOGNITION, CCMOTORINTENT, GENERIC_NEURODATA
+  abuse_vector        string    ; REDLINE_ID or policy id (e.g. COREBELIEFKERNELMODULATION, LONGTERMAFFECTIVECONDITIONING, NEUROSURVEILLANCEMASSORTARGETED)
+  abuse_severity      string    ; LOW, MEDIUM, HIGH, EXTREME (host-sovereign rating)
+  lifecycle_phase     string    ; RUNTIME, OTA_UPDATE, CLINICAL_SESSION, REHAB_LOOP, RESEARCH_TRIAL, LAW_ENFORCEMENT_ACCESS, UNKNOWN
+  detected_by         string    ; GUARD_CI, GUARD_RUNTIME, MT6883_RISK, OFFLINE_FORENSICS, HOST_REPORT, THIRD_PARTY_REPORT
+  detection_guard_id  string    ; e.g. SovereignHostKernelGuard, CognitiveCandyGuard, psychriskguard, BioToxinEnvelopeGuard
+  governing_profile   string    ; reference to neurorights profile id at time of event
+endstruct
+
+struct NeuralAbuseRightsSnapshot
+  neurorights_bits          string    ; serialized bitset: mental_privacy,cognitive_liberty,mental_integrity,psychological_continuity,mental_identity,non_coercion
+  neurorights_profile_id    string    ; NeurorightsEnvelope id
+  neurorights_floor_ok      bool      ; whether floor was satisfied before abuse attempt
+  neurorights_floor_after   bool      ; whether floor would hold if abuse had proceeded
+  cognitive_liberty_score   f32       ; computed scalar 0..1 (1.0 = fully respected)
+  mental_privacy_score      f32       ; computed scalar 0..1
+  mental_integrity_score    f32       ; computed scalar 0..1
+  continuity_score          f32       ; psychological continuity scalar 0..1
+  identity_stability_score  f32       ; mental identity stability scalar 0..1
+endstruct
+
+struct NeuralAbusePsychRiskSnapshot
+  psychrisk_index          f32     ; normalized 0..1 psych risk at detection
+  psychrisk_index_ceiling  f32     ; configured hostpsychriskmax ceiling
+  roh_scalar_before        f32     ; RoH value before attempted action
+  roh_scalar_after         f32     ; projected RoH if action were allowed
+  roh_ceiling              f32     ; RoH max, typically 0.3
+  cognitive_candy_ci       f32     ; CognitiveCandy scalar Ci at detection
+  cognitive_candy_ci_min   f32     ; configured minimal acceptable Ci (usually 0.0)
+  slavery_risk_flag        bool    ; whether slaveryrisk.jobclass constraints were implicated
+  slavery_risk_jobclass    string  ; job class id if relevant, else NONE
+endstruct
+
+struct NeuralAbuseConsentSnapshot
+  consent_envelope_id      string   ; ConsentEnvelope identifier, if any
+  consent_mode             string   ; e.g. DENY, STRICTDIAGNOSTIC, THERAPEUTICONLY, RESEARCHWITHGUARDS, FULLWITHLOGGING
+  consent_scope_channels   string   ; serialized list of channel ids consent actually covered
+  consent_scope_purposes   string   ; serialized list of declared purposes
+  consent_revoked_at       string   ; RFC3339 timestamp if consent revoked before event, else ""
+  consent_valid_at_event   bool     ; effective validity at detection_time
+  coercion_flag            bool     ; whether context indicates coercive or structurally forced consent
+  coercion_context_tag     string   ; EMPLOYMENT_CONDITION, EDUCATION_ACCESS, BASIC_SERVICES, LEGAL_BENEFITS, NONE
+  power_imbalance_flag     bool     ; structural asymmetry state, e.g. STATE_ACTOR, LARGE_PLATFORM, HEALTHCARE_PROVIDER
+endstruct
+
+struct NeuralAbuseContextSnapshot
+  mt6883_risk_event_id     string   ; RISKevent primary key if mapped
+  mt6883_risk_tier         string   ; Tier0EvidenceOnly, Tier1Read, Tier2Config, Tier3DeepActuation, UNKNOWN
+  mt6883_neuroethic_hours  f32      ; neuroethictimehours snapshot at time of event
+  detox_envelope_id        string   ; bio.safety.envelope.detox.toxin-stack.v1 id, if relevant
+  toxin_context_flag       bool     ; whether alcohol/nicotine/toxin context is active
+  environment_globe_cell   string   ; e.g. US-AZ-PHOENIX, CL-RM-SANTIAGO
+  workload_lane            string   ; lane at time of event, reusing MT6883 and EcoSys semantics
+  continuity_grade         string   ; A, B, C... per MT6883 registry
+  ker_band                 string   ; GREEN, YELLOW, RED or equivalent
+endstruct
+
+struct NeuralAbuseActionSnapshot
+  operation_type           string   ; READ, WRITE, STIMULATE, CONFIG_CHANGE, EXPORT, IMPORT, OTA_APPLY, XR_REHAB_STEP, UNKNOWN
+  target_object_type       string   ; SKO, TELEMETRY_FRAME, DEVICE_CONFIG, CONSENT_ENVELOPE, RISK_LOG, OTHER
+  target_object_id         string   ; identifier of the specific target (e.g. SKO id, telemetry frame id)
+  attempted_effect         string   ; PIPELINED, DIRECT_ACTUATION, BACKGROUND_CONDITIONING, SCORING, SURVEILLANCE, EVIDENCE_DELETION, OTHER
+  redline_id               string   ; redline this action hits, e.g. COREBELIEFKERNELMODULATION
+  redline_ref              string   ; aln-bci-specialbci.special.red-lines.prohibited-uses.aln
+  ota_evolution_window_id  string   ; evolution window id, if part of OTA or evolution
+  ota_rollback_reason      string   ; rollback reason if the action attempted illegal rollback, else NONE
+endstruct
+
+struct NeuralAbuseDecisionSnapshot
+  guard_decision           string   ; AUTO_DENY, AUTO_BRAKE, AUTO_QUARANTINE, AUTO_ALLOW_BUT_LOG, RETROACTIVE_FLAG
+  guard_reason_code        string   ; e.g. PSYCHRISKEXCEEDED, ROH_CEILING_EXCEEDED, NEURORIGHTS_FLOOR_BREACH, REDLINE_TRIGGERED, COERCIVE_CONSENT, RISK_LOG_MISSING
+  sovereign_kernel_ok      bool     ; whether Sovereign Host Kernel invariants remained satisfied
+  evolution_window_ok      bool     ; whether evolution window constraints remained satisfied
+  detox_corridor_ok        bool     ; whether detox/toxin corridor constraints remained satisfied
+  risk_log_written         bool     ; whether a RISKevent row was successfully created before deny/brake
+  evidence_bundle_id       string   ; id for associated ZK-attested evidence bundle, if created
+endstruct
+
+struct NeuralAbuseEvidencePointers
+  aln_shard_hashes         string   ; serialized list of ALN shard hashes used in evaluation
+  sovereign_kernel_hash    string   ; hash of sovereign host kernel shard at time of event
+  consent_shard_hash       string   ; hash of consent envelope shard, if any
+  risk_profile_hash        string   ; hash of mt6883.risk.profile.v1 shard at time of event
+  audit_ledger_ref         string   ; reference to aln-audit-ledger entry (e.g. audit.schema.events.aln row key)
+  organichain_anchor_txid  string   ; Organichain / Bostrom ledger tx id, if anchored
+  zk_attestation_ref       string   ; reference to ZK proof artifact covering guard decision
+endstruct
+
+struct NeuralAbuseEvent
+  header           NeuralAbuseEventHeader
+  rights_snapshot  NeuralAbuseRightsSnapshot
+  psych_snapshot   NeuralAbusePsychRiskSnapshot
+  consent_snapshot NeuralAbuseConsentSnapshot
+  context_snapshot NeuralAbuseContextSnapshot
+  action_snapshot  NeuralAbuseActionSnapshot
+  decision_snapshot NeuralAbuseDecisionSnapshot
+  evidence_pointers NeuralAbuseEvidencePointers
+endstruct
+
+constraints NeuralAbuseEvent
+  ; Host authority and binding
+  require header.hostdid != ""
+  require header.bostromaddress != ""
+  require header.device_type in ["EEG_NONINVASIVE","BCI_INVASIVE","XR_REHAB","NANOSWARM","DEVICLESS","OTHER"]
+  require header.abuse_severity in ["LOW","MEDIUM","HIGH","EXTREME"]
+  require header.lifecycle_phase in ["RUNTIME","OTA_UPDATE","CLINICAL_SESSION","REHAB_LOOP","RESEARCH_TRIAL","LAW_ENFORCEMENT_ACCESS","UNKNOWN"]
+
+  ; Neurorights semantics
+  require rights_snapshot.neurorights_profile_id != ""
+  require rights_snapshot.cognitive_liberty_score  >= 0.0
+  require rights_snapshot.cognitive_liberty_score  <= 1.0
+  require rights_snapshot.mental_privacy_score     >= 0.0
+  require rights_snapshot.mental_privacy_score     <= 1.0
+  require rights_snapshot.mental_integrity_score   >= 0.0
+  require rights_snapshot.mental_integrity_score   <= 1.0
+  require rights_snapshot.continuity_score         >= 0.0
+  require rights_snapshot.continuity_score         <= 1.0
+  require rights_snapshot.identity_stability_score >= 0.0
+  require rights_snapshot.identity_stability_score <= 1.0
+
+  ; Psych risk and RoH invariants
+  require psych_snapshot.psychrisk_index         >= 0.0
+  require psych_snapshot.psychrisk_index         <= 1.0
+  require psych_snapshot.psychrisk_index_ceiling >= 0.0
+  require psych_snapshot.psychrisk_index_ceiling <= 1.0
+  require psych_snapshot.roh_scalar_before       >= 0.0
+  require psych_snapshot.roh_scalar_before       <= psych_snapshot.roh_ceiling
+  require psych_snapshot.roh_scalar_after        >= 0.0
+  require psych_snapshot.roh_ceiling             <= 0.3
+  require psych_snapshot.cognitive_candy_ci_min  <= psych_snapshot.cognitive_candy_ci
+
+  ; Consent and coercion semantics
+  require consent_snapshot.consent_mode in ["DENY","STRICTDIAGNOSTIC","THERAPEUTICONLY","RESEARCHWITHGUARDS","FULLWITHLOGGING","UNKNOWN"]
+  require consent_snapshot.coercion_context_tag in ["EMPLOYMENT_CONDITION","EDUCATION_ACCESS","BASIC_SERVICES","LEGAL_BENEFITS","NONE"]
+  if consent_snapshot.coercion_flag == true
+    require decision_snapshot.guard_decision in ["AUTO_DENY","AUTO_BRAKE","AUTO_QUARANTINE"]
+  endif
+
+  ; Redline alignment
+  require action_snapshot.redline_ref == "aln-bci-specialbci.special.red-lines.prohibited-uses.aln"
+  if action_snapshot.redline_id != ""
+    require psych_snapshot.psychrisk_index >= 0.0 ; redline implies nontrivial risk context
+  endif
+
+  ; RISK logging invariants
+  if context_snapshot.mt6883_risk_event_id != ""
+    require decision_snapshot.risk_log_written == true
+  endif
+
+  ; Sovereign Host Kernel non-reduction (forward-only safety)
+  require decision_snapshot.sovereign_kernel_ok == true
+  require psych_snapshot.roh_scalar_after <= psych_snapshot.roh_ceiling
+
+endconstraints
+
+events NeuralAbuseEvent
+  type NEURAL_ABUSE_EVENT
+  route audit-ledger
+  severity_field header.abuse_severity
+  host_field header.hostdid
+  device_field header.device_id
+  anchor organichain.risk.anchor.v1 optional
+endevents
