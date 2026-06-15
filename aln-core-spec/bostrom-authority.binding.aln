@@ -1,24 +1,75 @@
-# File: /aln-core-spec/bostrom-authority.binding.aln
+# File: aln-core-spec/bostrom-authority.binding.aln
 # Purpose: Canonical binding between host identity, Bostrom address, and Cybercore authority.
 
-bostrom_authority_binding BostromAuthorityBinding_v1 {
-    definition {
-        host_did               = "string"
-        bostrom_address        = "string"
-        aln_compliance_clause  = "string"
-        evolution_source_repo  = "string"
-    }
+aln bostrom-authority.binding.v1
 
-    rules = [
-        {
-            rule_id     = "BAB_AUTHORITY_ANCHOR"
-            description = "All host-critical decisions and OTA paths must respect this authority binding as a first-order constraint."
-            enforcement = "VERIFY_BOSTROM_SIGNATURE_ON_UPDATES"
-        },
-        {
-            rule_id     = "BAB_CYBERCORE_MIGRATION"
-            description = "Evolution must adhere to ALN.MIGRATION.CYBERCORE_AUTHORITY.v1."
-            enforcement = "REJECT_NON_COMPLIANT_REPOS"
-        }
-    ]
-}
+meta
+  id bostrom-authority.binding.v1
+  version 1.0.1
+  description Canonical binding between host identity, Bostrom address, and Cybercore authority for all host-critical evolution and OTA.
+  authoritybinding ALN.MIGRATION.CYBERCORE_AUTHORITY.v1
+  hostdid_field hostdid
+  bostromaddress_field bostrom_address
+endmeta
+
+struct BostromAuthorityBinding
+  hostdid                 string  # W3C DID for host.
+  bostrom_address         string  # Primary Bostrom account address.
+  aln_compliance_clause   string  # Must equal ALN.MIGRATION.CYBERCORE_AUTHORITY.v1.
+  evolution_source_repo   string  # Must equal github.com/mk-bluebird/Cybercore.
+  monotone_semver_only    bool    # Versions may only tighten protections, never weaken.
+endstruct
+
+struct BostromAuthorityRule
+  rule_id      string
+  description  string
+  enforcement  string
+endstruct
+
+struct BostromAuthorityPolicy
+  id                    string
+  hostdid               string
+  bostrom_address       string
+  binding               BostromAuthorityBinding
+  rules                 BostromAuthorityRule[]
+endstruct
+
+binding BostromAuthorityPolicy
+  id              "BostromAuthorityBinding_v1"
+  hostdid         "did:aln:bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+  bostrom_address "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+
+  binding {
+    hostdid               "did:aln:bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+    bostrom_address       "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+    aln_compliance_clause "ALN.MIGRATION.CYBERCORE_AUTHORITY.v1"
+    evolution_source_repo "github.com/mk-bluebird/Cybercore"
+    monotone_semver_only  true
+  }
+
+  rules [
+    {
+      rule_id     "BAB_AUTHORITY_ANCHOR"
+      description "All host-critical decisions and OTA paths must respect this authority binding as a first-order constraint."
+      enforcement "VERIFY_BOSTROM_SIGNATURE_ON_UPDATES"
+    },
+    {
+      rule_id     "BAB_CYBERCORE_MIGRATION"
+      description "Evolution must adhere to ALN.MIGRATION.CYBERCORE_AUTHORITY.v1."
+      enforcement "REJECT_NON_COMPLIANT_REPOS"
+    }
+  ]
+endbinding
+
+constraints BostromAuthorityBinding
+  require hostdid != ""
+  require bostrom_address != ""
+  require aln_compliance_clause == "ALN.MIGRATION.CYBERCORE_AUTHORITY.v1"
+  require evolution_source_repo == "github.com/mk-bluebird/Cybercore"
+endconstraints
+
+constraints BostromAuthorityPolicy
+  require id == "BostromAuthorityBinding_v1"
+  require hostdid == binding.hostdid
+  require bostrom_address == binding.bostrom_address
+endconstraints
