@@ -1,0 +1,24 @@
+[package]
+name = "biophysical-blockchains"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "Biophysical blockchain guards, evolution windows, and Sintent-aware eco-invariants."
+readme = "README.md"
+authors = ["Augmented Citizen Contributors"]
+repository = "https://github.com/mk-bluebird/Augmented-Citizen"
+keywords = ["bci", "nanorobotics", "blockchain", "safety"]
+categories = ["science", "concurrency", "embedded"]
+
+[lib]
+name = "biophysical_blockchains"
+path = "src/lib.rs"
+crate-type = ["rlib"]
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+thiserror = "1.0"
+cybernano-intent = { path = "../cybernano-intent" }
+
+[dev-dependencies]
+serde_json = "1.0"
