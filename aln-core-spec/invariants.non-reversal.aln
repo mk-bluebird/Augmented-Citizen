@@ -1,19 +1,91 @@
-# File: /aln-core-spec/invariants.non-reversal.aln
+# File: aln-core-spec/invariants.non-reversal.aln
+# Destination: aln-core-spec/invariants.non-reversal.aln
 # Purpose: Invariants that forbid reversals or downgrades of rights, protections, or capabilities.
 
-non_reversal_invariants NonReversalInvariants_v1 {
-    rules = [
-        {
-            rule_id         = "NRI_MONOTONIC_PROTECTION"
-            description     = "New policies must be monotonic in protection; they cannot reduce the strength of existing rights."
-            check_condition = "new_policy.protection_level >= old_policy.protection_level"
-            on_violation    = "REJECT_POLICY_UPDATE"
-        },
-        {
-            rule_id         = "NRI_NO_SILENT_REMOVAL"
-            description     = "Older, stronger protections cannot be silently removed or deprecated without explicit host consent."
-            check_condition = "IF old_protection DELETED THEN host_consent == TRUE"
-            on_violation    = ["BLOCK_DELETION", "ALERT_HOST"]
-        }
-    ]
-}
+aln invariants.non-reversal.v1
+
+meta
+  id invariants.non-reversal.v1
+  version 1.1.0
+  description Non-reversal, non-degradation invariants for host capabilities, neurorights protection, and policy evolution.
+  authoritybinding ALN.MIGRATION.CYBERCORE_AUTHORITY.v1
+  hostdid_field hostdid
+  bostromaddress_field bostrom_address
+endmeta
+
+struct NonReversalInvariantRule
+  rule_id         string
+  description     string
+  check_condition string
+  on_violation    string[]
+endstruct
+
+struct NonReversalInvariant
+  id                 string
+  description        string
+  applies_to_domain  string
+  metric_field       string
+  inequality_type    string
+  monotone_direction string
+endstruct
+
+struct NonReversalPolicy
+  id                 string
+  hostdid            string
+  bostrom_address    string
+  invariants         NonReversalInvariant[]
+  rules              NonReversalInvariantRule[]
+endstruct
+
+policy NonReversalPolicy
+  id "NON_REVERSAL_POLICY_GLOBAL_V1"
+  hostdid did:aln:bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+  bostrom_address bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+
+  invariants [
+    {
+      id                 "NR_NEURORIGHTS_FLOOR_NON_SHRINKING"
+      description        "Neurorights protection levels must not shrink under any evolution window."
+      applies_to_domain  "RIGHTS_PROFILE"
+      metric_field       "neurorights_bits"
+      inequality_type    "GEQ"
+      monotone_direction "TIGHTEN_ONLY"
+    },
+    {
+      id                 "NR_KF_NON_DECREASING"
+      description        "Knowledge factor metric KF must not decrease except for explicit safety isolation reasons."
+      applies_to_domain  "BCI;NANOSWARM;XR"
+      metric_field       "KF_GAIN"
+      inequality_type    "GEQ"
+      monotone_direction "INCREASE_ONLY"
+    },
+    {
+      id                 "NR_CYBOSTATE_NON_DECREASING"
+      description        "Cybostate capability level must not be degraded, except when isolating bio-incompatible modules."
+      applies_to_domain  "BCI;NANOSWARM;XR;AUGMENTATION"
+      metric_field       "CYBOSTATE_LEVEL"
+      inequality_type    "GEQ"
+      monotone_direction "INCREASE_ONLY"
+    }
+  ]
+
+  rules [
+    {
+      rule_id         "NRI_MONOTONIC_PROTECTION"
+      description     "New policies must be monotonic in protection; they cannot reduce the strength of existing rights."
+      check_condition "new_policy.protection_level >= old_policy.protection_level"
+      on_violation    [ "REJECT_POLICY_UPDATE" ]
+    },
+    {
+      rule_id         "NRI_NO_SILENT_REMOVAL"
+      description     "Older, stronger protections cannot be silently removed or deprecated without explicit host consent."
+      check_condition "IF old_protection DELETED THEN host_consent == TRUE"
+      on_violation    [ "BLOCK_DELETION", "ALERT_HOST" ]
+    }
+  ]
+endpolicy
+
+constraints NonReversalPolicy
+  require hostdid != ""
+  require bostrom_address != ""
+endconstraints
