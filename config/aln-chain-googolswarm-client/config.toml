@@ -1,0 +1,82 @@
+# destination-path: Cybercore/config/aln-chain-googolswarm-client/config.toml
+
+[client]
+id                  = "aln-chain-googolswarm-audit-client"
+description         = "Audit-only ALN evidence anchor bound to Cybercore; no control or actuation surfaces."
+host_did            = "did:aln:bostrom-organic-host"
+bostrom_address     = "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+migration_clause    = "ALN.MIGRATION.CYBERCORE_AUTHORITY.v1"
+authoritative_repos = [
+  "https://github.com/mk-bluebird/Cybercore",
+]
+allow_deprecated_repos       = false
+ledger_role                  = "AUDIT_ONLY"          # Chain may only store DID-bound ALN evidence, never commands.
+control_surface_allowed      = false                 # Must be enforced by guards/CI as a hard invariant.
+inner_domain_data_forbidden  = true                  # Ledger must never see raw EEG, inner monologue, or subjective content.
+
+[keys]
+did_wallet_key_path  = "/secure/did-wallet/keys/host-ed25519.key"
+did_wallet_format    = "ed25519-pem"
+require_hardware_mfa = true
+
+[network]
+# These endpoints are restricted to outer-domain, evidence-only traffic.
+aln_chain_rpc_url   = "https://rpc.aln.googolswarm.cybercore.local/v1"
+aln_chain_rest_url  = "https://api.aln.googolswarm.cybercore.local/v1"
+organichain_rpc_url = "https://rpc.organichain.cybercore.local/v1"
+organichain_rest_url= "https://api.organichain.cybercore.local/v1"
+
+# Explicitly declare that only ALN evidence/event particles are permitted.
+allowed_rpc_methods = [
+  "ALN.CIEVENT.append",
+  "ALN.EVOLUTIONEVENT.append",
+  "ALN.TELEMETRYEVENT.append",
+]
+forbidden_rpc_methods = [
+  "NANOSWARM.SCHEDULE",
+  "BCI.STIMULATE",
+  "XR.ACTUATE",
+  "ANY.DIRECT_CONTROL",
+]
+
+[dns]
+resolve_timeout_ms = 1500
+retry_attempts     = 3
+fail_closed        = true
+
+[shards]
+# ALN shards that must be present and validated before any evidence is anchored.
+required_aln_shards = [
+  "aln.sovereign.host.kernel.v1",
+  "aln.neuro.constitution.v1",
+  "aln.bio.safety.envelope.citizen.v1",
+  "aln.nanoswarm.compliance.field.v1",
+  "aln.psych.slavery.guard.v1",
+  "aln.neural_slavery_prohibition.v1",
+]
+
+[anchoring]
+# Milliseconds to wait for on-chain inclusion before surfacing a timeout to the caller.
+submit_timeout_ms  = 8000
+confirm_timeout_ms = 15000
+max_retries        = 4
+backoff_base_ms    = 500
+backoff_max_ms     = 4000
+
+# Require inclusion in both ALN chain and Organichain for high-value evidence only.
+dual_anchor_required = true
+
+# Evidence bundle constraints.
+expected_evidence_tags = 10
+reject_if_missing_tags = true
+
+# Enforce that anchored records are outer-domain scalars and ALN particles only.
+outer_domain_only         = true      # RoH bands, LifeforceBand, EcoKarma, psychrisk indices, EvidenceBundle IDs.
+permit_inner_content_hash = false     # No raw thought content, no decoded EEG, no inner monologue traces.
+
+[logging]
+level            = "info"
+emit_cievents    = true
+cievent_topic    = "aln.evidence.anchor"
+metrics_enabled  = true
+metrics_endpoint = "http://localhost:9090/metrics"
