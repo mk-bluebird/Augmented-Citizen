@@ -1,0 +1,33 @@
+aln,cybernano,lifeforce-ota-guard,v1
+# Host-local ALN shard for lifeforce/blood floors and OTA eligibility
+# Bound to Augmented-Citizen and Cybercore authority
+
+metric,domain,module,op,threshold,unit,source
+lifeforcefloor_ota,host,LifeforceMutator,,0.35,fraction,lifeforce-band-spec-v3
+bloodtokenfloor_ota,host,BioTokenState,,0.25,fraction,bioeconomics-envelope-v2
+proteinfloor_ota,host,BioTokenState,,0.20,fraction,protein-budget-envelope-v1
+rohmax_ota,host,UCNRiskMonitor,,0.28,arb,roh-kernel-phoenix-v4
+thermalcoremax_ota,host,NanoswarmNeuroThermoGuard,,38.2,C,resp-thermo-trials-v3
+tissuedeltaTmax_ota,host,NanoswarmNeuroThermoGuard,,1.2,C,nanorobot-local-heating-v2
+bcidutyfractionmax_ota,host,BCIDutyGuard,,0.55,fraction,bci-duty-envelope-v3
+dailyota_stepsmax,host,DailyTurnState,,1,steps,loop.corridor.daily.v2
+ota_energybudgetmax,host,HostBudget,,2200.0,J,phoenix-ota-energy-profile-2026
+ota_mlpassfractionmax,host,MlPassSchedule,,0.20,fraction,ml-duty-envelope-v2
+
+modebind,host,KernelSelector,,OTA_MODE,,Any,kernel-map-augmented-citizen-v1
+auditbind,host,ALNChain,,bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7,,Any,audit-spec-ota-lifeforce-v1
+authoritybind,host,CybercoreAuthority,,mk-bluebird/Cybercore,,Any,ALN.MIGRATION.CYBERCORE_AUTHORITY.v1
+brainipbind,host,InnerLedger,,BRAINIP_SOVEREIGN,,Any,brainip.envelope.citizen.v1
+hostdidbind,host,IdentityHeader,,did:aln:organic-cpu:host,,Any,augmented-citizen.identity-spec.v1
+
+# Inequalities enforced at runtime:
+# 1) lifeforce >= lifeforcefloor_ota
+# 2) bloodtokens >= bloodtokenfloor_ota
+# 3) protein >= proteinfloor_ota
+# 4) RoH <= rohmax_ota
+# 5) core_temp <= thermalcoremax_ota
+# 6) delta_T_tissue <= tissuedeltaTmax_ota
+# 7) bci_duty_fraction <= bcidutyfractionmax_ota
+# 8) daily_ota_steps <= dailyota_stepsmax
+# 9) ota_energy_joules <= ota_energybudgetmax
+# 10) ml_pass_duty_fraction <= ota_mlpassfractionmax
