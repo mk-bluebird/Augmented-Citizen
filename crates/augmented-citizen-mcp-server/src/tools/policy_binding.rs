@@ -8,6 +8,7 @@ use serde_json::Value as JsonValue;
 
 use brain_identity_kernel::header::KernelHeader;
 
+use crate::audit::BindingAuditInfo;
 use crate::policy_hash::compute_canonical_policy_hash;
 use crate::protocol::jsonrpc::JsonRpcResponse;
 
@@ -18,8 +19,6 @@ pub struct PolicyBindingResult {
 }
 
 fn derive_attestation_tag(kernel_header: &KernelHeader) -> String {
-    // Short, non-invertible tag:
-    // combine current UTC minute + last 4 bytes of policy_hash, run through a small mixing function.
     let now = Utc::now();
     let minute = now.format("%Y%m%d%H%M").to_string();
 
@@ -39,32 +38,28 @@ fn derive_attestation_tag(kernel_header: &KernelHeader) -> String {
         acc = acc.wrapping_add(mix);
     }
 
-    // encode as 8 hex chars
-    let hex = {
-        const HEX: &[u8; 16] = b"0123456789abcdef";
-        let mut out = [0u8; 8];
-        let mut v = acc;
-        let mut i = 0;
-        while i < 8 {
-            let nib = (v & 0x0F) as u8;
-            out[7 - i] = HEX[nib as usize];
-            v >>= 4;
-            i += 1;
-        }
-        core::str::from_utf8(&out).unwrap().to_string()
-    };
+    const HEX: &[u8; 16] = b"0123456789abcdef";
+    let mut out = [0u8; 8];
+    let mut v = acc;
+    let mut i = 0;
+    while i < 8 {
+        let nib = (v & 0x0F) as u8;
+        out[7 - i] = HEX[nib as usize];
+        v >>= 4;
+        i += 1;
+    }
 
+    let hex = core::str::from_utf8(&out).unwrap().to_string();
     format!("AC-BIND-{}", hex)
 }
 
 pub fn handle_policy_verify_binding(
     kernel_header: &KernelHeader,
     id: Option<JsonValue>,
-) -> JsonRpcResponse {
+) -> (JsonRpcResponse, BindingAuditInfo) {
     let canonical = compute_canonical_policy_hash();
     let canonical_bytes = canonical.0;
 
-    // Compare without leaking either hash value directly.
     let mut equal = true;
     let mut i = 0usize;
     while i < 32 {
@@ -78,8 +73,15 @@ pub fn handle_policy_verify_binding(
 
     let result = PolicyBindingResult {
         binding_ok: equal,
+        attestation_tag: attestation_tag.clone(),
+    };
+
+    let resp = JsonRpcResponse::success(id, serde_json::to_value(result).unwrap());
+
+    let binding_info = BindingAuditInfo {
+        binding_ok: equal,
         attestation_tag,
     };
 
-    JsonRpcResponse::success(id, serde_json::to_value(result).unwrap())
+    (resp, binding_info)
 }
