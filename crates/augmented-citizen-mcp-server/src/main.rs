@@ -17,10 +17,11 @@ use serde_json::Value as JsonValue;
 
 use anti_coercion_enclave::state_machine::AccessLevel;
 use brain_identity_kernel::guard::KernelGuard;
-use brain_identity_kernel::kernel::ViabilityKernel;
+use brain_identity_kernel::header::KernelHeader;
 
 use crate::audit::{AuditEntry, AuditLog};
 use crate::context::SessionContext;
+use crate::kernel_loader::load_viability_kernel_from_aln;
 use crate::redact::sanitize_params;
 use crate::security::allowed_for;
 
@@ -153,6 +154,7 @@ fn handle_get_server_metadata(id: Option<JsonValue>) -> JsonRpcResponse {
                 "upgrade.validate_application_path".to_string(),
                 "audit.query_activity_log".to_string(),
                 "policy.get_non_reversal".to_string(),
+                "policy.verify_binding".to_string(),
             ],
             resources: vec![
                 "resource://augmented-citizen/profiles/{host_did}".to_string(),
@@ -243,6 +245,7 @@ fn audit_request(
 fn dispatch_with_context(
     ctx: &mut SessionContext<'_>,
     kernel_guard: &KernelGuard<'_>,
+    kernel_header: &KernelHeader,
     req: JsonRpcRequest,
 ) -> JsonRpcResponse {
     let method = req.method.clone();
@@ -296,6 +299,9 @@ fn dispatch_with_context(
         "policy.get_non_reversal" => {
             tools::policy::handle_policy_get_non_reversal(req.id)
         }
+        "policy.verify_binding" => {
+            tools::policy_binding::handle_policy_verify_binding(kernel_header, req.id)
+        }
         other => handle_unknown_method(req.id, other),
     };
 
@@ -308,16 +314,16 @@ fn main() {
     let mut stdout = io::stdout();
     let mut reader = stdin.lock();
 
-    let kernel: ViabilityKernel =
-        match kernel_loader::load_viability_kernel_from_aln("BrainIdentityKernelConfig2026v1.aln")
-        {
-            Ok(k) => k,
-            Err(_) => {
-                eprintln!("Failed to load BrainIdentityKernelConfig2026v1.aln");
-                return;
-            }
-        };
-    let kernel_guard = KernelGuard::new(&kernel);
+    let loaded_kernel = match load_viability_kernel_from_aln("BrainIdentityKernelConfig2026v1.aln") {
+        Ok(k) => k,
+        Err(_) => {
+            eprintln!("Failed to load BrainIdentityKernelConfig2026v1.aln");
+            return;
+        }
+    };
+
+    let kernel_guard = KernelGuard::new(&loaded_kernel.kernel);
+    let kernel_header: KernelHeader = loaded_kernel.header;
 
     let mut audit_log = AuditLog::new();
     let mut ctx = SessionContext::new(&mut audit_log);
@@ -347,7 +353,7 @@ fn main() {
             }
         };
 
-        let resp = dispatch_with_context(&mut ctx, &kernel_guard, req);
+        let resp = dispatch_with_context(&mut ctx, &kernel_guard, &kernel_header, req);
         let serialized = serde_json::to_string(&resp).unwrap();
         writeln!(stdout, "{}", serialized).unwrap();
         stdout.flush().unwrap();
