@@ -12,6 +12,7 @@ pub enum ShardError {
     DimensionMismatch,
     HostDidMismatch,
     PrecisionMismatch,
+    PolicyHashMismatch,
 }
 
 pub struct VerifiedKernelShard {
@@ -28,7 +29,7 @@ pub fn verify_and_decode(
     expected_host_did: &str,
 ) -> Result<VerifiedKernelShard, ShardError> {
     let bytes = raw.bytes;
-    if bytes.len() < 80 {
+    if bytes.len() < 112 {
         return Err(ShardError::InvalidEncoding);
     }
 
@@ -43,7 +44,7 @@ pub fn verify_and_decode(
     }
 
     let header_len = u16::from_be_bytes([bytes[6], bytes[7]]);
-    if header_len as usize != 80 {
+    if header_len as usize != 112 {
         return Err(ShardError::InvalidEncoding);
     }
 
@@ -63,19 +64,25 @@ pub fn verify_and_decode(
         return Err(ShardError::InvalidEncoding);
     }
 
-    let host_did_bytes = &bytes[16..16 + 44];
+    let host_did_bytes = &bytes[16..60];
     let host_did_str = core::str::from_utf8(&host_did_bytes[..host_did_len])
         .map_err(|_| ShardError::InvalidEncoding)?;
     if host_did_str != expected_host_did {
         return Err(ShardError::HostDidMismatch);
     }
 
-    let config_id_bytes = &bytes[60..78];
+    let policy_hash_bytes = &bytes[60..92];
+
+    let config_id_bytes = &bytes[92..110];
     let config_id_len = config_id_bytes.iter().take_while(|b| **b != 0).count();
     let config_id_str = core::str::from_utf8(&config_id_bytes[..config_id_len])
         .map_err(|_| ShardError::InvalidEncoding)?;
     if config_id_str != "BrainIdentity2026v1" {
         return Err(ShardError::InvalidEncoding);
+    }
+
+    if !policy_hash_matches(policy_hash_bytes) {
+        return Err(ShardError::PolicyHashMismatch);
     }
 
     let mut offset = header_len as usize;
@@ -130,6 +137,21 @@ fn parse_i32_be(bytes: &[u8]) -> Result<i32, ShardError> {
         return Err(ShardError::InvalidEncoding);
     }
     Ok(i32::from_be_bytes([bytes[0], bytes[1], bytes[2], bytes[3]]))
+}
+
+fn policy_hash_matches(header_hash: &[u8]) -> bool {
+    if header_hash.len() != 32 {
+        return false;
+    }
+
+    const EXPECTED_POLICY_HASH: [u8; 32] = [
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    ];
+
+    header_hash == EXPECTED_POLICY_HASH
 }
 
 fn verify_signature(_config_id: &str, _data: &[u8], _signature: &[u8]) -> bool {
