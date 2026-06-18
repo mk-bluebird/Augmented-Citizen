@@ -152,6 +152,7 @@ fn handle_get_server_metadata(id: Option<JsonValue>) -> JsonRpcResponse {
                 "upgrade.plan_ota_bundle".to_string(),
                 "upgrade.validate_application_path".to_string(),
                 "audit.query_activity_log".to_string(),
+                "policy.get_non_reversal".to_string(),
             ],
             resources: vec![
                 "resource://augmented-citizen/profiles/{host_did}".to_string(),
@@ -291,6 +292,9 @@ fn dispatch_with_context(
         "bio.read_state" => handle_bio_read_state(req.id, req.params),
         "audit.query_activity_log" => {
             tools::audit_tool::handle_audit_query_activity_log(ctx, req.id, req.params)
+        }
+        "policy.get_non_reversal" => {
+            tools::policy::handle_policy_get_non_reversal(req.id)
         }
         other => handle_unknown_method(req.id, other),
     };
