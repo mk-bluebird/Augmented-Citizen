@@ -19,7 +19,7 @@ use anti_coercion_enclave::state_machine::AccessLevel;
 use brain_identity_kernel::guard::KernelGuard;
 use brain_identity_kernel::header::KernelHeader;
 
-use crate::audit::{AuditEntry, AuditLog};
+use crate::audit::{AuditEntry, AuditLog, BindingAuditInfo};
 use crate::context::SessionContext;
 use crate::kernel_loader::load_viability_kernel_from_aln;
 use crate::redact::sanitize_params;
@@ -217,6 +217,7 @@ fn audit_request(
     access: AccessLevel,
     req: &JsonRpcRequest,
     resp: &JsonRpcResponse,
+    binding_info: Option<BindingAuditInfo>,
 ) {
     let status_code = resp.error.as_ref().map(|e| e.code).unwrap_or(0);
     let status_message = resp
@@ -237,6 +238,7 @@ fn audit_request(
         status_code,
         status_message,
         params_fingerprint: fingerprint,
+        binding_info,
     };
 
     ctx.audit_log.record(entry);
@@ -300,12 +302,15 @@ fn dispatch_with_context(
             tools::policy::handle_policy_get_non_reversal(req.id)
         }
         "policy.verify_binding" => {
-            tools::policy_binding::handle_policy_verify_binding(kernel_header, req.id)
+            let (resp, binding_info) =
+                tools::policy_binding::handle_policy_verify_binding(kernel_header, req.id);
+            audit_request(ctx, &method, access, &req, &resp, Some(binding_info));
+            return resp;
         }
         other => handle_unknown_method(req.id, other),
     };
 
-    audit_request(ctx, &method, access, &req, &resp);
+    audit_request(ctx, &method, access, &req, &resp, None);
     resp
 }
 
@@ -314,13 +319,14 @@ fn main() {
     let mut stdout = io::stdout();
     let mut reader = stdin.lock();
 
-    let loaded_kernel = match load_viability_kernel_from_aln("BrainIdentityKernelConfig2026v1.aln") {
-        Ok(k) => k,
-        Err(_) => {
-            eprintln!("Failed to load BrainIdentityKernelConfig2026v1.aln");
-            return;
-        }
-    };
+    let loaded_kernel =
+        match load_viability_kernel_from_aln("BrainIdentityKernelConfig2026v1.aln") {
+            Ok(k) => k,
+            Err(_) => {
+                eprintln!("Failed to load BrainIdentityKernelConfig2026v1.aln");
+                return;
+            }
+        };
 
     let kernel_guard = KernelGuard::new(&loaded_kernel.kernel);
     let kernel_header: KernelHeader = loaded_kernel.header;
