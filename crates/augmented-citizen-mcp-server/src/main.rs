@@ -2,9 +2,16 @@
 
 #![forbid(unsafe_code)]
 
+mod context;
+mod security;
+mod tools;
+
 use std::io::{self, BufRead, Write};
 use std::time::SystemTime;
 
+use anti_coercion_enclave::state_machine::AccessLevel;
+use brain_identity_kernel::guard::KernelGuard;
+use brain_identity_kernel::kernel::ViabilityKernel;
 use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
 
@@ -19,12 +26,6 @@ const ALT_BOSTROM_ADDRESSES: &[&str] = &[
     "zeta12x0up66pzyeretzyku8p4ccuxrjqtqpdc4y4x8",
     "0x519fC0eB4111323Cac44b70e1aE31c30e405802D",
 ];
-
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "lowercase")]
-enum JsonRpcVersion {
-    V2_0,
-}
 
 #[derive(Debug, Serialize, Deserialize)]
 struct JsonRpcRequest {
@@ -43,6 +44,30 @@ struct JsonRpcResponse {
     result: Option<JsonValue>,
     #[serde(skip_serializing_if = "Option::is_none")]
     error: Option<JsonRpcError>,
+}
+
+impl JsonRpcResponse {
+    fn success(id: Option<JsonValue>, result: JsonValue) -> Self {
+        JsonRpcResponse {
+            jsonrpc: "2.0".to_string(),
+            id,
+            result: Some(result),
+            error: None,
+        }
+    }
+
+    fn error(id: Option<JsonValue>, code: i32, message: impl Into<String>) -> Self {
+        JsonRpcResponse {
+            jsonrpc: "2.0".to_string(),
+            id,
+            result: None,
+            error: Some(JsonRpcError {
+                code,
+                message: message.into(),
+                data: None,
+            }),
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -117,8 +142,9 @@ fn handle_get_server_metadata(id: Option<JsonValue>) -> JsonRpcResponse {
         ],
         features: ServerFeatures {
             tools: vec![
+                "mcp.get_server_metadata".to_string(),
+                "consent.refresh_verdict".to_string(),
                 "bio.read_state".to_string(),
-                "bio.project_state_window".to_string(),
                 "economy.compute_upgrade_budget".to_string(),
                 "upgrade.plan_ota_bundle".to_string(),
                 "upgrade.validate_application_path".to_string(),
@@ -136,12 +162,7 @@ fn handle_get_server_metadata(id: Option<JsonValue>) -> JsonRpcResponse {
         },
     };
 
-    JsonRpcResponse {
-        jsonrpc: "2.0".to_string(),
-        id,
-        result: Some(serde_json::to_value(metadata).unwrap()),
-        error: None,
-    }
+    JsonRpcResponse::success(id, serde_json::to_value(metadata).unwrap())
 }
 
 fn handle_bio_read_state(id: Option<JsonValue>, params: JsonValue) -> JsonRpcResponse {
@@ -149,33 +170,22 @@ fn handle_bio_read_state(id: Option<JsonValue>, params: JsonValue) -> JsonRpcRes
     let params = match parsed {
         Ok(p) => p,
         Err(e) => {
-            return JsonRpcResponse {
-                jsonrpc: "2.0".to_string(),
+            return JsonRpcResponse::error(
                 id,
-                result: None,
-                error: Some(JsonRpcError {
-                    code: -32602,
-                    message: format!("Invalid params: {}", e),
-                    data: None,
-                }),
-            };
+                -32602,
+                format!("Invalid params: {}", e),
+            );
         }
     };
 
     if !is_allowed_bostrom_address(&params.bostrom_address) {
-        return JsonRpcResponse {
-            jsonrpc: "2.0".to_string(),
+        return JsonRpcResponse::error(
             id,
-            result: None,
-            error: Some(JsonRpcError {
-                code: -32001,
-                message: "Unauthorized bostrom_address for this server".to_string(),
-                data: None,
-            }),
-        };
+            -32001,
+            "Unauthorized bostrom_address for this server",
+        );
     }
 
-    // Placeholder for real bio-signal integration: keep strictly read-only and non-reversing.
     let state = BioState {
         blood: 1.0,
         sugar: 1.0,
@@ -190,32 +200,83 @@ fn handle_bio_read_state(id: Option<JsonValue>, params: JsonValue) -> JsonRpcRes
         timestamp: now_iso8601(),
     };
 
-    JsonRpcResponse {
-        jsonrpc: "2.0".to_string(),
-        id,
-        result: Some(serde_json::to_value(state).unwrap()),
-        error: None,
-    }
+    JsonRpcResponse::success(id, serde_json::to_value(state).unwrap())
 }
 
 fn handle_unknown_method(id: Option<JsonValue>, method: &str) -> JsonRpcResponse {
-    JsonRpcResponse {
-        jsonrpc: "2.0".to_string(),
+    JsonRpcResponse::error(
         id,
-        result: None,
-        error: Some(JsonRpcError {
-            code: -32601,
-            message: format!("Method not found: {}", method),
-            data: None,
-        }),
-    }
+        -32601,
+        format!("Method not found: {}", method),
+    )
 }
 
-fn dispatch(request: JsonRpcRequest) -> JsonRpcResponse {
-    match request.method.as_str() {
-        "mcp.get_server_metadata" => handle_get_server_metadata(request.id),
-        "bio.read_state" => handle_bio_read_state(request.id, request.params),
-        other => handle_unknown_method(request.id, other),
+fn dispatch_with_context(
+    ctx: &mut context::SessionContext,
+    req: JsonRpcRequest,
+    kernel_guard: &KernelGuard<'_>,
+) -> JsonRpcResponse {
+    use security::allowed_for;
+
+    let method = req.method.clone();
+    let access = allowed_for(ctx.verdict, &method);
+
+    match method.as_str() {
+        "mcp.get_server_metadata" => handle_get_server_metadata(req.id),
+        "consent.refresh_verdict" => {
+            tools::consent::handle_consent_refresh(ctx, kernel_guard, req.id, req.params)
+        }
+        "upgrade.plan_ota_bundle" => match access {
+            AccessLevel::Allow => {
+                tools::upgrade_planner::handle_upgrade_plan_ota_bundle(
+                    req.id,
+                    req.params,
+                )
+            }
+            AccessLevel::Restricted => {
+                let mut resp = tools::upgrade_planner::handle_upgrade_plan_ota_bundle(
+                    req.id,
+                    req.params,
+                );
+                if let Some(ref mut result) = resp.result {
+                    if let Some(obj) = result.as_object_mut() {
+                        obj.insert(
+                            "requires_step_up".to_string(),
+                            serde_json::json!(true),
+                        );
+                    }
+                }
+                resp
+            }
+            AccessLevel::Deny => JsonRpcResponse::error(
+                req.id,
+                -32030,
+                "Upgrade tool denied under current consent verdict",
+            ),
+        },
+        "economy.compute_upgrade_budget" => match access {
+            AccessLevel::Allow | AccessLevel::Restricted => {
+                tools::token_economy::handle_economy_compute_upgrade_budget(
+                    req.id,
+                    req.params,
+                )
+            }
+            AccessLevel::Deny => JsonRpcResponse::error(
+                req.id,
+                -32031,
+                "Economy tool denied under current consent verdict",
+            ),
+        },
+        "bio.read_state" => {
+            let resp = handle_bio_read_state(req.id, req.params);
+            if let AccessLevel::Restricted = access {
+            }
+            resp
+        }
+        "audit.query_activity_log" => {
+            tools::audit::handle_audit_query(ctx, req.id, req.params)
+        }
+        other => handle_unknown_method(req.id, other),
     }
 }
 
@@ -223,6 +284,15 @@ fn main() {
     let stdin = io::stdin();
     let mut stdout = io::stdout();
     let mut reader = stdin.lock();
+
+    let kernel = ViabilityKernel {
+        a: [[brain_identity_kernel::fixed::Fx::zero(); brain_identity_kernel::kernel::STATE_DIM];
+            brain_identity_kernel::kernel::INEQUALITY_COUNT],
+        b: [brain_identity_kernel::fixed::Fx::zero();
+            brain_identity_kernel::kernel::INEQUALITY_COUNT],
+    };
+    let kernel_guard = KernelGuard::new(&kernel);
+    let mut ctx = context::SessionContext::new();
 
     loop {
         let mut line = String::new();
@@ -240,16 +310,8 @@ fn main() {
         let req = match req {
             Ok(r) => r,
             Err(e) => {
-                let error_response = JsonRpcResponse {
-                    jsonrpc: "2.0".to_string(),
-                    id: None,
-                    result: None,
-                    error: Some(JsonRpcError {
-                        code: -32700,
-                        message: format!("Parse error: {}", e),
-                        data: None,
-                    }),
-                };
+                let error_response =
+                    JsonRpcResponse::error(None, -32700, format!("Parse error: {}", e));
                 let serialized = serde_json::to_string(&error_response).unwrap();
                 writeln!(stdout, "{}", serialized).unwrap();
                 stdout.flush().unwrap();
@@ -257,7 +319,7 @@ fn main() {
             }
         };
 
-        let resp = dispatch(req);
+        let resp = dispatch_with_context(&mut ctx, req, &kernel_guard);
         let serialized = serde_json::to_string(&resp).unwrap();
         writeln!(stdout, "{}", serialized).unwrap();
         stdout.flush().unwrap();
