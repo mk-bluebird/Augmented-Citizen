@@ -6,6 +6,8 @@ mod audit;
 mod context;
 mod security;
 mod tools;
+mod kernel_loader;
+mod redact;
 
 use std::io::{self, BufRead, Write};
 
@@ -15,12 +17,11 @@ use serde_json::Value as JsonValue;
 
 use anti_coercion_enclave::state_machine::AccessLevel;
 use brain_identity_kernel::guard::KernelGuard;
-use brain_identity_kernel::kernel::{
-    ViabilityKernel, INEQUALITY_COUNT as KERNEL_INEQUALITIES, STATE_DIM as KERNEL_STATE_DIM,
-};
+use brain_identity_kernel::kernel::ViabilityKernel;
 
 use crate::audit::{AuditEntry, AuditLog};
 use crate::context::SessionContext;
+use crate::redact::sanitize_params;
 use crate::security::allowed_for;
 
 const SERVER_NAME: &str = "augmented-citizen-mcp";
@@ -172,11 +173,7 @@ fn handle_bio_read_state(id: Option<JsonValue>, params: JsonValue) -> JsonRpcRes
     let params = match parsed {
         Ok(p) => p,
         Err(e) => {
-            return JsonRpcResponse::error(
-                id,
-                -32602,
-                format!("Invalid params: {}", e),
-            );
+            return JsonRpcResponse::error(id, -32602, format!("Invalid params: {}", e));
         }
     };
 
@@ -208,11 +205,7 @@ fn handle_bio_read_state(id: Option<JsonValue>, params: JsonValue) -> JsonRpcRes
 }
 
 fn handle_unknown_method(id: Option<JsonValue>, method: &str) -> JsonRpcResponse {
-    JsonRpcResponse::error(
-        id,
-        -32601,
-        format!("Method not found: {}", method),
-    )
+    JsonRpcResponse::error(id, -32601, format!("Method not found: {}", method))
 }
 
 fn audit_request(
@@ -229,7 +222,7 @@ fn audit_request(
         .map(|e| e.message.clone())
         .unwrap_or_else(|| "ok".to_string());
 
-    let fingerprint = Some(req.params.clone());
+    let fingerprint = Some(sanitize_params(method, &req.params));
 
     let entry = AuditEntry {
         timestamp: Utc::now(),
@@ -261,16 +254,11 @@ fn dispatch_with_context(
         }
         "upgrade.plan_ota_bundle" => match access {
             AccessLevel::Allow => {
-                tools::upgrade_planner::handle_upgrade_plan_ota_bundle(
-                    req.id,
-                    req.params,
-                )
+                tools::upgrade_planner::handle_upgrade_plan_ota_bundle(req.id, req.params)
             }
             AccessLevel::Restricted => {
-                let mut resp = tools::upgrade_planner::handle_upgrade_plan_ota_bundle(
-                    req.id,
-                    req.params,
-                );
+                let mut resp =
+                    tools::upgrade_planner::handle_upgrade_plan_ota_bundle(req.id, req.params);
                 if let Some(ref mut result) = resp.result {
                     if let Some(obj) = result.as_object_mut() {
                         obj.insert(
@@ -316,10 +304,15 @@ fn main() {
     let mut stdout = io::stdout();
     let mut reader = stdin.lock();
 
-    let kernel = ViabilityKernel {
-        a: [[brain_identity_kernel::fixed::Fx::zero(); KERNEL_STATE_DIM]; KERNEL_INEQUALITIES],
-        b: [brain_identity_kernel::fixed::Fx::zero(); KERNEL_INEQUALITIES],
-    };
+    let kernel: ViabilityKernel =
+        match kernel_loader::load_viability_kernel_from_aln("BrainIdentityKernelConfig2026v1.aln")
+        {
+            Ok(k) => k,
+            Err(_) => {
+                eprintln!("Failed to load BrainIdentityKernelConfig2026v1.aln");
+                return;
+            }
+        };
     let kernel_guard = KernelGuard::new(&kernel);
 
     let mut audit_log = AuditLog::new();
@@ -341,11 +334,8 @@ fn main() {
         let req = match req {
             Ok(r) => r,
             Err(e) => {
-                let error_response = JsonRpcResponse::error(
-                    None,
-                    -32700,
-                    format!("Parse error: {}", e),
-                );
+                let error_response =
+                    JsonRpcResponse::error(None, -32700, format!("Parse error: {}", e));
                 let serialized = serde_json::to_string(&error_response).unwrap();
                 writeln!(stdout, "{}", serialized).unwrap();
                 stdout.flush().unwrap();
