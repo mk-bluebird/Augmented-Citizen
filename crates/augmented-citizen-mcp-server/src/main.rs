@@ -2,18 +2,26 @@
 
 #![forbid(unsafe_code)]
 
+mod audit;
 mod context;
 mod security;
 mod tools;
 
 use std::io::{self, BufRead, Write};
-use std::time::SystemTime;
+
+use chrono::Utc;
+use serde::{Deserialize, Serialize};
+use serde_json::Value as JsonValue;
 
 use anti_coercion_enclave::state_machine::AccessLevel;
 use brain_identity_kernel::guard::KernelGuard;
-use brain_identity_kernel::kernel::ViabilityKernel;
-use serde::{Deserialize, Serialize};
-use serde_json::Value as JsonValue;
+use brain_identity_kernel::kernel::{
+    ViabilityKernel, INEQUALITY_COUNT as KERNEL_INEQUALITIES, STATE_DIM as KERNEL_STATE_DIM,
+};
+
+use crate::audit::{AuditEntry, AuditLog};
+use crate::context::SessionContext;
+use crate::security::allowed_for;
 
 const SERVER_NAME: &str = "augmented-citizen-mcp";
 const SERVER_VERSION: &str = "0.1.0";
@@ -28,26 +36,26 @@ const ALT_BOSTROM_ADDRESSES: &[&str] = &[
 ];
 
 #[derive(Debug, Serialize, Deserialize)]
-struct JsonRpcRequest {
-    jsonrpc: String,
-    id: Option<JsonValue>,
-    method: String,
+pub struct JsonRpcRequest {
+    pub jsonrpc: String,
+    pub id: Option<JsonValue>,
+    pub method: String,
     #[serde(default)]
-    params: JsonValue,
+    pub params: JsonValue,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct JsonRpcResponse {
-    jsonrpc: String,
-    id: Option<JsonValue>,
+pub struct JsonRpcResponse {
+    pub jsonrpc: String,
+    pub id: Option<JsonValue>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    result: Option<JsonValue>,
+    pub result: Option<JsonValue>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    error: Option<JsonRpcError>,
+    pub error: Option<JsonRpcError>,
 }
 
 impl JsonRpcResponse {
-    fn success(id: Option<JsonValue>, result: JsonValue) -> Self {
+    pub fn success(id: Option<JsonValue>, result: JsonValue) -> Self {
         JsonRpcResponse {
             jsonrpc: "2.0".to_string(),
             id,
@@ -56,7 +64,7 @@ impl JsonRpcResponse {
         }
     }
 
-    fn error(id: Option<JsonValue>, code: i32, message: impl Into<String>) -> Self {
+    pub fn error(id: Option<JsonValue>, code: i32, message: impl Into<String>) -> Self {
         JsonRpcResponse {
             jsonrpc: "2.0".to_string(),
             id,
@@ -71,49 +79,49 @@ impl JsonRpcResponse {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct JsonRpcError {
-    code: i32,
-    message: String,
+pub struct JsonRpcError {
+    pub code: i32,
+    pub message: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    data: Option<JsonValue>,
+    pub data: Option<JsonValue>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct ServerMetadata {
-    name: String,
-    version: String,
-    authority: String,
-    aln_clause: String,
-    invariants: Vec<String>,
-    features: ServerFeatures,
+pub struct ServerMetadata {
+    pub name: String,
+    pub version: String,
+    pub authority: String,
+    pub aln_clause: String,
+    pub invariants: Vec<String>,
+    pub features: ServerFeatures,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct ServerFeatures {
-    tools: Vec<String>,
-    resources: Vec<String>,
-    prompts: Vec<String>,
+pub struct ServerFeatures {
+    pub tools: Vec<String>,
+    pub resources: Vec<String>,
+    pub prompts: Vec<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct BioStateParams {
-    host_did: String,
-    bostrom_address: String,
+pub struct BioStateParams {
+    pub host_did: String,
+    pub bostrom_address: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct BioState {
-    blood: f64,
-    sugar: f64,
-    protein: f64,
-    lifeforce: f64,
-    oxygen: f64,
-    brain: f64,
-    wave: f64,
-    dw: f64,
-    pain: f64,
-    fear: f64,
-    timestamp: String,
+pub struct BioState {
+    pub blood: f64,
+    pub sugar: f64,
+    pub protein: f64,
+    pub lifeforce: f64,
+    pub oxygen: f64,
+    pub brain: f64,
+    pub wave: f64,
+    pub dw: f64,
+    pub pain: f64,
+    pub fear: f64,
+    pub timestamp: String,
 }
 
 fn is_allowed_bostrom_address(addr: &str) -> bool {
@@ -121,12 +129,6 @@ fn is_allowed_bostrom_address(addr: &str) -> bool {
         return true;
     }
     ALT_BOSTROM_ADDRESSES.iter().any(|a| a == &addr)
-}
-
-fn now_iso8601() -> String {
-    let now = SystemTime::now();
-    let datetime: chrono::DateTime<chrono::Utc> = now.into();
-    datetime.to_rfc3339()
 }
 
 fn handle_get_server_metadata(id: Option<JsonValue>) -> JsonRpcResponse {
@@ -186,6 +188,8 @@ fn handle_bio_read_state(id: Option<JsonValue>, params: JsonValue) -> JsonRpcRes
         );
     }
 
+    let now = Utc::now().to_rfc3339();
+
     let state = BioState {
         blood: 1.0,
         sugar: 1.0,
@@ -197,7 +201,7 @@ fn handle_bio_read_state(id: Option<JsonValue>, params: JsonValue) -> JsonRpcRes
         dw: 1.0,
         pain: 0.0,
         fear: 0.0,
-        timestamp: now_iso8601(),
+        timestamp: now,
     };
 
     JsonRpcResponse::success(id, serde_json::to_value(state).unwrap())
@@ -211,17 +215,46 @@ fn handle_unknown_method(id: Option<JsonValue>, method: &str) -> JsonRpcResponse
     )
 }
 
-fn dispatch_with_context(
-    ctx: &mut context::SessionContext,
-    req: JsonRpcRequest,
-    kernel_guard: &KernelGuard<'_>,
-) -> JsonRpcResponse {
-    use security::allowed_for;
+fn audit_request(
+    ctx: &mut SessionContext<'_>,
+    method: &str,
+    access: AccessLevel,
+    req: &JsonRpcRequest,
+    resp: &JsonRpcResponse,
+) {
+    let status_code = resp.error.as_ref().map(|e| e.code).unwrap_or(0);
+    let status_message = resp
+        .error
+        .as_ref()
+        .map(|e| e.message.clone())
+        .unwrap_or_else(|| "ok".to_string());
 
+    let fingerprint = Some(req.params.clone());
+
+    let entry = AuditEntry {
+        timestamp: Utc::now(),
+        host_did: ctx.host_did.clone(),
+        bostrom_address: ctx.bostrom_address.clone(),
+        method: method.to_string(),
+        access_level: access,
+        verdict: ctx.verdict,
+        status_code,
+        status_message,
+        params_fingerprint: fingerprint,
+    };
+
+    ctx.audit_log.record(entry);
+}
+
+fn dispatch_with_context(
+    ctx: &mut SessionContext<'_>,
+    kernel_guard: &KernelGuard<'_>,
+    req: JsonRpcRequest,
+) -> JsonRpcResponse {
     let method = req.method.clone();
     let access = allowed_for(ctx.verdict, &method);
 
-    match method.as_str() {
+    let resp = match method.as_str() {
         "mcp.get_server_metadata" => handle_get_server_metadata(req.id),
         "consent.refresh_verdict" => {
             tools::consent::handle_consent_refresh(ctx, kernel_guard, req.id, req.params)
@@ -267,17 +300,15 @@ fn dispatch_with_context(
                 "Economy tool denied under current consent verdict",
             ),
         },
-        "bio.read_state" => {
-            let resp = handle_bio_read_state(req.id, req.params);
-            if let AccessLevel::Restricted = access {
-            }
-            resp
-        }
+        "bio.read_state" => handle_bio_read_state(req.id, req.params),
         "audit.query_activity_log" => {
-            tools::audit::handle_audit_query(ctx, req.id, req.params)
+            tools::audit_tool::handle_audit_query_activity_log(ctx, req.id, req.params)
         }
         other => handle_unknown_method(req.id, other),
-    }
+    };
+
+    audit_request(ctx, &method, access, &req, &resp);
+    resp
 }
 
 fn main() {
@@ -286,13 +317,13 @@ fn main() {
     let mut reader = stdin.lock();
 
     let kernel = ViabilityKernel {
-        a: [[brain_identity_kernel::fixed::Fx::zero(); brain_identity_kernel::kernel::STATE_DIM];
-            brain_identity_kernel::kernel::INEQUALITY_COUNT],
-        b: [brain_identity_kernel::fixed::Fx::zero();
-            brain_identity_kernel::kernel::INEQUALITY_COUNT],
+        a: [[brain_identity_kernel::fixed::Fx::zero(); KERNEL_STATE_DIM]; KERNEL_INEQUALITIES],
+        b: [brain_identity_kernel::fixed::Fx::zero(); KERNEL_INEQUALITIES],
     };
     let kernel_guard = KernelGuard::new(&kernel);
-    let mut ctx = context::SessionContext::new();
+
+    let mut audit_log = AuditLog::new();
+    let mut ctx = SessionContext::new(&mut audit_log);
 
     loop {
         let mut line = String::new();
@@ -310,8 +341,11 @@ fn main() {
         let req = match req {
             Ok(r) => r,
             Err(e) => {
-                let error_response =
-                    JsonRpcResponse::error(None, -32700, format!("Parse error: {}", e));
+                let error_response = JsonRpcResponse::error(
+                    None,
+                    -32700,
+                    format!("Parse error: {}", e),
+                );
                 let serialized = serde_json::to_string(&error_response).unwrap();
                 writeln!(stdout, "{}", serialized).unwrap();
                 stdout.flush().unwrap();
@@ -319,7 +353,7 @@ fn main() {
             }
         };
 
-        let resp = dispatch_with_context(&mut ctx, req, &kernel_guard);
+        let resp = dispatch_with_context(&mut ctx, &kernel_guard, req);
         let serialized = serde_json::to_string(&resp).unwrap();
         writeln!(stdout, "{}", serialized).unwrap();
         stdout.flush().unwrap();
