@@ -25,6 +25,7 @@ members = [
     "crates/cyberswarm-plane",
     "crates/neuro-content-safety",
     "crates/ac-gateway-api",
+    "crates/augmented-citizen-mcp-server",
 ]
 
 resolver = "2"
