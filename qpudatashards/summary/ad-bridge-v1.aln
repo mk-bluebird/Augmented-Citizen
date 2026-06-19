@@ -1,0 +1,11 @@
+aln,aln,neuro,ad-bridge-v1
+metric,domain,module,op,threshold,unit,source
+vad_max,host,NeuroADGuard,,1.0,arb,file11
+roh_max,host,NeuroADGuard,,0.30,arb,file18
+sigma_min,host,NeuroConnectomeTDAGuard,,0.80,arb,web28
+csi_min,host,NeuroMicrostateGuard,,0.65,arb,file11
+xbar_max,host,NeuroADGuard,,x_thresh,arb,web24
+hostdid,host,Binder,,didalnorganic-host,,file11
+bostrom_primary,host,Binder,,bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7,,file11
+evolution_rule,host,NeuroADGuard,,FORWARD_ONLY_NO_DOWNGRADE,,file18
+domain_invariant,host,NeuroADGuard,,BCI_AD_NETWORK_SAFE,,web20
