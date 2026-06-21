@@ -27,6 +27,7 @@ members = [
     "crates/ac-gateway-api",
     "crates/augmented-citizen-mcp-server",
     "crates/xr-telemetry-client",
+    "crates/cybernano-unknown-upgrade-guard",
 ]
 
 resolver = "2"
