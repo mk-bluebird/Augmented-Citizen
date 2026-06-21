@@ -1,0 +1,31 @@
+aln,cybernano,unknown-upgrade,v1
+hostdid,didalnorganic-host
+bostromaddress,bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+authority,ALN.MIGRATION.CYBERCORE_AUTHORITY.v1
+no_rollback,true
+no_downgrade,true
+monotone_tightening_only,true
+
+# Threshold registry (one row per organ system / corridor)
+metric,domain,module,op,threshold,unit,mode,jurisdiction,evidence
+donor_min_renal,unknown_region,UnknownUpgradeValidator,>=,120,count,Any,global,renal-ssm-ph-2026-01
+donor_frac_min_renal,unknown_region,UnknownUpgradeValidator,>=,0.85,fraction,Any,global,renal-ssm-ph-2026-01
+ph_pvalue_max_renal,unknown_region,UnknownUpgradeValidator,<=,0.001,prob,Any,global,renal-ph-2026-01
+ssm_cumvar_min_renal,unknown_region,UnknownUpgradeValidator,>=,0.95,fraction,Any,global,renal-ssm-2026-01
+tre_max_renal,unknown_region,UnknownUpgradeValidator,<=,1.2,mm,Any,global,renal-reg-2026-01
+
+donor_min_heart,unknown_region,UnknownUpgradeValidator,>=,150,count,Any,global,heart-ssm-ph-2026-01
+donor_frac_min_heart,unknown_region,UnknownUpgradeValidator,>=,0.90,fraction,Any,global,heart-ssm-ph-2026-01
+ph_pvalue_max_heart,unknown_region,UnknownUpgradeValidator,<=,0.0005,prob,Any,global,heart-ph-2026-01
+ssm_cumvar_min_heart,unknown_region,UnknownUpgradeValidator,>=,0.92,fraction,Any,global,heart-ssm-2026-01
+tre_max_heart,unknown_region,UnknownUpgradeValidator,<=,1.5,mm,Any,global,heart-reg-2026-01
+
+roh_global_ceiling,host,RoHAggregator,<=,0.30,arb,Any,global,roh-kernel-2026-01
+roh_unknown_corridor_ceiling,unknown_region,RoHAggregator,<=,0.28,arb,Any,global,roh-kernel-2026-01
+
+# Governance VC binding
+vc_required,unknown_region,UnknownUpgradeValidator,==,true,bool,Any,global,vc-spec-unknown-upgrade-2026-01
+vc_min_signers,unknown_region,UnknownUpgradeValidator,>=,3,count,Any,global,vc-spec-unknown-upgrade-2026-01
+vc_host_must_sign,unknown_region,UnknownUpgradeValidator,==,true,bool,Any,global,vc-spec-unknown-upgrade-2026-01
+vc_neurorights_must_hold,unknown_region,UnknownUpgradeValidator,==,true,bool,Any,global,vc-spec-unknown-upgrade-2026-01
+cooling_off_days,unknown_region,UnknownUpgradeValidator,>=,7,days,Any,global,vc-spec-unknown-upgrade-2026-01
