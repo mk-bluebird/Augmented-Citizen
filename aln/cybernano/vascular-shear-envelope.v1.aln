@@ -1,0 +1,9 @@
+aln,cybernano,vascular-shear-envelope,v1
+hostdid,didalnorganic-host
+bostromaddress,bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+authority,ALN.MIGRATION.CYBERCORE_AUTHORITY.v1
+no_rollback,true
+no_downgrade,true
+
+metric,domain,module,op,threshold,unit,mode,jurisdiction,evidence
+tau_w_max,swarm,WallShearStressGuard,<=,4.0,Pa,Any,global,pinn-wss-validation-2026-01
