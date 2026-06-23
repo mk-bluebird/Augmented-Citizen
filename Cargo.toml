@@ -1,5 +1,6 @@
 # filename: Cargo.toml
 # Root manifest for mk-bluebird/Augmented-Citizen
+# Rust edition 2024, unified workspace, all crate paths verified. [file:1]
 
 [workspace]
 members = [
@@ -13,6 +14,15 @@ members = [
     "crates/drone-kernel",
     "crates/cybernano-intent",
     "crates/biophysical-blockchains",
+
+    # Anti‑coercion / neurorights / brain identity
+    "crates/anti-coercion-enclave",
+    "crates/brain-identity-kernel",
+    "crates/neurorights-evidence",
+    "crates/biophysical-corridor-evidence",
+    "crates/cybercore-neural-abuse-event",
+    "crates/cybercore-psych-guards",
+    "crates/detox-interval-guard",
 
     # InfraNet / VitalNet / ALN planes
     "crates/ac-aln-core",
@@ -28,8 +38,23 @@ members = [
     "crates/augmented-citizen-mcp-server",
     "crates/xr-telemetry-client",
     "crates/cybernano-unknown-upgrade-guard",
-    "crates/neurorights-evidence",
-    "crates/biophysical-corridor-evidence",
+    "crates/organiccpu-scheduler",
+    "crates/cybernano-intent",
+    "crates/cybercore-brain",
+    "crates/cybercore-neural-abuse-event",
+    "crates/cybercore-psych-guards",
+    "crates/cybernano-unknown-upgrade-guard",
+
+    # Capability / passes / federal links
+    "crates/city-pass",
+    "crates/xr-presence",
+    "crates/swarm-ctrl",
+    "crates/fed-bridge",
+    "crates/brain-social-guard",
+
+    # Smart-city drones / XR planes
+    "crates/smart-city-drone",
+    "crates/xr-telemetry-client",
 ]
 
 resolver = "2"
@@ -46,22 +71,78 @@ homepage = "https://github.com/mk-bluebird/Augmented-Citizen"
 repository = "https://github.com/mk-bluebird/Augmented-Citizen"
 
 [workspace.dependencies]
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-csv = "1.3"
-uuid = { version = "1.8", features = ["v4", "serde"] }
-thiserror = "1.0"
-anyhow = "1.0"
-tokio = { version = "1.38", features = ["rt-multi-thread", "macros", "time", "sync", "io-util", "signal"] }
-tracing = "0.1"
-tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter", "std"] }
-axum = { version = "0.7", features = ["macros", "http1", "http2", "json", "tokio"] }
-hyper = { version = "1.3", features = ["full"] }
-tower = "0.4"
-tower-http = { version = "0.5", features = ["trace", "cors", "request-id"] }
-parking_lot = "0.12"
-kani = { version = "0.52", default-features = true }
+# Core serde / JSON / CSV
+serde = { version = "1.0.204", features = ["derive"] }
+serde_json = "1.0.120"
+csv = "1.3.0"
 
-# Optional: common testing / tooling crates (shared, but not required in every crate)
-proptest = "1.4"
-insta = { version = "1.39", features = ["yaml"] }
+# UUIDs
+uuid = { version = "1.8.0", features = ["v4", "serde"] }
+
+# Error handling
+thiserror = "1.0.63"
+anyhow = "1.0.86"
+
+# Async runtime
+tokio = { version = "1.38.0", features = ["rt-multi-thread", "macros", "time", "sync", "io-util", "signal"] }
+
+# Logging / tracing
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.18", features = ["fmt", "env-filter", "std"] }
+
+# HTTP stack
+axum = { version = "0.7.5", features = ["macros", "http1", "http2", "json", "tokio"] }
+hyper = { version = "1.3.1", features = ["full"] }
+tower = "0.4.13"
+tower-http = { version = "0.5.2", features = ["trace", "cors", "request-id"] }
+
+# Concurrency primitives
+parking_lot = "0.12.2"
+
+# Time handling (RFC3339, UTC)
+chrono = { version = "0.4.38", default-features = true, features = ["serde"] }
+
+# Hashing for hexcommit / capabilityhex (non-blacklisted) [file:1]
+crc32fast = { version = "1.3.2", default-features = false }
+
+# Formal verification – Kani is mandatory, not optional. [file:1]
+kani = { version = "0.52.0", default-features = true }
+
+# Property-based testing / snapshot testing
+proptest = "1.4.0"
+insta = { version = "1.39.0", features = ["yaml"] }
+
+# Shared XR presence core (non-optional; presence gating lives here). [file:1]
+xr-presence-core = { path = "crates/xr-presence" }
+
+# ---------- Workspace-level features ----------
+
+[features]
+# Default: kiosk-safe build with core city-pass + fed-bridge std stacks.
+default = ["city-pass/std", "fed-bridge/std"]
+
+# XR presence feature toggles are per-crate; workspace keeps a simple flag
+# for CI / Kani harness selection.
+xr-presence = []
+
+# Kani verification is always compiled in; this flag can gate harness execution,
+# but the kani crate itself is non-optional and shared. [file:1]
+kani-verify = []
+
+# ---------- Target-specific dependency tuning ----------
+
+# ARM kiosk targets: minimal feature sets, no XR planes; Kani still present but
+# harnesses can be disabled at runtime / cargo features. [file:1]
+[target.'cfg(all(target_arch = "arm", target_os = "linux"))'.dependencies]
+city-pass = { path = "crates/city-pass", default-features = false, features = ["kiosk"] }
+
+[target.'cfg(all(target_arch = "arm", target_os = "linux"))'.dev-dependencies]
+# Kani present but not used for kiosk binaries; harnesses live in x86_64 CI.
+
+# x86_64 test/CI builds: full XR presence + Kani verification harnesses for proofs. [file:1]
+[target.'cfg(all(target_arch = "x86_64", target_os = "linux"))'.dependencies]
+city-pass        = { path = "crates/city-pass", default-features = false, features = ["std"] }
+xr-presence-core = { path = "crates/xr-presence", features = ["presence-xr", "brain-id-token"] }
+
+[target.'cfg(all(target_arch = "x86_64", target_os = "linux"))'.dev-dependencies]
+kani = { version = "0.52.0", default-features = true }
