@@ -1,0 +1,20 @@
+aln CityPassAuditShard2026v1
+
+record CityPassAuditShard2026v1 {
+  string audit_id
+  string host_did
+  string host_bostrom
+  string city_id
+  string pass_cap_id
+  string tap_timestamp_utc
+  string tap_device_id
+  string tap_location_bucket   // coarse (e.g., PHX-ZONE-01)
+  float  eco_kwh_baseline_per_trip
+  float  eco_kwh_transit_per_trip
+  float  eco_savings_kwh_increment
+  bool   neurorights_ok
+  bool   roh_ok
+  bool   psychload_ok
+  bool   abuse_suspected
+  string abuse_event_id        // link to ALN.NEURAL.ABUSE.EVENT.v1 if true
+}
