@@ -1,0 +1,32 @@
+# filename: crates/neurorights-evidence/Cargo.toml
+
+[package]
+name = "neurorights-evidence"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "MIT OR Apache-2.0"
+description = "Canonical neurorights evidence sources and citizen neurorights envelope for ALN/Rust-based bioscale systems."
+repository = "https://github.com/mk-bluebird/Augmented-Citizen"
+readme = "README.md"
+authors = ["Augmented Citizen – BioPay / ALN Stack"]
+
+[package.metadata]
+# This crate is part of the bioscale / neurorights core and must not be downgraded or removed.
+
+[dependencies]
+# Core-only: no external deps required.
+# Add serde if you later want to serialize these types.
+# serde = { version = "1.0", features = ["derive"], optional = true }
+
+[dev-dependencies]
+kani-verifier = { version = "0.52.0", optional = true }
+
+[features]
+default = []
+# Enable when running Kani proofs in CI:
+kani = ["kani-verifier"]
+
+[lib]
+path = "src/lib.rs"
+crate-type = ["rlib"]
