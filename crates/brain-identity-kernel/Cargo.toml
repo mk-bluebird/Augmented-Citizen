@@ -1,0 +1,18 @@
+[package]
+name = "brain-identity-kernel"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "MIT OR Apache-2.0"
+description = "Neurorights-safe brain identity kernel with viability constraints and intent fusion"
+authors = [
+    "mk-bluebird <host@augmented-citizen.org>",
+    "Augmented-Citizen Lab <research@augmented-citizen.org>",
+]
+keywords = ["brain-identity", "neurorights", "aln", "bci", "kernel"]
+
+[dependencies]
+serde = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
