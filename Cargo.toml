@@ -28,6 +28,7 @@ members = [
     "crates/augmented-citizen-mcp-server",
     "crates/xr-telemetry-client",
     "crates/cybernano-unknown-upgrade-guard",
+    "crates/neurorights-evidence",
 ]
 
 resolver = "2"
