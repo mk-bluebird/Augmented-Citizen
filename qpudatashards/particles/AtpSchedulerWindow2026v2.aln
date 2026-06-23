@@ -1,0 +1,26 @@
+aln
+  qpudatashards/particles/AtpSchedulerWindow2026v2.aln
+aln
+
+AtpSchedulerWindow2026v2
+
+record AtpSchedulerWindow
+  string windowid
+  string hostdid
+  string windowepoch
+  float  maxenergyj_global
+  float  maxduty_global
+
+  # Per-organ ATP budgets (normalized or absolute)
+  float  maxenergyj_resp
+  float  maxenergyj_card
+  float  maxenergyj_neuro
+  float  maxenergyj_other
+
+  float  maxduty_resp
+  float  maxduty_card
+  float  maxduty_neuro
+  float  maxduty_other
+
+  string notes
+endrecord
