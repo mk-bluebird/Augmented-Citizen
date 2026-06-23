@@ -1,0 +1,45 @@
+aln
+  qpudatashards/particles/CityPassAuditShardQpu2026v2.aln
+aln
+
+CityPassAuditShardQpu2026v2
+
+record CityPassAuditShardQpu
+  string  auditid                # unique row, ROWRPM semantics
+  string  hostdid                # augmented-citizen DID (DID-key only)
+  string  citypassbindingid      # ref to sealed CityPassBinding
+  string  bostromprimary         # primary Bostrom address
+  string  transitdeviceid        # dcr / gate / turnstile id
+  string  regionid               # city district code
+  string  serviceclass           # Transit, Basic, Civic, etc.
+  int64   amountmills            # fare (0.001 USD)
+  string  tapepoch               # ISO-8601 timestamp
+
+  # Neurorights snapshot (no raw state)
+  string  neurorightsenveloperef # neurorights.envelope.citizen.v1
+  string  rightsstate            # packed flags: noexclusionbasicservices|noneurocoercion|revocableatwill|noscorefrominnerstate
+  string  aiconsentstate         # Confirmed | Deny | Suspended
+  string  corridorstatus         # Inside | Borderline | ViolationSuspected
+  bool    isessentialservice     # true for baseline transit
+
+  # Coercion suspicion (brain-social guard)
+  bool    coercionsuspected      # guard’s suspicion at tap time
+  string  coercionreasoncode     # short code: OFFICER_PRESENCE, VERBAL_THREAT, BODY_STRESS, etc.
+  string  brainsocialguardhex    # hextrace over local state + policy (state-only summary)
+
+  # Forensic linkage to abuse records without raw neural
+  string  abuseeventref          # optional ALN.NEURAL.ABUSE.EVENT.v1 id
+  string  lawenforcementid       # optional badge/agency hash
+  string  locationhash           # hash(GPS | stopid | routeid)
+
+  # Anti-replay / integrity
+  string  kernelversionhash      # hash of neurorights viability kernel A,b used at decision time
+  string  decisionhextrace       # DecisionGuardOutcome hextrace for the tap
+
+  # Eco / KER for audit
+  float   kfactor                # knowledge factor at decision (0.0-1.0)
+  float   efactor                # eco-impact factor (0.0-1.0)
+  float   rhoh                   # Risk-of-harm scalar RoH (0.0-1.0)
+
+  string  notes                  # analyst / classifier notes (no raw quotes)
+endrecord
