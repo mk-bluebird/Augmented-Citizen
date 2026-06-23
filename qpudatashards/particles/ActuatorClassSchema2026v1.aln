@@ -1,0 +1,16 @@
+aln
+  qpudatashards/particles/ActuatorClassSchema2026v1.aln
+aln
+
+ActuatorClassSchema2026v1
+
+record ActuatorClass
+  string actuatorid            # e.g., nanoswarm.resp.sentinel
+  string organ                 # respiratory, cardiac, neurovascular, systemic
+  string missionkind           # SentinelObserveOnly, MicroDepot, Recanalize, etc.
+  string mode                  # DiagnosticOnly, Therapeutic
+  float  roh_ceiling           # RoH ceiling for this actuator
+  bool   requires_stable_state # true if only allowed in ActiveStable
+  bool   allowed_in_elevated   # true if allowed in ActiveElevatedRisk
+  string notes
+endrecord
