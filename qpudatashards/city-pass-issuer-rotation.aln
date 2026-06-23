@@ -1,0 +1,48 @@
+# 39. Issuer key-rotation ceremony and ALN protocol
+
+filename city-pass-issuer-rotation.aln
+destination qpudatashards/city-pass-issuer-rotation.aln
+
+rotation.meta
+  module           CityPassIssuerRotation
+  version          1.0.0
+  authority        "ALN.MIGRATION.CYBERCOREAUTHORITY.v1"
+  rightsbasis      "Neurorights, GDPR, HIPAA, eIDAS"
+  safety-vectors   "DLow,NRLow,EEHigh"
+
+rotation.schema
+  field issuer_id         TEXT    # logical issuer identifier
+  field key_version       INTEGER # monotonic, starting at 1
+  field pubkey_pq         TEXT    # Kyber/Dilithium public key (base64)
+  field valid_from_utc    TEXT    # RFC3339
+  field valid_until_utc   TEXT    # RFC3339 (optional, for decommissioning)
+  field hexcommit         TEXT    # commitment over key material and metadata [file:1]
+  field status            TEXT    # ACTIVE | RETIRED
+
+rotation.protocol
+  step "Prepare new keypair in secure HSM/enclave; compute pubkey_pq and ALN hexcommit."
+  step "Insert new row into issuer_keys SQLite table with key_version+1, status=ACTIVE."
+  step "Update ALN shard city-pass-issuer-keys.v1 with matching record and anchor to Bostrom chain."
+  step "Configure issuance nodes to select key by (issuer_id, max ACTIVE key_version)."
+  step "Verification rule: accept passes where issuer_sig verifies under any ACTIVE or RETIRED key whose \
+        validity window fully covers pass. Never delete old keys; mark RETIRED only after all passes expired." 
+  step "Log rotation event as JSONL line with event=issuer_key_rotation, including old and new key_version, \
+        and hexcommit; anchor into ALN QPU datashard." [file:1]
+
+rotation.sqlite
+  CREATE TABLE IF NOT EXISTS issuer_keys (
+      issuer_id       TEXT    NOT NULL,
+      key_version     INTEGER NOT NULL,
+      pubkey_pq       TEXT    NOT NULL,
+      valid_from_utc  TEXT    NOT NULL,
+      valid_until_utc TEXT    NULL,
+      hexcommit       TEXT    NOT NULL,
+      status          TEXT    NOT NULL, -- ACTIVE | RETIRED
+      PRIMARY KEY (issuer_id, key_version)
+  );
+
+  CREATE TRIGGER IF NOT EXISTS trg_issuer_keys_no_delete
+  BEFORE DELETE ON issuer_keys
+  BEGIN
+      SELECT RAISE(ABORT, 'issuer_keys is append-only: DELETE forbidden');
+  END;
