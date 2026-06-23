@@ -1,0 +1,83 @@
+# 35. Federal bridge cache for ALN-shard hashes and issuer public keys
+#    one-year partition survival, full offline verification. [file:1][file:9]
+
+filename federal-bridge-cache.aln
+destination qpudatashards/federal.bridge.cache.aln
+
+federal.bridge.cache.meta
+  modulename          FederalBridgeCache
+  version             1.0.0
+  retention_days      365
+  purpose             "Offline verification of federal.link.binding.v1 during year-long partitions"
+  rightsbasis         "Neurorights, mental privacy, cognitive liberty, due process"
+  safety-vectors      "DLow, NRLow, EEHigh"
+
+federal.bridge.cache.schema
+  # Each entry pins an issuer namespace, current ALN shard hash, and issuer public key
+  # without storing raw identifiers. [file:1]
+  field issuer_namespace       TEXT     # e.g. "US-SSA", "US-IRS" [file:1]
+  field shard_hexcommit        TEXT     # hexcommit of federal.link.policy.v1 shard [file:1]
+  field issuer_pubkey_pq       TEXT     # Kyber/Dilithium public key (base64) [file:9]
+  field policy_version         TEXT     # e.g. "v2026.1" [file:1]
+  field cached_at_utc          TEXT     # RFC3339 [file:1]
+  field not_after_utc          TEXT     # RFC3339, <= cached_at_utc + 365d [file:1]
+  field safety_vectors         TEXT     # "DLow,NRLow,EEHigh" [file:9]
+
+federal.bridge.cache.operations
+  op load_from_sqlite
+    description  "Load cache rows from local federal_bridge_cache table"
+    sqlite_table "federal_bridge_cache"
+    durable      true
+    forward_only true         # append-only, same pattern as revocations [file:1]
+
+  op verify_federal_link_offline
+    description "Verify federal.link.binding.v1 using cached issuer keys and shard hashes"
+    input_fields
+      host_did             TEXT    # from BrainSocialBinding [file:1]
+      binding_hex          TEXT    # host-bound capabilityhex [file:1]
+      reference_commit_hex TEXT    # crc32fast commitment of reference ID [file:1]
+      issuer_namespace     TEXT
+      issuer_sig           BLOB
+    steps
+      - "Lookup cache entry by issuer_namespace; fail closed if not found or expired."
+      - "Recompute ALN hexcommit for the presented federal.link.binding.v1 particle and \
+          compare to shard_hexcommit; abort on mismatch." 
+      - "Verify issuer_sig with issuer_pubkey_pq over (host_did, binding_hex, reference_commit_hex)."
+      - "Check not_after_utc against local time with skew tolerance; treat parse errors as expired."
+      - "Return Verified if all checks pass; otherwise Deny with audit record."
+
+  op rotate_cache_entry
+    description "Rotate issuer_pubkey_pq and shard_hexcommit without deleting old entries"
+    semantics
+      - "Insert new row with higher policy_version and later not_after_utc."
+      - "Mark old row as superseded via status field but keep for audit."
+      - "Never UPDATE or DELETE existing rows; cache is forward-only." [file:1]
+
+federal.bridge.cache.sqlite
+  -- Backing table in the same identity-capability DB. [file:1]
+  CREATE TABLE IF NOT EXISTS federal_bridge_cache (
+      cache_id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      issuer_namespace  TEXT    NOT NULL,
+      shard_hexcommit   TEXT    NOT NULL,
+      issuer_pubkey_pq  TEXT    NOT NULL,
+      policy_version    TEXT    NOT NULL,
+      cached_at_utc     TEXT    NOT NULL,
+      not_after_utc     TEXT    NOT NULL,
+      status            TEXT    NOT NULL DEFAULT 'ACTIVE', -- ACTIVE | SUPERSEDED [file:1]
+      safety_vectors    TEXT    NOT NULL
+  );
+
+  CREATE UNIQUE INDEX IF NOT EXISTS idx_federal_bridge_cache_ns_ver
+    ON federal_bridge_cache (issuer_namespace, policy_version);
+
+  CREATE TRIGGER IF NOT EXISTS trg_federal_bridge_cache_no_update
+  BEFORE UPDATE ON federal_bridge_cache
+  BEGIN
+      SELECT RAISE(ABORT, 'federal_bridge_cache is append-only: UPDATE forbidden');
+  END;
+
+  CREATE TRIGGER IF NOT EXISTS trg_federal_bridge_cache_no_delete
+  BEFORE DELETE ON federal_bridge_cache
+  BEGIN
+      SELECT RAISE(ABORT, 'federal_bridge_cache is append-only: DELETE forbidden');
+  END;
