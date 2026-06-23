@@ -1,0 +1,68 @@
+aln
+aln destination-path qpudatashards/particles/city-pass.eco.offline.2026v1.aln
+
+datashard-header
+  destination-path qpudatashards/city-pass
+  module           CityPassEcoOffline
+  version          1.0.0
+  role             OfflineTransitCapability
+  security-protocol AES256-PostQ-TLS
+  interop-standard  FIDO-ALN
+  identity-mgmt     BrainSocialBinding
+  ai-agent-integration MistralQwen
+  device-type       EdgeValidator
+  authentication    FIDO2Passkey
+  digital-twin      Disabled
+  edge-analytics    EcoTransitScore
+  compliance        GDPR-EcoNet-Neurorights
+  log-persistence   CephRADOSLogs
+end-datashard-header
+
+record CityPassShard2026v1
+  string shard_id
+  string host_did
+  string host_bostrom
+  string city_id
+  string pass_cap_id
+  string validity_start_utc
+  string validity_end_utc
+  uint32 max_taps
+  uint32 taps_used
+  float  eco_kwh_baseline_per_trip
+  float  eco_kwh_transit_per_trip
+  float  eco_savings_kwh
+  string neurorights_contract_id
+  string ecocontract_id
+  string hex_commit
+end-record
+
+constraints CityPassShard2026v1
+  require shard_id                    != ""
+  require host_did                    != ""
+  require host_bostrom                != ""
+  require city_id                     != ""
+  require pass_cap_id                 != ""
+  require validity_start_utc          != ""
+  require validity_end_utc            != ""
+  require max_taps                    > 0
+  require taps_used                   <= max_taps
+  require eco_kwh_baseline_per_trip   >= 0.0
+  require eco_kwh_transit_per_trip    >= 0.0
+  require eco_kwh_baseline_per_trip   >= eco_kwh_transit_per_trip
+  require eco_savings_kwh             >= 0.0
+end-constraints
+
+math CityPassShard2026v1
+  // Eco savings per host over all taps:
+  // eco_savings_kwh = (eco_kwh_baseline_per_trip - eco_kwh_transit_per_trip) * taps_used
+  // => monotone non-decreasing in taps_used and never negative.
+end-math
+
+events CityPassShard2026v1
+  type        CITY_PASS_ECO_USAGE
+  route       data-lake.city-pass.eco
+  hostfield   host_did
+  devicefield city_id
+  severityfield eco_savings_kwh
+  anchor      organichain.eco.anchor.v1 optional
+end-events
