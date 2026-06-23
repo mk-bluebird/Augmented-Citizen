@@ -29,6 +29,7 @@ members = [
     "crates/xr-telemetry-client",
     "crates/cybernano-unknown-upgrade-guard",
     "crates/neurorights-evidence",
+    "crates/biophysical-corridor-evidence",
 ]
 
 resolver = "2"
