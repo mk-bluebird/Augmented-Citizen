@@ -1,0 +1,19 @@
+aln
+  qpudatashards/particles/HostDidKeriLog2026v1.aln
+aln
+
+HostDidKeriLog2026v1
+
+record HostDidKeriEvent
+  string hostdid             # host DID
+  string bostromaddress      # host Bostrom address
+  string sequence            # KERI sequence number as string "0001", "0002", ...
+  string eventtype           # INCEPTION, ROTATION, INTERACTION
+  string prev_event_hash     # hash of previous event (for log chaining)
+  string current_keyset_hash # hash of current key set (pub keys)
+  string next_keyset_hash    # hash of next key set (for rotations)
+  string eventpayloadhash    # hash of any additional KERI payload
+  string eventepoch          # ISO-8601 timestamp
+  string signature           # signature over event fields
+  string notes
+endrecord
