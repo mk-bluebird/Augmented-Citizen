@@ -1,0 +1,17 @@
+# filename: qpudatashards/particles/NeurorightsEvidence2026v1.aln
+
+aln NeurorightsEvidence2026v1
+
+record NeurorightsSource
+  string evidid          # Stable local identifier, e.g. "neurorights.foundation.5rights.v1"
+  string name            # Short human-readable name
+  string url             # Public URL of the source
+  string scope           # "constitutional" | "treaty" | "guideline" | "commentary"
+  string jurisdiction    # e.g. "Chile", "UNESCO", "IEEE", "Global"
+  string summary         # Compact summary of what this source contributes
+endrecord
+
+record NeurorightsEnvelopeEvidence
+  string envelopeid        # e.g. "neurorights.envelope.citizen.v1"
+  NeurorightsSource[] sources
+endrecord
