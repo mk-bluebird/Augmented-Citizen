@@ -1,0 +1,18 @@
+aln
+  qpudatashards/particles/BleRfDutyLedger2026v1.aln
+aln
+
+BleRfDutyLedger2026v1
+
+record BleRfDutyLedger
+  string hostdid           # augmented citizen DID
+  string deviceid          # BLE radio / implant / wearable id
+  string regionid          # city / zone
+  string windowepoch       # ISO start of window (e.g., hour/day)
+  int32  channel           # BLE advertising / data channel index
+  int64  maxms             # max allowed TX ms in this window
+  int64  usedms            # cumulative ms of TX in this window
+  bool   corridor_ok       # true if usedms <= maxms at last update
+  string kernelversionhash # hash of RF duty kernel
+  string notes
+endrecord
