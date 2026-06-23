@@ -1,0 +1,51 @@
+aln
+  qpudatashards/particles/BrainSocialBinding2026v2.aln
+aln
+
+BrainSocialBinding2026v2
+
+record BrainSocialBinding
+  string bindingshardid          # unique binding id
+  string hostdid                 # augmented-citizen DID
+  string bostromaddress          # host Bostrom address
+  string brainidentitybindingid  # ref to BrainIdentityToken binding shard
+
+  # Social identity handle (never raw access token)
+  string socialplatform          # e.g., facebook, instagram
+  string socialprofilehash       # hash(profile_id | salt)
+  string socialnamespace         # e.g., "facebook.com"
+
+  # Binding lifecycle
+  string bindingepoch            # ISO-8601 binding time
+  string revocationepoch         # ISO-8601 revocation time (if revoked)
+  bool   isrevoked               # true iff binding is no longer active
+  string revocationreasoncode    # e.g., USER_REQUEST, RIGHTS_VIOLATION_SUSPECTED
+
+  # Neurorights + scoring guarantees
+  bool   noscorefrominnerstate   # invariant must be true for entire binding life
+  bool   noneurocoercion         # no forced access to inner state
+  bool   revocableatwill         # user can revoke without losing basics
+  bool   noexclusionbasicservices
+
+  # Channel semantics (forensic proof that only state-only channels existed)
+  string stateonlychannelclass   # e.g., CONSENT_BAND_ONLY, FATIGUE_ONLY
+  string allowedmetricset        # e.g., "consent_band,fatigue_band,latency_ms"
+  bool   exportedaistateonly     # true iff only state-only metrics were exported
+  bool   exportedrawneural       # must be false (forensic vital flag)
+
+  # Usage summary (non-identifying aggregates)
+  int64  total_sessions          # number of bind-guarded sessions
+  int64  total_prompts           # total prompts mediated
+  float  avg_consent_latency_ms  # average consent latency (no raw traces)
+  float  max_roh_observed        # max RoH during binding lifespan
+
+  # Kernel + guard references
+  string kernelversionhash       # neurorights kernel used while binding active
+  string guardversionid          # BrainSocialGuard version used
+
+  # Hextrace anchor for audit
+  string bindinghextrace         # hextrace summarizing guard decisions
+  string revocationhextrace      # hextrace for revocation event
+
+  string notes
+endrecord
