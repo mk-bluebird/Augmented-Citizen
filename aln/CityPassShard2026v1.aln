@@ -1,0 +1,19 @@
+aln CityPassShard2026v1
+
+record CityPassShard2026v1 {
+  string shard_id
+  string host_did
+  string host_bostrom
+  string city_id
+  string pass_cap_id
+  string validity_start_utc
+  string validity_end_utc
+  uint32 max_taps
+  uint32 taps_used
+  float  eco_kwh_baseline_per_trip
+  float  eco_kwh_transit_per_trip
+  float  eco_savings_kwh
+  string neurorights_contract_id
+  string ecocontract_id
+  string hex_commit
+}
