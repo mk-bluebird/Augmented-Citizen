@@ -1,18 +1,26 @@
 ```
-# Index database files
-.index/
+# Dependencies
+target/
+Cargo.lock
 
-# Python cache
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
+# Compiled and build artifacts
+**/*.rs.bk
+**/*.rlib
+**/*.so
+**/*.dylib
+**/*.dll
+**/*.a
 
-# Logs
+# Logs and temp files
 *.log
+*.tmp
+*.swp
 
-# Environment files
-.env
-.env.local
-*.env.*
+# Editors
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
 ```
