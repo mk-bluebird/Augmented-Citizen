@@ -1,0 +1,19 @@
+# filename: qpudatashards/particles/neurorights.envelope.citizen.v1.aln
+
+aln NeurorightsEnvelopeCitizenV1
+
+record NeurorightsEnvelope
+  bool noscorefrominnerstate
+  bool noexclusionbasicservices
+  bool noneurocoercion
+  bool revocableatwill
+  bool augmentationcontinuity
+  bool projectcontinuity
+  string[] legal_bases   # evidid references into NeurorightsEvidence2026v1
+endrecord
+
+# Canonical citizen envelope for organically-integrated augmented citizens.
+record NeurorightsEnvelopeCitizenBinding
+  string envelopeid
+  NeurorightsEnvelope envelope
+endrecord
