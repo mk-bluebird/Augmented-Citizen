@@ -1,0 +1,6 @@
+"#","Focus","Main construct(s)"
+"11","Tap + coercion flag shard","CityPassAuditShardQpu2026v2 with coercionsuspected, hextraces"
+"12","BrainIdentityToken thread confinement","!Send/!Sync via Rc<RefCell<…>> and enclave single‑thread exec"
+"13","Kernel A,bA,bA,b invariants","Rowwise monotone tightening + grid subset CI + Kani harnesses"
+"14","BLE duty ledger + Kani","BleRfDutyLedger2026v1 + BleDutyState + Kani invariant proof"
+"15","CognitiveCandy + ATP","Ci′=Ri−Pi−αRoHi−γATPiC'_i = R_i - P_i - α RoH_i - γ ATP_iCi′​=Ri​−Pi​−αRoHi​−γATPi​ + state‑machine links"
