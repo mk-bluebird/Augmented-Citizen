@@ -1,0 +1,13 @@
+aln
+  qpudatashards/particles/BrainIdentityKernelPolicy2026v1.aln
+aln
+
+BrainIdentityKernelPolicy2026v1
+
+record BrainIdentityKernelPolicy
+  string brainidentitykernelid
+  float  roh_global_ceiling           # e.g., 0.30
+  bool   allow_diagnostic_in_elevated # true
+  bool   allow_therapeutic_in_elevated# must be false
+  string notes
+endrecord
