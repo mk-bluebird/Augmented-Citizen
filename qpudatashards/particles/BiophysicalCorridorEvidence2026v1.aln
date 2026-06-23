@@ -1,0 +1,19 @@
+# filename: qpudatashards/particles/BiophysicalCorridorEvidence2026v1.aln
+
+aln BiophysicalCorridorEvidence2026v1
+
+record CorridorMetric
+  string metricid        # e.g. "hrv.rmssd.ms", "spo2.percent"
+  string source_evid     # evidid of primary scientific source
+  float safe_min         # lower bound of "safe" corridor
+  float safe_max         # upper bound of "safe" corridor
+  float warn_min         # lower bound of "warning" corridor
+  float warn_max         # upper bound of "warning" corridor
+  string unit            # "ms", "%", "pg/mL", "mmol/L", "degC"
+  string summary         # compact description of how to interpret this metric
+endrecord
+
+record BiophysicalCorridorProfile
+  string profileid       # e.g. "bioscale.default.v1"
+  CorridorMetric[] metrics
+endrecord
