@@ -1,0 +1,30 @@
+# filename: crates/biophysical-corridor-evidence/Cargo.toml
+
+[package]
+name = "biophysical-corridor-evidence"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "MIT OR Apache-2.0"
+description = "Biophysical corridor metrics (HRV, SpO2, respiratory rate, IL-6, lactate) for bioscale-safe neurorights kernels and nanoswarm guards."
+repository = "https://github.com/mk-bluebird/Augmented-Citizen"
+readme = "README.md"
+authors = ["Augmented Citizen – BioPay / ALN Stack"]
+
+[package.metadata]
+# This crate encodes safety corridors and must not be weakened or removed.
+
+[dependencies]
+# Core-only: no external deps required.
+# serde = { version = "1.0", features = ["derive"], optional = true }
+
+[dev-dependencies]
+kani-verifier = { version = "0.52.0", optional = true }
+
+[features]
+default = []
+kani = ["kani-verifier"]
+
+[lib]
+path = "src/lib.rs"
+crate-type = ["rlib"]
