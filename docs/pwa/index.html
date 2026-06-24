@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Augmented-Citizen%22%2C%22short_name%22%3A%22AugCit%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23000000%22%2C%22theme_color%22%3A%22%2306b6d4%22%2C%22description%22%3A%22Neuro-rights%20and%20cognitive%20sovereignty%20platform%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D%27http%3A//www.w3.org/2000/svg%27%2520viewBox%3D%270%200%20512%20512%27%253E%253Crect%2520width%3D%27512%27%2520height%3D%27512%27%2520fill%3D%27%23000%27/%253E%253Ctext%2520x%3D%2750%2525%27%2520y%3D%2754%2525%27%2520font-family%3D%27monospace%27%2520font-size%3D%27180%27%2520fill%3D%27%2322d3ee%27%2520text-anchor%3D%27middle%27%2520dominant-baseline%3D%27middle%27%253EAC%253C/text%253E%253C/svg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+<link rel="manifest" href="manifest.json">
 <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
 <style>
 :root{
@@ -104,6 +104,47 @@ footer a:hover{text-decoration:underline;color:#a5f3fc}
 .badge{display:inline-block;padding:.15rem .45rem;border:1px solid rgba(34,211,238,.3);border-radius:.4rem;font-size:.68rem;color:#7dd3fc;background:rgba(34,211,238,.08);margin-left:.4rem}
 hr.sep{border:0;border-top:1px solid rgba(34,211,238,.12);margin:1rem 0}
 </style>
+
+<script>
+// PWA Service Worker for offline-first operation
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      console.log('SW registered for augmented citizen:', reg.scope);
+      // Notify user of offline readiness
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            const banner = document.createElement('div');
+            banner.style.cssText = 'position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.9);border:1px solid #22d3ee;padding:.6rem 1rem;border-radius:.6rem;color:#a5f3fc;font-size:.8rem;z-index:9999';
+            banner.textContent = 'Update available — reload for offline-ready version';
+            document.body.appendChild(banner);
+            setTimeout(()=>banner.remove(), 6000);
+          }
+        });
+      });
+    }).catch(err => console.log('SW registration failed:', err));
+  });
+  
+  // Listen for sync messages from SW
+  navigator.serviceWorker.addEventListener('message', event => {
+    if (event.data && event.data.type === 'SYNC_CONSENT') {
+      console.log('Background sync: consent log synced');
+    }
+  });
+}
+
+// Low-power mode detection
+if ('connection' in navigator) {
+  const conn = navigator.connection;
+  if (conn && (conn.saveData || conn.effectiveType === '2g')) {
+    document.documentElement.classList.add('low-power');
+    console.log('Low-power mode: reducing animations');
+  }
+}
+</script>
+
 </head>
 <body>
 <div class="bg-grid"></div>
@@ -111,7 +152,7 @@ hr.sep{border:0;border-top:1px solid rgba(34,211,238,.12);margin:1rem 0}
 <header>
   <h1 class="title">Augmented-Citizen</h1>
   <p class="subtitle">Neuro-rights • Cognitive Sovereignty • Host-Bound Evolution</p>
-  <div class="status-pills">
+  <div class="status-pills"><span class="pill" id="offline-pill" style="display:none">OFFLINE MODE</span>
     <span class="pill" id="pill-host">HOST: unbound</span>
     <span class="pill" id="pill-consent">Cₙ = 0</span>
     <span class="pill" id="pill-bc">BCₕ: —</span>
@@ -487,5 +528,12 @@ BCₕ = —</div>
 })();
 </script>
 <script>(function(){document.addEventListener("click",function(e){var a=e.target.closest("[data-product-id]");if(!a)return;e.preventDefault();var pid=a.getAttribute("data-product-id");if(pid)parent.postMessage({type:"ecto-artifact-link-click",productId:pid},"*")})})();</script>
+
+<script>
+window.addEventListener('online', () => document.getElementById('offline-pill').style.display='none');
+window.addEventListener('offline', () => document.getElementById('offline-pill').style.display='inline-block');
+if (!navigator.onLine) document.getElementById('offline-pill').style.display='inline-block';
+</script>
+
 </body>
 </html>
