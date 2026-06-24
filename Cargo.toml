@@ -46,6 +46,7 @@ members = [
     "crates/cybercore-psych-guards",
     "crates/cybernano-unknown-upgrade-guard",
     "crates/city-eco-ledger",
+    "crates/city-eco-ledger-sqlite",
 
     # Capability / passes / federal links
     "crates/city-pass",
