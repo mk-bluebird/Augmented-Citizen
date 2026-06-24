@@ -1,0 +1,17 @@
+{
+  "host": {
+    "host_did": "did:aln:organic-host",
+    "bostrom_address": "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7",
+    "verified": true,
+    "ts": "2026-06-24T03:54:18.871Z"
+  },
+  "consentLog": [
+    {
+      "n": 1,
+      "type": "GRANT",
+      "ts": "2026-06-24T03:54:27.128Z",
+      "hash": "MTpHUkFOVDoy"
+    }
+  ],
+  "exported": "2026-06-24T03:54:32.313Z"
+}
