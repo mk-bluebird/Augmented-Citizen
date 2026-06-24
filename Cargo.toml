@@ -45,6 +45,7 @@ members = [
     "crates/cybercore-neural-abuse-event",
     "crates/cybercore-psych-guards",
     "crates/cybernano-unknown-upgrade-guard",
+    "crates/city-eco-ledger",
 
     # Capability / passes / federal links
     "crates/city-pass",
