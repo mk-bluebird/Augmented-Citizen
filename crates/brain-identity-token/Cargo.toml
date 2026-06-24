@@ -1,0 +1,37 @@
+[package]
+name = "brain-identity-token"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+authors = ["mk-bluebird <dev@mk-bluebird.org>"]
+license = "Apache-2.0"
+description = "BrainIdentityToken bindings and neurorights-aware extensions for Augmented-Citizen."
+repository = "https://github.com/mk-bluebird/Augmented-Citizen"
+readme = "README.md"
+keywords = ["identity", "bci", "neurorights", "sovereign", "aln"]
+categories = ["authentication", "science"]
+publish = false
+
+[lib]
+name = "brain_identity_token"
+path = "src/lib.rs"
+
+[dependencies]
+chrono = { version = "0.4", default-features = false, features = ["clock"] }
+
+# Local crate providing StateOnlyVec16 and PainIndexState.
+state-only-channel = { path = "../state-only-channel", package = "state-only-channel" }
+
+[dev-dependencies]
+kani = { version = "0.46", optional = true }
+
+[features]
+default = ["std"]
+std = []
+
+# Enable Kani proof harnesses for this crate.
+kani-proofs = ["kani"]
+
+[package.metadata.docs]
+# This crate is the Rust binding for BrainIdentityToken and its
+# neurorights-aware extensions, aligned with ALN shards in Augmented-Citizen.
