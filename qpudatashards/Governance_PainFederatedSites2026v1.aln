@@ -1,0 +1,84 @@
+aln qpudatashards/Governance_PainFederatedSites2026v1.aln
+
+aln Governance_PainFederatedSites2026v1
+
+record PainFederatedSiteGovernance2026v1
+  string   governance_id
+  string   hostdid
+  string   bostromaddress
+
+  string   jurisdictioncode
+  string   sitecode
+  string   city
+  string   country
+
+  string   irbid
+  string   irb_name
+  string   irb_contact
+
+  string   legalbasis
+  string   hipaa_scope
+  string   gdpr_scope
+  string   data_use_agreement_id
+
+  bool     on_device_only
+  bool     export_state_only
+  bool     export_raw_biosignals_forbidden
+  bool     federated_training_allowed
+  bool     commercial_use_forbidden
+
+  bool     neurorights_noscorefrominnerstate
+  bool     neurorights_noneurocoercion
+  bool     neurorights_noexclusionbasicservices
+
+  string   consent_envelope_id
+  string   audit_policy_id
+
+  datetime created_at_utc
+  datetime updated_at_utc
+  datetime expiry_utc
+
+  bool     antirollback
+  bool     monotone_tightening_only
+
+  string   organichainroot
+  string   rowledgerroot
+  string   row_id
+  string   prev_row_id
+
+constraints PainFederatedSiteGovernance2026v1
+  require hostdid == "didalnorganic-host"
+  require bostromaddress == "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+
+  require on_device_only == true
+  require export_state_only == true
+  require export_raw_biosignals_forbidden == true
+
+  require neurorights_noscorefrominnerstate == true
+  require neurorights_noneurocoercion == true
+  require neurorights_noexclusionbasicservices == true
+
+  require created_at_utc <= updated_at_utc
+  require updated_at_utc <= expiry_utc
+
+  require antirollback == true
+  require monotone_tightening_only == true
+
+  require length(governance_id) > 0
+  require length(irbid) > 0
+  require length(legalbasis) > 0
+  require length(row_id) > 0
+
+index PainFederatedSiteGovernance2026v1_index_site
+  on PainFederatedSiteGovernance2026v1(jurisdictioncode, sitecode, row_id)
+
+index PainFederatedSiteGovernance2026v1_index_irb
+  on PainFederatedSiteGovernance2026v1(irbid, row_id)
+
+doc PainFederatedSiteGovernance2026v1
+  "PainFederatedSiteGovernance2026v1 binds federated pain research to IRB and legal envelopes."
+  "Each row encodes a single site in Boston, London, Melbourne, Toronto, or Phoenix."
+  "on_device_only and export_state_only enforce local processing and state-only exports."
+  "export_raw_biosignals_forbidden == true forbids exporting raw EEG, HRV, or timeseries."
+  "Neurorights flags are non-shrinkable; relaxing them requires a new governance_id and consent."
+  "antirollback and monotone_tightening_only enforce forward-only tightening of legal and safety constraints."
