@@ -1,0 +1,11 @@
+# output/aln/eco/city-eco-impact-ledger.v1.aln
+aln,eco,city-eco-impact-ledger,v1
+cityid,ledgerid,metric,domain,module,op,threshold,unit,mode,jurisdiction,evidence
+phoenix-az,eco-ledger-phx-2026,e_city_kwh,city,CityEcoLedger,,0.0,kWh,Daily,us-az-phoenix,file-eco-model-phx
+copenhagen-dk,eco-ledger-cph-2026,e_city_kwh,city,CityEcoLedger,,0.0,kWh,Daily,dk-copenhagen,file-eco-model-cph
+vancouver-bc,eco-ledger-yvr-2026,e_city_kwh,city,CityEcoLedger,,0.0,kWh,Daily,ca-bc-vancouver,file-eco-model-yvr
+wellington-nz,eco-ledger-wlg-2026,e_city_kwh,city,CityEcoLedger,,0.0,kWh,Daily,nz-wellington,file-eco-model-wlg
+curitiba-br,eco-ledger-ctb-2026,e_city_kwh,city,CityEcoLedger,,0.0,kWh,Daily,br-pr-curitiba,file-eco-model-ctb
+phoenix-az,eco-ledger-phx-2026,iso14064_verified,city,CityEcoLedger,,1,flag,Annual,us-az-phoenix,file-iso14064-attest-phx
+phoenix-az,eco-ledger-phx-2026,nonreduction_clause,city,CityEcoLedger,,0,arb,Any,global,"no downgrade of measurement accuracy or ledger completeness; updates must preserve or increase coverage"
+phoenix-az,eco-ledger-phx-2026,auditbind,city,ALNChain,,googolswarmtxid0xecoledgerphx,,Any,global,file-eco-ledger-audit
