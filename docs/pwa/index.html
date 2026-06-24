@@ -13,9 +13,14 @@
 <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
 <style>
 :root{
-  --cyan:#22d3ee; --cyan2:#06b6d4; --cyan3:#0891b2;
-  --bg:#000; --glass:rgba(10,15,23,0.74);
-  --ok:#22c55e; --warn:#eab308; --bad:#ef4444;
+  --cyan:#22d3ee;
+  --cyan2:#06b6d4;
+  --cyan3:#0891b2;
+  --bg:#000;
+  --glass:rgba(10,15,23,0.74);
+  --ok:#22c55e;
+  --warn:#eab308;
+  --bad:#ef4444;
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;background:#000;color:#e0f7fa;font-family:"IBM Plex Mono",ui-monospace,monospace;-webkit-font-smoothing:antialiased;overflow-x:hidden}
@@ -29,7 +34,7 @@ header{padding:2.8rem 1rem 1.6rem;text-align:center;position:relative}
 .status-pills{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:1.1rem}
 .pill{font-size:.7rem;padding:.28rem .65rem;border:1px solid rgba(34,211,238,.28);border-radius:999px;background:rgba(8,145,178,.09);color:#7dd3fc;backdrop-filter:blur(6px)}
 
-nav{position:sticky;top:0;z-index40;backdrop-filter:blur(12px);background:linear-gradient(to bottom,rgba(0,0,0,.9),rgba(0,0,0,.65));border-bottom:1px solid rgba(34,211,238,.12);padding:.75rem;display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center}
+nav{position:sticky;top:0;z-index:40;backdrop-filter:blur(12px);background:linear-gradient(to bottom,rgba(0,0,0,.9),rgba(0,0,0,.65));border-bottom:1px solid rgba(34,211,238,.12);padding:.75rem;display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center}
 .tab-btn{appearance:none;border:1px solid rgba(34,211,238,.18);background:rgba(15,23,42,.6);color:#a5f3fc;padding:.58rem .95rem;border-radius:.8rem;font-size:.85rem;cursor:pointer;transition:.2s;font-family:inherit;letter-spacing:.02em}
 .tab-btn:hover{border-color:rgba(34,211,238,.5);background:rgba(34,211,238,.08)}
 .tab-btn.active{background:rgba(34,211,238,.15);border-color:var(--cyan);color:#ecfeff;box-shadow:0 0 16px rgba(34,211,238,.25),inset 0 0 8px rgba(34,211,238,.15)}
@@ -96,7 +101,7 @@ footer{border-top:1px solid rgba(34,211,238,.15);padding:2rem 1rem;text-align:ce
 footer a{color:#7dd3fc;text-decoration:none}
 footer a:hover{text-decoration:underline;color:#a5f3fc}
 
-.toast{position:fixed;bottom:1.2rem;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(8,20,30,.94);border:1px solid rgba(34,211,238,.4);padding:.6rem 1rem;border-radius:.7rem;font-size:.82rem;color:#a5f3fc;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:.3s;z-index100;font-family:"JetBrains Mono"}
+.toast{position:fixed;bottom:1.2rem;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(8,20,30,.94);border:1px solid rgba(34,211,238,.4);padding:.6rem 1rem;border-radius:.7rem;font-size:.82rem;color:#a5f3fc;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:.3s;z-index:100;font-family:"JetBrains Mono"}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 .mono{font-family:"JetBrains Mono",monospace}
@@ -106,14 +111,13 @@ hr.sep{border:0;border-top:1px solid rgba(34,211,238,.12);margin:1rem 0}
 </style>
 
 <script>
-// PWA Service Worker for offline-first operation
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').then(reg => {
       console.log('SW registered for augmented citizen:', reg.scope);
-      // Notify user of offline readiness
       reg.addEventListener('updatefound', () => {
         const newWorker = reg.installing;
+        if (!newWorker) return;
         newWorker.addEventListener('statechange', () => {
           if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
             const banner = document.createElement('div');
@@ -126,8 +130,6 @@ if ('serviceWorker' in navigator) {
       });
     }).catch(err => console.log('SW registration failed:', err));
   });
-  
-  // Listen for sync messages from SW
   navigator.serviceWorker.addEventListener('message', event => {
     if (event.data && event.data.type === 'SYNC_CONSENT') {
       console.log('Background sync: consent log synced');
@@ -135,7 +137,6 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Low-power mode detection
 if ('connection' in navigator) {
   const conn = navigator.connection;
   if (conn && (conn.saveData || conn.effectiveType === '2g')) {
@@ -152,7 +153,8 @@ if ('connection' in navigator) {
 <header>
   <h1 class="title">Augmented-Citizen</h1>
   <p class="subtitle">Neuro-rights • Cognitive Sovereignty • Host-Bound Evolution</p>
-  <div class="status-pills"><span class="pill" id="offline-pill" style="display:none">OFFLINE MODE</span>
+  <div class="status-pills">
+    <span class="pill" id="offline-pill" style="display:none">OFFLINE MODE</span>
     <span class="pill" id="pill-host">HOST: unbound</span>
     <span class="pill" id="pill-consent">Cₙ = 0</span>
     <span class="pill" id="pill-bc">BCₕ: —</span>
@@ -170,12 +172,10 @@ if ('connection' in navigator) {
 </nav>
 
 <main>
-  <!-- HOST BINDING -->
   <section id="panel-host" class="panel active">
     <div class="card">
       <h2><span class="dot"></span>Host Binding</h2>
-      <p class="lead">Per <span class="mono">ALN.MIGRATION.CYBERCORE_AUTHORITY.v1</span>, all compute must be cryptographically bound to an organic host. This enforces neuro-rights by preventing disembodied extraction and preserving cognitive sovereignty. Binding is host-local and stored only in your browser.</p>
-      
+      <p class="lead">Per ALN.MIGRATION.CYBERCORE_AUTHORITY.v1, all compute must be cryptographically bound to an organic host. Binding is host-local and stored only in your browser.</p>
       <div class="grid-2">
         <div>
           <label for="host_did">host_did</label>
@@ -200,12 +200,10 @@ if ('connection' in navigator) {
     </div>
   </section>
 
-  <!-- CONSENT LOG -->
   <section id="panel-consent" class="panel">
     <div class="card">
       <h2><span class="dot"></span>Consent Log</h2>
-      <p class="lead">Neuro-rights require explicit, revocable, append-only consent. Each action increments Cₙ. History is immutable, timestamped, and exportable. Nothing leaves this device.</p>
-      
+      <p class="lead">Neuro-rights require explicit, revocable, append-only consent. Each action increments Cₙ. History is immutable, timestamped, and exportable.</p>
       <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:.8rem">
         <button class="btn" id="grantBtn">Grant Consent</button>
         <button class="btn btn-danger" id="revokeBtn">Revoke Consent</button>
@@ -218,23 +216,21 @@ if ('connection' in navigator) {
       <div class="log" id="consentLog"></div>
       <div class="kv" style="margin-top:.8rem">
         <div>Formula</div><div class="mono">Cₙ = Cₙ₋₁ + 1</div>
-        <div>Storage</div><div>localStorage only • portable • no backend</div>
+        <div>Storage</div><div>IndexedDB • append-only • exportable</div>
       </div>
     </div>
   </section>
 
-  <!-- BIOCOMPATIBILITY -->
   <section id="panel-biocomp" class="panel">
     <div class="card">
       <h2><span class="dot"></span>Biocompatibility Monitor</h2>
-      <p class="lead">Host safety is quantified via Bₕ(t) = Σ Wᵢ·zᵢ. RoH (Risk of Harm) scalar is strictly limited to protect cognitive sovereignty. Weights from earlier ALN work: w_roh 0.4, w_lifeforce 0.3, w_thermal 0.2, w_cns 0.1.</p>
-      
+      <p class="lead">Host safety is quantified via Bₕ(t) = Σ Wᵢ·zᵢ. RoH is strictly limited to protect cognitive sovereignty. Weights: w_roh 0.4, w_lifeforce 0.3, w_thermal 0.2, w_cns 0.1.</p>
       <div class="grid-2">
         <div>
           <label>roh_scalar (0–0.5) <span class="badge">critical</span></label>
           <input type="range" id="roh" min="0" max="0.5" step="0.01" value="0.18">
           <div style="display:flex;justify-content:space-between;font-size:.75rem;color:#7aa9b8"><span>0.00</span><span id="rohVal" class="mono">0.18</span><span>0.50</span></div>
-          
+
           <label style="margin-top:.8rem">lifeforce (0–1)</label>
           <input type="range" id="lifeforce" min="0" max="1" step="0.01" value="0.82">
           <div style="display:flex;justify-content:space-between;font-size:.75rem;color:#7aa9b8"><span>0</span><span id="lfVal" class="mono">0.82</span><span>1</span></div>
@@ -251,8 +247,8 @@ if ('connection' in navigator) {
           <div class="gauge-wrap">
             <div class="ring">
               <svg width="140" height="140" viewBox="0 0 140 140">
-                <circle class="ring-bg" cx="70" cy="70" r="60" fill="none" stroke-width="12"/>
-                <circle id="bcRing" class="ring-fg" cx="70" cy="70" r="60" fill="none" stroke-width="12" stroke-dasharray="377" stroke-dashoffset="377" stroke-linecap="round"/>
+                <circle class="ring-bg" cx="70" cy="70" r="60" fill="none" stroke-width="12"></circle>
+                <circle id="bcRing" class="ring-fg" cx="70" cy="70" r="60" fill="none" stroke-width="12" stroke-dasharray="377" stroke-dashoffset="377" stroke-linecap="round"></circle>
               </svg>
               <div class="ring-text"><span id="bcText">0%</span></div>
             </div>
@@ -268,11 +264,10 @@ BCₕ = —</div>
     </div>
   </section>
 
-  <!-- SWARM -->
   <section id="panel-swarm" class="panel">
     <div class="card">
       <h2><span class="dot"></span>Swarm Resources</h2>
-      <p class="lead">Community swarm accounting prevents overload. Ten tokens represent host resources (local simulation). Values are normalized 0–1 and never transmitted. Enforces anti-extraction.</p>
+      <p class="lead">Community swarm accounting prevents overload. Ten tokens represent host resources (local simulation). Values are normalized 0–1 and never transmitted.</p>
       <div id="swarmSliders"></div>
       <div style="display:flex;align-items:center;gap:.8rem;margin-top:.6rem;flex-wrap:wrap">
         <div style="flex:1;min-width:180px">
@@ -285,11 +280,10 @@ BCₕ = —</div>
     </div>
   </section>
 
-  <!-- OTA -->
   <section id="panel-ota" class="panel">
     <div class="card">
       <h2><span class="dot"></span>OTA — Non-Rollback Upgrades</h2>
-      <p class="lead">Upgrades are append-only and capability-preserving to honor cognitive continuity. Per repo policy: no downgrades, host binding and Cₙ persist across versions.</p>
+      <p class="lead">Upgrades are append-only and capability-preserving. No downgrades; host binding and Cₙ persist across versions.</p>
       <div class="grid-2">
         <div>
           <div class="kv">
@@ -302,6 +296,7 @@ BCₕ = —</div>
             <button class="btn" id="otaUpgrade">Simulate OTA Upgrade</button>
             <button class="btn btn-ghost" id="otaVerify">Verify Integrity</button>
           </div>
+        </div>
         <div>
           <div class="code">OTA_LOG:
 <span id="otaLog">- v1.3.0-cybercore • installed</span></div>
@@ -310,11 +305,10 @@ BCₕ = —</div>
     </div>
   </section>
 
-  <!-- AR VIEW -->
   <section id="panel-ar" class="panel">
     <div class="card">
       <h2><span class="dot"></span>AR View — Host Envelope</h2>
-      <p class="lead">WebXR placeholder for cybernetic hosts. Visualizes the host-bound execution envelope. No camera data is collected; rendering is local.</p>
+      <p class="lead">WebXR placeholder for cybernetic hosts. Visualizes the host-bound execution envelope. Rendering is local.</p>
       <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:.8rem">
         <button class="btn" id="enterAr">Enter AR</button>
         <button class="btn btn-ghost" id="resetAr">Reset View</button>
@@ -344,14 +338,103 @@ BCₕ = —</div>
 <div class="toast" id="toast"></div>
 
 <script>
+class ConsentDB {
+  constructor(dbName = 'augmented-citizen-consent', storeName = 'consent_log') {
+    this.dbName = dbName;
+    this.storeName = storeName;
+    this.db = null;
+  }
+  open() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(this.dbName, 1);
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if (!db.objectStoreNames.contains(this.storeName)) {
+          const store = db.createObjectStore(this.storeName, { keyPath: 'c_n' });
+          store.createIndex('event_type', 'event_type', { unique: false });
+          store.createIndex('timestamp', 'timestamp', { unique: false });
+        }
+      };
+      req.onsuccess = () => {
+        this.db = req.result;
+        resolve();
+      };
+      req.onerror = () => reject(req.error);
+    });
+  }
+  getCount() {
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction(this.storeName, 'readonly');
+      const store = tx.objectStore(this.storeName);
+      const req = store.count();
+      req.onsuccess = () => resolve(req.result || 0);
+      req.onerror = () => reject(req.error);
+    });
+  }
+  getAll() {
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction(this.storeName, 'readonly');
+      const store = tx.objectStore(this.storeName);
+      const req = store.getAll();
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => reject(req.error);
+    });
+  }
+  addConsent(entry) {
+    return this.getCount().then(count => {
+      const c_n = count + 1;
+      const record = {
+        c_n,
+        event_type: entry.event_type,
+        purpose: entry.purpose || null,
+        data_categories: entry.data_categories || [],
+        bostrom_address: entry.bostrom_address || null,
+        revokes_c_n: entry.revokes_c_n || null,
+        timestamp: entry.timestamp || new Date().toISOString(),
+        hash: btoa(`${c_n}:${entry.event_type}:${entry.timestamp || ''}`).slice(0, 12)
+      };
+      return new Promise((resolve, reject) => {
+        const tx = this.db.transaction(this.storeName, 'readwrite');
+        const store = tx.objectStore(this.storeName);
+        const req = store.add(record);
+        req.onsuccess = () => resolve(record);
+        req.onerror = () => reject(req.error);
+      });
+    });
+  }
+  exportJSON() {
+    return this.getAll().then(all => {
+      return JSON.stringify({
+        consentLog: all,
+        exported: new Date().toISOString()
+      }, null, 2);
+    });
+  }
+  verifyIntegrity() {
+    return this.getAll().then(all => {
+      let valid = true;
+      let error = null;
+      for (let i = 0; i < all.length; i++) {
+        if (all[i].c_n !== i + 1) {
+          valid = false;
+          error = `Sequence break at index ${i}`;
+          break;
+        }
+      }
+      return { valid, count: all.length, error };
+    });
+  }
+}
+
 (() => {
   const $ = s => document.querySelector(s);
   const $$ = s => document.querySelectorAll(s);
   const storeKey = 'ac-state-v1.3';
+  const consentDB = new ConsentDB();
+  window.consentDB = consentDB;
 
   const defaultState = {
     host: { host_did:'did:aln:organic-host', bostrom_address:'bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7', verified:false, ts:null },
-    consentLog: [],
     biocomp: { roh_scalar:0.18, lifeforce:0.82, thermal_index:0.24, cns_load:0.19 },
     swarm: { BLOOD:0.40, SUGAR:0.50, PROTEIN:0.45, LIFEFORCE:0.60, OXYGEN:0.70, BRAIN:0.30, WAVE:0.20, DW:0.15, PAIN:0.05, FEAR:0.03 },
     ota: { version:'1.3.0-cybercore', history:[{v:'1.3.0-cybercore', ts:new Date().toISOString(), note:'installed'}] }
@@ -360,174 +443,367 @@ BCₕ = —</div>
   let state = loadState();
 
   function loadState(){
-    try{ const s = JSON.parse(localStorage.getItem(storeKey)); return s ? {...defaultState, ...s, host:{...defaultState.host, ...s.host}, biocomp:{...defaultState.biocomp,...s.biocomp}, swarm:{...defaultState.swarm,...s.swarm}, ota:{...defaultState.ota,...s.ota}} : structuredClone(defaultState);}catch{ return structuredClone(defaultState) }
+    try{
+      const s = JSON.parse(localStorage.getItem(storeKey));
+      if (!s) return structuredClone(defaultState);
+      return {
+        ...defaultState,
+        ...s,
+        host:{...defaultState.host, ...s.host},
+        biocomp:{...defaultState.biocomp,...s.biocomp},
+        swarm:{...defaultState.swarm,...s.swarm},
+        ota:{...defaultState.ota,...s.ota}
+      };
+    }catch{
+      return structuredClone(defaultState);
+    }
   }
   function save(){ localStorage.setItem(storeKey, JSON.stringify(state)); updatePills(); }
 
-  // Tabs
-  $$('.tab-btn').forEach(b=>b.onclick=()=>{ $$('.tab-btn').forEach(x=>x.classList.remove('active')); b.classList.add('active'); $$('.panel').forEach(p=>p.classList.remove('active')); $('#panel-'+b.dataset.tab).classList.add('active'); if(b.dataset.tab==='ar' && !window._arInit) initARScene(); });
+  $$('.tab-btn').forEach(b=>b.onclick=()=>{
+    $$('.tab-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    $$('.panel').forEach(p=>p.classList.remove('active'));
+    $('#panel-'+b.dataset.tab).classList.add('active');
+    if(b.dataset.tab==='ar' && !window._arInit) initARScene();
+  });
 
-  // Toast
-  function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+  function toast(msg){
+    const t=$('#toast');
+    t.textContent=msg;
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2200);
+  }
 
-  // Pills
   function updatePills(){
     $('#pill-host').textContent = 'HOST: ' + (state.host.verified ? 'bound' : 'unbound');
-    const cn = state.consentLog.length ? state.consentLog[state.consentLog.length-1].n : 0;
+    const cn = state._consentCount || 0;
     $('#pill-consent').textContent = 'Cₙ = '+cn;
     const bc = computeBC();
     $('#pill-bc').textContent = 'BCₕ: ' + (bc.score*100).toFixed(0)+'%';
     $('#pill-roh').textContent = 'RoH: ' + state.biocomp.roh_scalar.toFixed(2);
   }
 
-  // HOST BINDING
   const hostDidEl=$('#host_did'), bostromEl=$('#bostrom_address');
-  hostDidEl.value = state.host.host_did; bostromEl.value = state.host.bostrom_address;
+  hostDidEl.value = state.host.host_did;
+  bostromEl.value = state.host.bostrom_address;
+
   function renderHost(){
-    const s=$('#hostStatus'); s.innerHTML='';
+    const s=$('#hostStatus');
+    s.innerHTML='';
     if(state.host.verified){
-      s.innerHTML = `<div class="guard ok">✓ Bound to ${state.host.host_did} • ${new Date(state.host.ts).toLocaleString()}</div><div class="kv"><div>Bostrom</div><div class="mono">${state.host.bostrom_address}</div><div>Clause</div><div>ALN.MIGRATION.CYBERCORE_AUTHORITY.v1 enforced</div></div>`;
-    }else{ s.innerHTML = `<div class="guard warn">⚠ Unverified — binding required for host-bound execution</div>`; }
+      s.innerHTML = `<div class="guard ok">✓ Bound to ${state.host.host_did} • ${state.host.ts ? new Date(state.host.ts).toLocaleString() : ''}</div><div class="kv"><div>Bostrom</div><div class="mono">${state.host.bostrom_address}</div><div>Clause</div><div>ALN.MIGRATION.CYBERCORE_AUTHORITY.v1 enforced</div></div>`;
+    }else{
+      s.innerHTML = `<div class="guard warn">⚠ Unverified — binding required for host-bound execution</div>`;
+    }
   }
+
   $('#verifyBtn').onclick = ()=>{
-    const did = hostDidEl.value.trim(), addr = bostromEl.value.trim();
+    const did = hostDidEl.value.trim();
+    const addr = bostromEl.value.trim();
     const roh = state.biocomp.roh_scalar;
-    if(!did.startsWith('did:aln:')) return toast('Invalid DID format');
-    if(!addr.startsWith('bostrom1') || addr.length<30) return toast('Invalid Bostrom address');
-    if(roh>0.30){ toast('QUARANTINE: RoH >0.30 — binding blocked'); state.host.verified=false; save(); renderHost(); return; }
+    if(!did.startsWith('did:aln:')){ toast('Invalid DID format'); return; }
+    if(!addr.startsWith('bostrom1') || addr.length<30){ toast('Invalid Bostrom address'); return; }
+    if(roh>0.30){
+      toast('QUARANTINE: RoH >0.30 — binding blocked');
+      state.host.verified=false;
+      save();
+      renderHost();
+      return;
+    }
     state.host = { host_did:did, bostrom_address:addr, verified:true, ts:new Date().toISOString() };
-    save(); renderHost(); toast('Host binding verified');
+    save();
+    renderHost();
+    toast('Host binding verified');
   };
-  $('#clearHostBtn').onclick = ()=>{ state.host.verified=false; state.host.ts=null; save(); renderHost(); toast('Binding cleared'); };
 
-  // CONSENT LOG
-  function renderConsent(){
-    const log=$('#consentLog'); log.innerHTML='';
-    if(!state.consentLog.length){ log.innerHTML = `<div class="log-item"><span class="muted">No consent events yet. Grant to initialize C₁.</span></div>`; }
-    else{ state.consentLog.slice().reverse().forEach(e=>{ const d=document.createElement('div'); d.className='log-item'; d.innerHTML=`<span class="log-n">C${e.n}</span><span class="log-t">${e.type}</span><span class="muted">${new Date(e.ts).toLocaleString()}</span><span class="log-h">${e.hash}</span>`; log.appendChild(d); }); }
-    const cn = state.consentLog.length ? state.consentLog[state.consentLog.length-1].n : 0;
+  $('#clearHostBtn').onclick = ()=>{
+    state.host.verified=false;
+    state.host.ts=null;
+    save();
+    renderHost();
+    toast('Binding cleared');
+  };
+
+  function renderConsentList(entries){
+    const log=$('#consentLog');
+    log.innerHTML='';
+    if(!entries.length){
+      log.innerHTML = `<div class="log-item"><span class="muted">No consent events yet. Grant to initialize C₁.</span></div>`;
+    }else{
+      entries.slice().reverse().forEach(e=>{
+        const d=document.createElement('div');
+        d.className='log-item';
+        d.innerHTML=`<span class="log-n">C${e.c_n}</span><span class="log-t">${e.event_type}</span><span class="muted">${new Date(e.timestamp).toLocaleString()}</span><span class="log-h">${e.hash}</span>`;
+        log.appendChild(d);
+      });
+    }
+    const cn = entries.length ? entries[entries.length-1].c_n : 0;
+    state._consentCount = cn;
     $('#cnDisplay').textContent = `Cₙ = ${cn}`;
+    updatePills();
   }
-  function addConsent(type){
-    const prev = state.consentLog.length ? state.consentLog[state.consentLog.length-1].n : 0;
-    const n = prev+1;
-    const ts = new Date().toISOString();
-    const hash = btoa(`${n}:${type}:${ts}:${state.host.host_did}`).slice(0,12);
-    state.consentLog.push({n, type, ts, hash}); save(); renderConsent(); toast(`${type} recorded as C${n}`);
+
+  async function initConsentSystem(){
+    await consentDB.open();
+    const count = await consentDB.getCount();
+    state._consentCount = count;
+    const entries = await consentDB.getAll();
+    renderConsentList(entries);
   }
-  $('#grantBtn').onclick = ()=>addConsent('GRANT');
-  $('#revokeBtn').onclick = ()=>addConsent('REVOKE');
-  $('#exportBtn').onclick = ()=>{
-    const blob = new Blob([JSON.stringify({host:state.host, consentLog:state.consentLog, exported:new Date().toISOString()}, null,2)], {type:'application/json'});
-    const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`augmented-citizen-consent-C${state.consentLog.length||0}.json`; a.click(); URL.revokeObjectURL(url);
+
+  $('#grantBtn').onclick = async ()=>{
+    await consentDB.open();
+    const entry = await consentDB.addConsent({
+      event_type: 'GRANT',
+      purpose: 'general',
+      data_categories: ['neural', 'telemetry'],
+      bostrom_address: state.host.bostrom_address
+    });
+    const entries = await consentDB.getAll();
+    renderConsentList(entries);
+    toast(`GRANT recorded as C${entry.c_n}`);
   };
 
-  // BIOCOMPATIBILITY
+  $('#revokeBtn').onclick = async ()=>{
+    await consentDB.open();
+    const entries = await consentDB.getAll();
+    const latest = entries.length ? entries[entries.length-1] : null;
+    const originalCn = latest ? latest.c_n : null;
+    const entry = await consentDB.addConsent({
+      event_type: 'REVOKE',
+      purpose: 'revocation',
+      revokes_c_n: originalCn,
+      data_categories: ['revocation']
+    });
+    const all = await consentDB.getAll();
+    renderConsentList(all);
+    toast(`REVOKE recorded as C${entry.c_n}`);
+  };
+
+  $('#exportBtn').onclick = async ()=>{
+    await consentDB.open();
+    const json = await consentDB.exportJSON();
+    const blob = new Blob([json], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `augmented-citizen-consent-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const rohEl=$('#roh'), lfEl=$('#lifeforce'), thEl=$('#thermal'), cnsEl=$('#cns');
-  rohEl.value=state.biocomp.roh_scalar; lfEl.value=state.biocomp.lifeforce; thEl.value=state.biocomp.thermal_index; cnsEl.value=state.biocomp.cns_load;
+  rohEl.value=state.biocomp.roh_scalar;
+  lfEl.value=state.biocomp.lifeforce;
+  thEl.value=state.biocomp.thermal_index;
+  cnsEl.value=state.biocomp.cns_load;
+
   function computeBC(){
-    const roh = +rohEl.value, lf=+lfEl.value, th=+thEl.value, cns=+cnsEl.value;
+    const roh = +rohEl.value;
+    const lf=+lfEl.value;
+    const th=+thEl.value;
+    const cns=+cnsEl.value;
     const z_roh = Math.max(0, 1 - (roh/0.30));
-    const z_lf = lf, z_th = 1-th, z_cns = 1-cns;
+    const z_lf = lf;
+    const z_th = 1-th;
+    const z_cns = 1-cns;
     const score = 0.4*z_roh + 0.3*z_lf + 0.2*z_th + 0.1*z_cns;
     return {score:Math.max(0,Math.min(1,score)), z_roh, roh, lf, th, cns};
   }
+
   function renderBC(){
     const {score,z_roh,roh,lf,th,cns} = computeBC();
-    $('#rohVal').textContent = roh.toFixed(2); $('#lfVal').textContent=lf.toFixed(2); $('#thVal').textContent=th.toFixed(2); $('#cnsVal').textContent=cns.toFixed(2);
-    const pct = Math.round(score*100); $('#bcText').textContent = pct+'%';
-    const ring = $('#bcRing'); const off = 377*(1-score); ring.setAttribute('stroke-dashoffset', off);
+    $('#rohVal').textContent = roh.toFixed(2);
+    $('#lfVal').textContent=lf.toFixed(2);
+    $('#thVal').textContent=th.toFixed(2);
+    $('#cnsVal').textContent=cns.toFixed(2);
+    const pct = Math.round(score*100);
+    $('#bcText').textContent = pct+'%';
+    const ring = $('#bcRing');
+    const off = 377*(1-score);
+    ring.setAttribute('stroke-dashoffset', off);
     ring.setAttribute('stroke', score>0.7 ? '#22d3ee' : score>0.4 ? '#eab308' : '#ef4444');
     $('#bcFormula').textContent = `Bₕ(t) = 0.4·${z_roh.toFixed(2)} + 0.3·${lf.toFixed(2)} + 0.2·${(1-th).toFixed(2)} + 0.1·${(1-cns).toFixed(2)}\nBCₕ = ${score.toFixed(3)}`;
     const guard = $('#rohGuard');
-    if(roh>0.30){ guard.className='guard bad'; guard.innerHTML='⛔ QUARANTINE: RoH >0.30 — Host binding suspended per ALN.MIGRATION.CYBERCORE_AUTHORITY.v1'; state.host.verified=false; }
-    else if(roh>0.27){ guard.className='guard warn'; guard.innerHTML='⚠ BRAKE: RoH >0.27 — reduce cybernetic load, increase lifeforce'; }
-    else { guard.className='guard ok'; guard.innerHTML='✓ NOMINAL: RoH within safe envelope (≤0.27)'; }
-    state.biocomp = {roh_scalar:roh, lifeforce:lf, thermal_index:th, cns_load:cns}; save(); updatePills(); $('#arStats').textContent = `RoH ${roh.toFixed(2)} • BCₕ ${pct}%`;
+    if(roh>0.30){
+      guard.className='guard bad';
+      guard.innerHTML='⛔ QUARANTINE: RoH >0.30 — Host binding suspended per ALN.MIGRATION.CYBERCORE_AUTHORITY.v1';
+      state.host.verified=false;
+    }else if(roh>0.27){
+      guard.className='guard warn';
+      guard.innerHTML='⚠ BRAKE: RoH >0.27 — reduce cybernetic load, increase lifeforce';
+    }else{
+      guard.className='guard ok';
+      guard.innerHTML='✓ NOMINAL: RoH within safe envelope (≤0.27)';
+    }
+    state.biocomp = {roh_scalar:roh, lifeforce:lf, thermal_index:th, cns_load:cns};
+    save();
+    updatePills();
+    $('#arStats').textContent = `RoH ${roh.toFixed(2)} • BCₕ ${pct}%`;
   }
+
   [rohEl,lfEl,thEl,cnsEl].forEach(el=>el.addEventListener('input', renderBC));
 
-  // SWARM
   const tokens = Object.keys(defaultState.swarm);
   function renderSwarm(){
-    const wrap=$('#swarmSliders'); wrap.innerHTML='';
+    const wrap=$('#swarmSliders');
+    wrap.innerHTML='';
     tokens.forEach(t=>{
-      const row=document.createElement('div'); row.className='slider-row';
+      const row=document.createElement('div');
+      row.className='slider-row';
       row.innerHTML=`<label>${t}</label><input type="range" min="0" max="1" step="0.01" data-token="${t}" value="${state.swarm[t]}"><span class="val" id="val-${t}">${state.swarm[t].toFixed(2)}</span>`;
       wrap.appendChild(row);
     });
     wrap.querySelectorAll('input').forEach(inp=>{
       inp.addEventListener('input', e=>{
-        const tok = e.target.dataset.token; const old = state.swarm[tok]; const v = +e.target.value;
-        state.swarm[tok]=v; const total = Object.values(state.swarm).reduce((a,b)=>a+b,0)/tokens.length;
-        if(total>0.92){ state.swarm[tok]=old; e.target.value=old; toast('OVERLOAD PREVENTED: reduce other resources'); return; }
-        $('#val-'+tok).textContent = v.toFixed(2); updateSwarmTotal(); save();
+        const tok = e.target.dataset.token;
+        const old = state.swarm[tok];
+        const v = +e.target.value;
+        state.swarm[tok]=v;
+        const total = Object.values(state.swarm).reduce((a,b)=>a+b,0)/tokens.length;
+        if(total>0.92){
+          state.swarm[tok]=old;
+          e.target.value=old;
+          toast('OVERLOAD PREVENTED: reduce other resources');
+          return;
+        }
+        $('#val-'+tok).textContent = v.toFixed(2);
+        updateSwarmTotal();
+        save();
       });
     });
     updateSwarmTotal();
   }
+
   function updateSwarmTotal(){
     const total = Object.values(state.swarm).reduce((a,b)=>a+b,0)/tokens.length;
     $('#swarmFill').style.width = (total*100).toFixed(0)+'%';
     $('#swarmTotalText').textContent = total.toFixed(2)+' / 1.0';
     const w=$('#swarmWarn');
-    if(total>0.85){ w.innerHTML='<span class="guard warn" style="padding:.2rem .5rem">Approaching overload</span>'; }
-    else if(total>0.65){ w.innerHTML='<span class="guard ok" style="padding:.2rem .5rem">Balanced</span>'; }
-    else { w.innerHTML='<span class="muted">Nominal</span>'; }
+    if(total>0.85){
+      w.innerHTML='<span class="guard warn" style="padding:.2rem .5rem">Approaching overload</span>';
+    }else if(total>0.65){
+      w.innerHTML='<span class="guard ok" style="padding:.2rem .5rem">Balanced</span>';
+    }else{
+      w.innerHTML='<span class="muted">Nominal</span>';
+    }
   }
 
-  // OTA
   function renderOTA(){
-    $('#otaVersion').textContent = 'v'+state.ota.version;
+    $('#otaVersion').textContent = state.ota.version;
     $('#otaLast').textContent = new Date().toLocaleString();
-    $('#otaLog').innerHTML = state.ota.history.slice().reverse().map(h=>`- v${h.v} • ${new Date(h.ts).toLocaleString()}${h.note? ' • '+h.note:''}`).join('\n');
+    $('#otaLog').textContent = state.ota.history.slice().reverse().map(h=>`- ${h.v} • ${new Date(h.ts).toLocaleString()}${h.note? ' • '+h.note:''}`).join('\n');
   }
-  $('#otaUpgrade').onclick = ()=>{
-    const parts = state.ota.version.split(/[. -]/); let [maj,min,patch]=parts.map(n=>parseInt(n)||0); patch++;
-    const newV = `${maj}.${min}.${patch}-cybercore`;
-    state.ota.version = newV;
-    const cn = state.consentLog.length ? state.consentLog[state.consentLog.length-1].n : 0;
-    state.ota.history.push({v:newV, ts:new Date().toISOString(), note:`capability preserved (Cₙ=${cn})`});
-    save(); renderOTA(); toast(`OTA ${newV} installed — Cₙ preserved`);
-  };
-  $('#otaVerify').onclick = ()=>{ toast('Integrity ✓ — host binding and consent log intact'); };
 
-  // AR
+  $('#otaUpgrade').onclick = ()=>{
+    const parts = state.ota.version.replace('v','').split(/[. -]/);
+    let [maj,min,patch] = parts.map(n=>parseInt(n)||0);
+    patch++;
+    const newV = `v${maj}.${min}.${patch}-cybercore`;
+    state.ota.version = newV;
+    const cn = state._consentCount || 0;
+    state.ota.history.push({v:newV, ts:new Date().toISOString(), note:`capability preserved (Cₙ=${cn})`});
+    save();
+    renderOTA();
+    toast(`${newV} installed — Cₙ preserved`);
+  };
+
+  $('#otaVerify').onclick = async ()=>{
+    await consentDB.open();
+    const integrity = await consentDB.verifyIntegrity();
+    if(integrity.valid){
+      toast(`Integrity ✓ — ${integrity.count} consent entries, C₁ to Cₙ`);
+    }else{
+      toast('Integrity check failed');
+    }
+  };
+
   let scene,camera,renderer,cube,inner,anim;
   function initARScene(){
-    if(window._arInit) return; window._arInit=true;
+    if(window._arInit) return;
+    window._arInit=true;
     const container = $('#arContainer');
-    const w = container.clientWidth, h = container.clientHeight || Math.round(w*9/16);
+    const w = container.clientWidth;
+    const h = container.clientHeight || Math.round(w*9/16);
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(55, w/h, 0.1, 100); camera.position.set(2.4,1.6,2.4);
-    renderer = new THREE.WebGLRenderer({antialias:true, alpha:true}); renderer.setSize(w,h); renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+    camera = new THREE.PerspectiveCamera(55, w/h, 0.1, 100);
+    camera.position.set(2.4,1.6,2.4);
+    renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+    renderer.setSize(w,h);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
     container.prepend(renderer.domElement);
-    const geo = new THREE.BoxGeometry(1.2,1.2); const mat = new THREE.MeshBasicMaterial({color:0x22d3ee,wireframe:true,transparent:true,opacity:0.85});
-    cube = new THREE.Mesh(geo,mat); scene.add(cube);
-    inner = new THREE.Mesh(new THREE.IcosahedronGeometry(0.35,1), new THREE.MeshBasicMaterial({color:0x06b6d4,wireframe:true,opacity:0.6,transparent:true})); scene.add(inner);
-    const grid = new THREE.GridHelper(4,12,0x0ea5b1,0x083344); grid.position.y=-0.9; scene.add(grid);
-    const light = new THREE.AmbientLight(0x88ffff,0.8); scene.add(light);
-    function animate(){ anim=requestAnimationFrame(animate); cube.rotation.y+=0.006; cube.rotation.x+=0.003; inner.rotation.y-=0.01; renderer.render(scene,camera); }
+    const geo = new THREE.BoxGeometry(1.2,1.2);
+    const mat = new THREE.MeshBasicMaterial({color:0x22d3ee,wireframe:true,transparent:true,opacity:0.85});
+    cube = new THREE.Mesh(geo,mat);
+    scene.add(cube);
+    inner = new THREE.Mesh(new THREE.IcosahedronGeometry(0.35,1), new THREE.MeshBasicMaterial({color:0x06b6d4,wireframe:true,opacity:0.6,transparent:true}));
+    scene.add(inner);
+    const grid = new THREE.GridHelper(4,12,0x0ea5b1,0x083344);
+    grid.position.y=-0.9;
+    scene.add(grid);
+    const light = new THREE.AmbientLight(0x88ffff,0.8);
+    scene.add(light);
+    function animate(){
+      anim=requestAnimationFrame(animate);
+      cube.rotation.y+=0.006;
+      cube.rotation.x+=0.003;
+      inner.rotation.y-=0.01;
+      renderer.render(scene,camera);
+    }
     animate();
-    window.addEventListener('resize', ()=>{ const ww=container.clientWidth, hh=container.clientHeight; camera.aspect=ww/hh; camera.updateProjectionMatrix(); renderer.setSize(ww,hh); });
+    window.addEventListener('resize', ()=>{
+      const ww=container.clientWidth;
+      const hh=container.clientHeight || Math.round(ww*9/16);
+      camera.aspect=ww/hh;
+      camera.updateProjectionMatrix();
+      renderer.setSize(ww,hh);
+    });
   }
-  $('#enterAr').onclick = ()=>{ document.querySelector('[data-tab="ar"]').click(); initARScene(); toast('AR envelope active — host-local only'); };
-  $('#resetAr').onclick = ()=>{ if(cube){ cube.rotation.set(0,0,0); inner.rotation.set(0,0,0);} };
 
-  // Init
+  $('#enterAr').onclick = ()=>{
+    document.querySelector('[data-tab="ar"]').click();
+    initARScene();
+    toast('AR envelope active — host-local only');
+  };
+
+  $('#resetAr').onclick = ()=>{
+    if(cube){ cube.rotation.set(0,0,0); }
+    if(inner){ inner.rotation.set(0,0,0); }
+  };
+
   function init(){
-    renderHost(); renderConsent(); renderBC(); renderSwarm(); renderOTA(); updatePills();
-    // persist inputs
-    hostDidEl.addEventListener('change', ()=>{ state.host.host_did=hostDidEl.value.trim(); save(); });
-    bostromEl.addEventListener('change', ()=>{ state.host.bostrom_address=bostromEl.value.trim(); save(); });
+    renderHost();
+    renderBC();
+    renderSwarm();
+    renderOTA();
+    updatePills();
+    hostDidEl.addEventListener('change', ()=>{
+      state.host.host_did=hostDidEl.value.trim();
+      save();
+    });
+    bostromEl.addEventListener('change', ()=>{
+      state.host.bostrom_address=bostromEl.value.trim();
+      save();
+    });
+    initConsentSystem();
   }
   init();
 
-  // PWA service worker stub (inline)
-  if('serviceWorker' in navigator){ /* no external SW to keep single-file, but manifest allows install */ }
+  if('serviceWorker' in navigator){
+  }
 })();
 </script>
-<script>(function(){document.addEventListener("click",function(e){var a=e.target.closest("[data-product-id]");if(!a)return;e.preventDefault();var pid=a.getAttribute("data-product-id");if(pid)parent.postMessage({type:"ecto-artifact-link-click",productId:pid},"*")})})();</script>
+
+<script>
+document.addEventListener("click",function(e){
+  var a=e.target.closest("[data-product-id]");
+  if(!a)return;
+  e.preventDefault();
+  var pid=a.getAttribute("data-product-id");
+  if(pid)parent.postMessage({type:"ecto-artifact-link-click",productId:pid},"*");
+});
+</script>
 
 <script>
 window.addEventListener('online', () => document.getElementById('offline-pill').style.display='none');
