@@ -19,11 +19,13 @@ members = [
     "crates/anti-coercion-enclave",
     "crates/brain-identity-kernel",
     "crates/brain-identity-core",
+    "crates/brain-identity-token",
     "crates/neurorights-evidence",
     "crates/biophysical-corridor-evidence",
     "crates/cybercore-neural-abuse-event",
     "crates/cybercore-psych-guards",
     "crates/detox-interval-guard",
+    "crates/state-only-channel",
 
     # InfraNet / VitalNet / ALN planes
     "crates/ac-aln-core",
