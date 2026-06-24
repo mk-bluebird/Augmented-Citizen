@@ -1,0 +1,89 @@
+aln qpudatashards/PainFederatedModel2026v1.aln
+
+aln PainFederatedModel2026v1
+
+record PainFederatedModel2026v1
+  string   modelid
+  string   hostdid
+  string   bostromaddress
+  string   brainidentitytokenid
+  string   jurisdictioncode
+  string   sitecode
+  string   irbid
+  string   legalbasis
+  string   consent_envelope_id
+
+  float    p_local
+  float    weight
+  float    rohvalue
+  float    psychriskscalar
+  float    data_quality_score
+  float    hrv_quality_score
+  float    eeg_quality_score
+
+  bool     neurorights_noscorefrominnerstate
+  bool     neurorights_noneurocoercion
+  bool     neurorights_noexclusionbasicservices
+
+  string   mobilityscope
+  string   topology
+
+  string   purpose
+  string   capability_scope
+  string   federated_round_id
+
+  datetime created_at_utc
+  datetime updated_at_utc
+  datetime expiry_utc
+
+  bool     antirollback
+  bool     monotone_tightening_only
+
+  string   row_id
+  string   prev_row_id
+  string   organichainroot
+  string   rowledgerroot
+
+constraints PainFederatedModel2026v1
+  require hostdid == "didalnorganic-host"
+  require bostromaddress == "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+
+  require 0.0 <= p_local && p_local <= 1.0
+  require 0.0 <= weight  && weight  <= 1.0
+  require 0.0 <= rohvalue && rohvalue <= 0.30
+  require 0.0 <= psychriskscalar && psychriskscalar <= 1.0
+
+  require 0.0 <= data_quality_score && data_quality_score <= 1.0
+  require 0.0 <= hrv_quality_score  && hrv_quality_score  <= 1.0
+  require 0.0 <= eeg_quality_score  && eeg_quality_score  <= 1.0
+
+  require neurorights_noscorefrominnerstate == true
+  require neurorights_noneurocoercion == true
+  require neurorights_noexclusionbasicservices == true
+
+  require created_at_utc <= updated_at_utc
+  require updated_at_utc <= expiry_utc
+
+  require antirollback == true
+  require monotone_tightening_only == true
+
+  require length(modelid) > 0
+  require length(brainidentitytokenid) > 0
+  require length(federated_round_id) > 0
+  require length(row_id) > 0
+
+  require row_id != prev_row_id
+
+index PainFederatedModel2026v1_index_model_round
+  on PainFederatedModel2026v1(modelid, federated_round_id, row_id)
+
+index PainFederatedModel2026v1_index_host_round
+  on PainFederatedModel2026v1(hostdid, brainidentitytokenid, federated_round_id)
+
+doc PainFederatedModel2026v1
+  "PainFederatedModel2026v1 encodes a single contribution to a federated pain index round."
+  "p_local is a normalized scalar in [0, 1] derived from StateOnlyVec16 and BrainStateCommit."
+  "weight is a normalized quality weight; the aggregator enforces Σ w_i = 1 across sites."
+  "No raw EnclaveBrainSnapshot fields or high-dimensional embeddings are ever serialized here."
+  "Neurorights flags must remain true; any attempt to relax them is rejected at compile-time."
+  "antirollback and monotone_tightening_only enforce forward-only evolution of pain models."
