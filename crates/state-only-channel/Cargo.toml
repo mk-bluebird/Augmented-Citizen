@@ -1,0 +1,40 @@
+[package]
+name = "state-only-channel"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+authors = ["mk-bluebird <dev@mk-bluebird.org>"]
+license = "Apache-2.0"
+description = "State-only scalar export channel for neuromorphic and biophysical kernels in Augmented-Citizen."
+repository = "https://github.com/mk-bluebird/Augmented-Citizen"
+readme = "README.md"
+keywords = ["bci", "neuromorphic", "privacy", "state-only", "aln"]
+categories = ["science", "embedded", "no-std"]
+publish = false
+
+[lib]
+name = "state_only_channel"
+path = "src/lib.rs"
+
+[dependencies]
+# chrono is used in related schedulers; kept here for alignment,
+# but this crate’s core modules avoid wall-clock dependencies where unnecessary.
+chrono = { version = "0.4", default-features = false, features = ["clock"] }
+
+# No-std compatible data structures; std is used by default in this crate,
+# but the API can be adapted to no-std environments as needed.
+hashbrown = "0.14"
+
+[dev-dependencies]
+kani = { version = "0.46", optional = true }
+
+[features]
+default = ["std"]
+std = []
+
+# Kani proofs for formal verification.
+kani-proofs = ["kani"]
+
+[package.metadata.docs]
+# This crate is part of the Augmented-Citizen stack and is documented
+# alongside ALN qpudatashards for neuromorphic state vectors.
