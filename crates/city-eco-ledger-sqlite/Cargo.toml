@@ -1,0 +1,30 @@
+# crates/city-eco-ledger-sqlite/Cargo.toml
+[package]
+name = "city-eco-ledger-sqlite"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "SQLite-backed eco-impact ledger for E_city kWh metrics, ISO 14064-attestable, append-only."
+repository = "https://github.com/mk-bluebird/Augmented-Citizen"
+authors = ["mk-bluebird <dev@augmented.city>"]
+
+[dependencies]
+city-eco-ledger = { path = "../city-eco-ledger" }
+serde = { workspace = true, features = ["derive"] }
+time = { workspace = true, features = ["serde"] }
+uuid = { workspace = true, features = ["v4", "serde"] }
+rusqlite = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+serde_json = { workspace = true }
+
+[lib]
+name = "city_eco_ledger_sqlite"
+path = "src/lib.rs"
+
+[package.metadata.infra-net]
+design_score = "DLow"
+neuro_risk = "NRLow"
+energy_efficiency = "EEHigh"
+role = "EcoLedgerStorage"
