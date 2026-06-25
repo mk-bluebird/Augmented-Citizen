@@ -56,6 +56,7 @@ members = [
     "crates/swarm-ctrl",
     "crates/fed-bridge",
     "crates/brain-social-guard",
+    "crates/deviceless-agent-guard",
 
     # Smart-city drones / XR planes
     "crates/smart-city-drone",
