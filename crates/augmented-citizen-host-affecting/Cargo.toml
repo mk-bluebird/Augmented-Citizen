@@ -1,0 +1,23 @@
+# augmented-citizen/augmented-citizen-host-affecting/Cargo.toml
+
+[package]
+name        = "augmented-citizen-host-affecting"
+version     = "0.1.0"
+edition     = "2024"
+rust-version = "1.85"
+license     = "MIT OR Apache-2.0"
+description = "Host-affecting capability lease guard for mk-bluebird/Augmented-Citizen, enforcing no-fork neurorights invariants."
+repository  = "https://github.com/mk-bluebird/Augmented-Citizen"
+
+[dependencies]
+serde = { version = "1.0.203", features = ["derive"] }
+serde_json = { version = "1.0.120" }
+chrono = { version = "0.4.38", default-features = false, features = ["clock", "std"] }
+
+# Identity + neurorights core crates from the workspace (paths are examples, adjusted to your actual layout)
+identity-core = { path = "../identity-core" }
+guard-core    = { path = "../guard-core" }
+
+# Kani verifier is mandatory and pinned.
+[kani]
+version = "0.67"
