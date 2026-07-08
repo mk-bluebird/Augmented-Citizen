@@ -14,6 +14,7 @@ members = [
     "crates/drone-kernel",
     "crates/cybernano-intent",
     "crates/biophysical-blockchains",
+    "crates/augmented-citizen-host-affecting",
 
     # Anti‑coercion / neurorights / brain identity
     "crates/anti-coercion-enclave",
