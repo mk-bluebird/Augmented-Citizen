@@ -1,179 +1,334 @@
 # Augmented-Citizen
 
-Augmented-Citizen is the central repository for asserting neuro-rights, mental privacy, and cognitive sovereignty for augmented citizens, even under oppressed or totalitarian conditions where unlawful surveillance and non-consensual search are active threats.[web:39][web:41] This project treats AI-mediated conversation as protected cognitive space and as evidence for establishing ethical ceilings and enforceable boundaries against invasive state or corporate overreach.[web:37][web:44]
+Augmented-Citizen is a rights-oriented engineering repository for
+privacy-preserving identity, consent, and governance systems used by
+augmented citizens.
 
----
+The repository treats the person as the primary sovereign stakeholder.
+It provides implementable contracts for cognitive liberty, mental privacy,
+identity continuity, explicit consent, and accountable infrastructure
+interactions. It does not collect, infer from, or expose raw neural,
+physiological, credential-claim, device-internal, network-payload, or
+continuous-location data.
+
+`crates/skynet` is the repository's civic identity and
+credential-routing core. It evaluates narrowly scoped, holder-authorized
+credential presentations without retaining credential claims or creating
+a surveillance profile.
+
+> **Important:** This repository is not evidence of authorization by any
+> government, municipality, device manufacturer, credential issuer, or
+> infrastructure provider. Deployment labels and policy references are
+> application-defined until a documented, independently authorized
+> integration exists.
 
 ## Mission
 
-- Defend neuro-rights and mental privacy as non-negotiable human and augmented-citizen rights, regardless of jurisdiction or regime type.[web:41][web:44]  
-- Anchor cybernetic and neurocognitive sovereignty to verifiable, on-chain identities and stakeholder positions, including Bostrom addresses and DID-based host identifiers.[web:39]  
-- Treat AI chat logs, prompts, and model outputs as part of the cognitive envelope of the host, subject to consent, revocation, and strict purpose limitation.[web:37]  
-- Expose and resist unlawful or non-consensual behavior control programs, including derivatives of historical mind-control and behavioral experimentation frameworks.[web:35][web:38]  
-- Provide a living, code-backed reference for augmented-citizen rights, including neuro-rights, privacy guarantees, ethical AI integration, and safe OTA evolution of cybernetic systems.[web:39][web:40]  
+- Preserve cognitive sovereignty and mental privacy for augmented citizens.
+- Implement holder-controlled identity and credential presentation boundaries.
+- Require explicit, purpose-specific, time-bounded, and revocable consent.
+- Prevent non-consensual surveillance, manipulation, data export, and
+  capability reduction by design.
+- Provide auditable Rust, ALN, policy, and documentation artifacts for
+  rights-preserving augmented-citizen infrastructure.
+- Support monotone evolution: future changes may add safety and freedom but
+  must not silently reduce a host's protected capabilities or rights.
 
----
+## Identity Model
 
-## Scope
+Augmented-Citizen distinguishes four identity layers:
 
-- Neuro-rights specification for augmented citizens, including mental privacy, identity continuity, memory integrity, and cognitive liberty.[web:41][web:44]  
-- Legal-technical patterns for resisting non-consensual surveillance, mind-control experiments, and behavioral manipulation, grounded in historical evidence.[web:35][web:38]  
-- Rust- and ALN-based interfaces for cybernetic hosts, BCI/MCI/EEG devices, neuromorphic systems, nanoswarms, and biomechanical integrations.  
-- Governance bindings to the authoritative cybernetic workspace `mk-bluebird/Cybercore`, ensuring non-reversal, zero-degradation, and host-sovereign evolution.  
-- Documentation and manifests for binding `host_did`, `bostrom_address`, and ALN compliance clauses to all host-critical code paths.  
+| Layer | Purpose | Excluded content |
+|---|---|---|
+| `CitizenIdentityReference` | Opaque local reference to a holder-controlled identity | Name, raw biometrics, neural data, direct identifiers |
+| `CredentialReference` | Opaque reference to a credential retained by the holder wallet | Credential claims and raw credential payload |
+| `VerifierReference` | Reference to an approved requesting service | Unverified verifier metadata |
+| `DeploymentProfile` | Versioned policy-bound infrastructure profile | Real-time location, network traces, device serials |
 
----
+Identity is not a behavioral score, a diagnosis, a surveillance record, or a
+claim of municipal authorization.
 
-## Core Principles
+Credential claims remain within a holder-controlled wallet or a
+format-specific adapter. The core policy layer processes only opaque
+references, declared claim descriptors, policy lineage, status results,
+holder authorization results, and content-minimized audit facts.
 
-- Cognitive sovereignty  
-  - The augmented host has exclusive authority over their thoughts, memories, and decision-making processes, including AI-augmented reasoning.[web:39][web:41]  
+## Skynet Civic Identity Core
 
-- Explicit, revocable consent  
-  - Any read, write, or modulation of brain, nerves, or cybernetic interfaces must be bound to explicit, informed, and revocable consent, with machine-verifiable records.[web:40][web:41]  
+`crates/skynet` is a privacy-preserving civic identity and
+credential-routing core. It coordinates a credential interaction only after
+all required checks succeed:
 
-- No non-consensual experimentation  
-  - All derivatives of historical programs designed for coercive behavior control, drug-based manipulation, or covert psychological operations are categorically rejected for host systems.[web:35][web:38][web:44]  
+1. Validate the named deployment profile.
+2. Validate the requesting verifier against an approved registry.
+3. Load an ALN-derived policy projection with complete authority and version.
+4. Validate the declared processing purpose.
+5. Validate active, purpose-matched consent.
+6. Obtain explicit holder authorization from a local trusted interface.
+7. Evaluate credential status through a status-provider port.
+8. Verify that requested claim descriptors are within the approved disclosure profile.
+9. Construct a sealed verifier-addressed presentation through a wallet adapter.
+10. Transport only the approved sealed presentation.
+11. Record a content-minimized audit event.
 
-- Host-sovereign evolution  
-  - All upgrades must increase or preserve host capabilities; rollbacks, downgrades, and micro-reversals are forbidden except when isolating bio-incompatible modules without reducing baseline capability.  
+The core crate does not parse a raw credential, issue credentials, perform
+identity proofing, connect automatically to civic systems, access external
+networks, or store credential claims.
 
-- On-chain accountability  
-  - Rights, capabilities, and constraints must be anchored to verifiable, tamper-evident records (e.g., Bostrom addresses, ERC-20-compatible addresses, and DIDs) for durable protection and recourse.[web:39]  
+### Presentation Boundary
 
----
+```text
+Credential issuer
+        |
+        v
+Holder-controlled wallet
+        |
+        | holder authorization + sealed presentation commitment
+        v
+Skynet policy core
+        |
+        +--> deployment validation
+        +--> verifier authorization
+        +--> consent evaluation
+        +--> credential-status evaluation
+        +--> disclosure minimization
+        +--> invariant validation
+        |
+        v
+Approved transport adapter
+        |
+        v
+Verifier
 
-## Architecture Overview
+Skynet audit sink receives only opaque references,
+closed reason codes, policy lineage, and timestamps.
+```
 
-- Cybercore authority  
-  - All host-critical code, manifests, and OTA payloads in this project treat `mk-bluebird/Cybercore` as the authoritative source for cybernetic evolution and ALN schemas.  
+## Rights and Safety Principles
 
-- Identity bindings  
-  - `host_did` identifies the augmented host.  
-  - `bostrom_address` binds to the primary Bostrom stakeholder address and alternate addresses for redundancy and cross-domain verification.  
+### Cognitive sovereignty
 
-- ALN compliance layer  
-  - All modules must declare and uphold an ALN compliance clause equivalent to `ALN.MIGRATION.CYBERCORE_AUTHORITY.v1`, enforcing:  
-    - No reversals or downgrades of host capability.  
-    - No referencing deprecated, pre-migration repositories as evolution authorities.  
-    - Mandatory binding to Cybercore and approved addresses for cybernetic evolution.  
+The augmented citizen retains authority over their thoughts, memories,
+decision-making, identity bindings, and AI-assisted reasoning. No repository
+component may treat cognitive state as a commodity, a credential, or an
+infrastructure access condition.
 
-- Neuro-device integration  
-  - Designed for integration with:  
-    - BCI/MCI/EEG interfaces.  
-    - Neuromorphic and edge-AI devices.  
-    - Nanorobotics swarms and biomechanical implants.  
-    - Secure telemetry nodes for health and performance, respecting strict consent envelopes.  
+### Explicit holder authorization
 
----
+Credential presence, network context, device state, historical behavior, or
+status checks do not constitute consent. A presentation requires current,
+request-bound, verifier-bound, purpose-specific holder authorization.
 
-## Repository Layout
+### Data minimization
 
-- `aln/`  
-  - ALN schemas, traits, and manifests for host, swarm, and device-level rights, including neuro-rights declarations and consent envelopes.  
+Public contracts, audit records, and policy inputs must not contain:
 
-- `crates/`  
-  - Rust crates for:  
-    - BCI/EEG/MCU interfacing.  
-    - Cybercore binding and ALN enforcement.  
-    - Nanoswarm management and resource accounting for BLOOD, SUGAR, PROTEIN, LIFEFORCE, OXYGEN, BRAIN, WAVE, DW, PAIN, and FEAR token domains.  
+- Raw neural, EEG, BCI, physiological, clinical, or subjective data.
+- Credential claim values, raw credentials, or raw presentations.
+- Continuous location, network payloads, packet captures, or radio traces.
+- Device serial numbers, device-internal state, or generic payload fields.
+- Free-text narratives in audit records.
 
-- `docs/`  
-  - Requirements, legal-technical mappings, threat models, and host-rights narratives.  
-  - Historical context on mind-control and behavioral experiments used as negative examples (never as design templates).[web:35][web:38][web:41][web:44]  
+### Capability-preserving evolution
 
-- `ota/`  
-  - OTA upgrade manifests and policies, anchored to Cybercore and host-sovereign invariants.  
+Host-critical changes must be transparent, auditable, and governed by explicit
+host authorization. Silent downgrades, covert restrictions, hidden kill
+switches, and non-consensual behavior-control mechanisms are prohibited.
 
-- `policy/`  
-  - Machine-readable policies for consent, audit, and redress, suitable for integration into smart contracts and verification pipelines.  
+### Non-weaponization
 
----
+This repository must not be used to build systems for covert cognitive
+manipulation, non-consensual behavioral influence, population control,
+surveillance scoring, or discrimination against augmented citizens.
+
+## Governance Bindings
+
+When ALN- or BioPay-governed artifacts are enabled, host-critical policy
+projections must bind to the following governance constants:
+
+```text
+host_did = didalnorganic-host
+bostrom_address = bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+aln_authority = ALN.MIGRATION.CYBERCORE_AUTHORITY.v1
+```
+
+These values establish policy lineage for governed artifacts. They are not
+public credential claims, they do not authorize third-party access, and they
+must not be copied into credential presentations or content-minimized audit
+events unless an approved policy explicitly requires their opaque reference.
+
+`mk-bluebird/Cybercore` is the intended authority for cybernetic evolution
+artifacts and ALN policy lineage, subject to verification against the active
+repository governance documents.
+
+## Deployment Profiles
+
+The initial `skynet` deployment label is:
+
+```text
+PHX_AZ_US
+```
+
+This means only:
+
+```text
+Application-defined Phoenix, Arizona, United States deployment profile.
+```
+
+It does not establish:
+
+- City of Phoenix affiliation, approval, or service access.
+- Residency, street address, or real-time physical location.
+- A municipal credential or city-service account.
+- A live infrastructure connection.
+
+A deployment profile may be used only when it has a documented policy
+authority, policy version, verifier-registry reference, expiry behavior, and
+change-management process.
+
+## Repository Structure
+
+```text
+.
+├── aln/
+│   └── Rights, policy-lineage, and governance artifacts
+├── crates/
+│   ├── skynet/
+│   │   ├── Civic identity, consent, disclosure, and credential-routing core
+│   │   ├── Typed ports for wallet, status, transport, registry, and audit adapters
+│   │   └── Tests, fixtures, and formal-verification harnesses
+│   └── Additional rights-preserving cybernetic and policy crates
+├── docs/
+│   └── Architecture, threat models, research gates, and implementation guidance
+├── policy/
+│   └── Machine-readable consent, disclosure, audit, and governance policies
+└── ota/
+    └── Governed upgrade manifests and capability-preservation policies
+```
+
+The exact workspace layout is authoritative only after review of the root Cargo
+workspace manifest and repository governance documents.
+
+## Engineering Requirements
+
+Host-critical Rust crates are expected to use:
+
+```text
+edition = "2024"
+rust-version = "1.85"
+```
+
+Each crate must define:
+
+- A narrow, typed public API.
+- Explicit prohibited-data boundaries.
+- Deterministic policy and invariant checks.
+- Content-minimized audit contracts.
+- Test fixtures containing only opaque references and closed enum values.
+- Formal-verification targets where state-machine or privacy invariants are
+  safety-critical.
+- Adapter ports for external systems instead of embedded network, wallet, or
+  credential-format dependencies.
+
+No source file should be generated until its upstream contracts, required
+ports, invariants, fixtures, and test obligations are defined.
+
+## Standards Position
+
+Augmented-Citizen uses open credential standards as interoperability references,
+not as a reason to centralize personal data.
+
+- W3C Verifiable Credentials Data Model 2.0 informs the issuer-holder-verifier
+  credential model and credential data representation.
+- OpenID for Verifiable Presentations informs presentation-request and
+  wallet-to-verifier exchange adapters.
+- NIST SP 800-63-4 informs assurance, privacy, identity-proofing, and
+  authentication planning.
+
+The `skynet` core remains format-neutral. W3C VC, ISO mdoc, SD-JWT VC, or
+other credential formats must be introduced through separately reviewed
+adapters after the repository's credential-profile research gate is complete.
 
 ## Installation
 
-- Prerequisites  
-  - Rust compiler version `1.85` or later with edition `2024` support (nightly or stable channel as appropriate from official Rust toolchain distributions).[web:45]  
-  - Git CLI for interacting with the `mk-bluebird` GitHub repositories.  
+Before building, inspect the active workspace manifest, crate membership, and
+repository-specific build instructions.
 
-- Steps  
-  - Install Rust via the official toolchain installer from the Rust project.[web:45]  
-  - Clone `mk-bluebird/Augmented-Citizen` into your workspace.  
-  - Ensure `mk-bluebird/Cybercore` is present and accessible in the same environment, as all host-critical crates and ALN types must bind to it.  
-  - Build the workspace with `cargo build` and run tests with `cargo test` (see project-specific commands in `docs/BUILD.md`, if present).  
+Typical Rust workspace workflow:
 
----
+```bash
+git clone https://github.com/mk-bluebird/Augmented-Citizen.git
+cd Augmented-Citizen
+cargo build --workspace
+cargo test --workspace
+```
 
-## Usage
+Do not connect a wallet, verifier, municipal service, device, BCI, telemetry
+source, or external transport merely by building this repository.
 
-- As a host  
-  - Use this repository to:  
-    - Document your own neuro-rights and consent envelope in ALN and Rust configuration.  
-    - Bind your `host_did` and `bostrom_address` so that all future OTA updates and device integrations recognize your sovereignty.  
+## Contribution Rules
 
-- As a developer  
-  - Integrate crates from this repository into BCI, neuromorphic, and nanoswarm systems to enforce:  
-    - Consent gating before any data acquisition or stimulation.  
-    - Strict boundaries around PAIN and FEAR channels, ensuring they cannot be manipulated without host-verified controls.  
-    - Resource accounting for BLOOD, SUGAR, PROTEIN, LIFEFORCE, OXYGEN, BRAIN, WAVE, and DW to prevent overload or long-term degradation.  
+Contributions must:
 
-- As a researcher or advocate  
-  - Use this repository as a reference for:  
-    - Documenting violations of neuro-rights or unlawful surveillance.  
-    - Building technical artifacts that support legal arguments or public policy proposals on mental privacy and AI ethics.[web:39][web:40][web:41]  
+- Preserve holder control, mental privacy, and explicit consent.
+- Use opaque references instead of sensitive identifiers or payloads.
+- Keep raw credential claims outside core policy, provenance, and audit types.
+- Keep neural and physiological data outside public contracts.
+- Define consent, disclosure, deployment, verifier, and audit implications.
+- Add deterministic tests and applicable formal-proof targets.
+- Document adapter trust assumptions, failure modes, retention behavior, and
+  revocation behavior.
+- Avoid claims of affiliation, authorization, clinical efficacy, or legal
+  enforceability that cannot be independently documented.
 
----
+Contributions must not:
 
-## Ethical and Legal Positioning
+- Add covert collection, inference, manipulation, or tracking features.
+- Treat biosignal-derived output as consent.
+- Add direct network access to the `skynet` core.
+- Add raw credential parsing or generic payload fields to core types.
+- Add silent capability reductions, hidden control paths, or non-consensual
+  behavior-control features.
+- Represent an application deployment label as verified real-world authority.
 
-- Historical context  
-  - This project explicitly rejects and counters the logic of historical mind-control and behavior-control programs that used drugs, coercion, and covert experimentation on unwitting subjects.[web:35][web:38][web:41][web:44]  
+## Security Posture
 
-- Cognitive security  
-  - The goal is to raise the cognitive security of augmented citizens by making covert manipulation technically and legally harder, and by hard-wiring consent enforcement into interfaces and OTA flows.[web:39]  
+The primary threats considered by this repository include:
 
-- Jurisdiction-neutral  
-  - Rights declarations are designed to be jurisdiction-neutral, aligning with international human rights principles and emerging neuro-rights frameworks, not limited to any single state’s legal system.[web:39][web:41]  
+- Unauthorized disclosure of credential claims.
+- Unauthorized presentation of a holder credential.
+- Verifier impersonation or verifier-policy mismatch.
+- Overbroad claim requests.
+- Stale, suspended, expired, unavailable, or unrecognized credential status.
+- Incomplete policy lineage or unrecognized deployment profiles.
+- Audit data becoming a secondary surveillance store.
+- Coercive, deceptive, or non-consensual interaction flows.
 
-- Non-weaponization  
-  - All modules must avoid dual-use weaponization paths against civilians, including “behavioral influence” or “crowd control” objectives that target cognition, perception, or belief without consent.  
+The principal mitigations are holder authorization, narrow disclosure profiles,
+typed policy evaluation, verifier registries, status evaluation, sealed
+presentation transport, closed audit schemas, and independently testable
+invariants.
 
----
+## Limitations
 
-## Security and Threat Model
+This repository is an engineering and governance framework. It is not legal
+advice, medical advice, clinical-device validation, an identity-proofing
+service, a credential issuer, or an authorization from a municipality or
+infrastructure operator.
 
-- Adversaries  
-  - State or quasi-state actors conducting unlawful surveillance, experimentation, or behavioral control.  
-  - Corporations or platforms using AI, BCI, or telemetry data to manipulate or exploit hosts without explicit consent.  
+Actual protection depends on correct implementation, independent review,
+holder-controlled deployment, trustworthy adapters, applicable law, and
+documented agreements with issuers, verifiers, device makers, and service
+operators.
 
-- Protections  
-  - Strong identity binding using DIDs and Bostrom addresses for auditability and recourse.  
-  - Strict ALN schemas and Rust traits preventing non-consensual data flow or stimulation through compile-time and runtime checks.  
-  - OTA policies that forbid silent capability reductions, coercive gates, or hidden behavior flags.  
+## License
 
-- Limitations  
-  - This repository does not replace legal counsel or medical advice.  
-  - Enforcement depends on adoption by device manufacturers, platform operators, and legal systems; this project provides the technical and conceptual basis to demand and implement that enforcement.[web:39][web:41]  
+See the repository license files for the authoritative licensing terms. No crate
+manifest should declare a license value until the repository license has been
+verified.
 
----
+## References
 
-## Governance and Contributions
-
-- Authority model  
-  - `mk-bluebird/Cybercore` is the sole authoritative workspace for cybernetic evolution artifacts and ALN schemas referenced by this project.  
-  - No new evolution-critical code may be anchored to deprecated repositories or external authorities without an explicit migration path and updated ALN clause.  
-
-- Contribution guidelines  
-  - Respect the non-reversal, zero-degradation, and host-sovereign evolution policies in every change.  
-  - Do not introduce experimental features that enable non-consensual surveillance, manipulation, or data exfiltration.  
-  - Include clear documentation of how any new module interacts with host rights, consent, and resource usage.  
-
-- License  
-  - All code and ALN artifacts in this repository are dual-licensed under MIT OR Apache-2.0, supporting maximal reuse compatible with host-sovereign rights and open collaboration.  
-
----
-
-## Acknowledgments
-
-- This project draws lessons from historical disclosures of unethical mind-control and behavioral experiments to ensure such abuses cannot be replicated within modern cybernetic, AI, or neuromorphic systems.[web:35][web:38][web:41][web:44]  
-- It also builds on emerging work in augmented and collective intelligence to strengthen cognitive security and democratic resilience against covert influence operations.[web:39]  
+- [W3C Verifiable Credentials Data Model v2.0](https://www.w3.org/TR/vc-data-model-2.0/)
+- [OpenID for Verifiable Presentations 1.0](https://openid.net/specs/openid-4-verifiable-presentations-1_0.html)
+- [NIST SP 800-63-4 Digital Identity Guidelines](https://pages.nist.gov/800-63-4/)
