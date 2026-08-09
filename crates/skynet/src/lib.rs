@@ -87,6 +87,7 @@ pub use audit::{
     AuditEvent,
     AuditOutcomeCode,
     AuditRecord,
+    PolicyLineageReference,
 };
 pub use consent::{
     ConsentPurpose,
