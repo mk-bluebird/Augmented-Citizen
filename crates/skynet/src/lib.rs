@@ -101,7 +101,6 @@ pub use error::{
     SkynetError,
     SkynetResult,
 };
-pub use identity::CitizenIdentityReference;
 pub use provenance::{
     PolicyAuthorityReference,
     PolicyLineage,
@@ -111,10 +110,15 @@ pub use provenance::{
 pub use status::CredentialStatus;
 pub use types::{
     AuditEventId,
+    CitizenIdentityReference,
     ConsentScopeId,
     CredentialReference,
     DecisionReceiptId,
+    DeploymentProfile,
     DisclosureDescriptorSetId,
+    PolicyAuthorityReference,
+    PolicyRuleReference,
+    PolicyVersion,
     PresentationRequestId,
     UtcTimestamp,
     VerifierReference,
