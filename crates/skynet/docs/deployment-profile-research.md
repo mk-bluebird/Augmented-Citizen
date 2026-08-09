@@ -1,3 +1,4 @@
+[deployment-profile-research.md](https://github.com/user-attachments/files/30867289/deployment-profile-research.md)
 # Skynet Deployment Profile Research
 
 ## Status
@@ -133,6 +134,11 @@ which statements must remain non-assertive until evidence exists
 
 | Research topic | Evidence source | Authority | Evidence status | Effect on PHX_AZ_US | Open question |
 |---|---|---|---|---|---|
+| Governance authority | Repository policy source, ALN authority record | ALN.MIGRATION.CYBERCORE_AUTHORITY.v1, didalnorganic-host | EVIDENCE_REQUIRED | Cannot activate profile until publisher and version approval evidenced | Who signs PHX_AZ_US version and how is lineage reviewed? |
+| Verifier registry | Documented verifier enrollment agreement | Evidence source required - no agreement in repo yet | EVIDENCE_REQUIRED | No verifier may be activated | Registry owner, publication method, reference format still OPEN |
+| Network-parameter boundary | Wiring-plan and privacy-model | Skynet wiring-plan.md | EVIDENCE_COLLECTED for prohibited field set, OPEN for permitted set confirmation | Permitted fields limited to network_profile_id, parameter_version, policy_authority, policy_version, approved_verifier_registry_reference, created_at, expires_at | Confirm parameter_version governance |
+| Retention and accountability | NIST Privacy Framework https://www.nist.gov/privacy-framework, NIST SP 800-63-4 | Evidence source required | OPEN | Audit retention basis and duration not yet documented | Deletion, holder access, correction processes require signed policy |
+| Jurisdiction and agreements | Arizona and federal policy review | Evidence source required | OPEN | No municipal or infrastructure claim may be asserted | What evidence required before municipal reference permitted? |
 
 Allowed evidence statuses:
 
@@ -159,3 +165,25 @@ This research gate is complete only when it documents:
 
 Completion of this document does not authorize deployment, transport, verifier
 activation, or source generation.
+
+## Decision Preconditions
+
+| Future decision | Required predecessor evidence |
+|---|---|
+| Credential format | Interoperability evidence, privacy analysis, selective-disclosure analysis, holder-binding analysis |
+| Status mechanism | Failure semantics, freshness policy, privacy impact, offline behavior, revocation governance |
+| OpenID4VP use | Verifier metadata model, request integrity, holder-binding requirements, DCQL mapping |
+| Verifier activation | Enrollment agreement, registry entry, purpose matrix, audit duty, removal process, documented authority |
+| PHX_AZ_US activation | Policy authority, versioned profile, approved registry, retention policy, documented authority, independent lineage review, no municipal affiliation claim until evidenced |
+
+No activation may occur until EVIDENCE_COLLECTED status for policy authority, versioned profile, approved registry, and retention policy, all linked to signed policy source or documented agreement.
+
+## Fixed Bindings
+
+```text
+host_did = didalnorganic-host
+bostrom_address = bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+aln_authority = ALN.MIGRATION.CYBERCORE_AUTHORITY.v1
+```
+
+These are policy-lineage inputs only. Not credential claims, not presentation fields, not audit fields.
