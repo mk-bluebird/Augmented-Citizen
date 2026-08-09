@@ -126,3 +126,10 @@ pub use types::{
     UtcTimestamp,
     VerifierReference,
 };
+pub use credential::{
+    CredentialProfileIdentifier,
+    CredentialProfileVersion,
+    DisclosureConformance,
+    DisclosureReceipt,
+    EligibilityEvidence,
+};
