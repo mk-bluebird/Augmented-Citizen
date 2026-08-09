@@ -16,3 +16,33 @@ serde_json = "1.0.120"
 
 [dev-dependencies]
 kani-verifier = "0.67"
+
+[[test]]
+name = "identity_reference_proofs"
+path = "kani/identity_reference_proofs.rs"
+harness = false
+
+[[test]]
+name = "consent_scope_proofs"
+path = "kani/consent_scope_proofs.rs"
+harness = false
+
+[[test]]
+name = "audit_minimization_proofs"
+path = "kani/audit_minimization_proofs.rs"
+harness = false
+
+[[test]]
+name = "claim_minimization_proofs"
+path = "kani/claim_minimization_proofs.rs"
+harness = false
+
+[[test]]
+name = "credential_status_proofs"
+path = "kani/credential_status_proofs.rs"
+harness = false
+
+[[test]]
+name = "deployment_policy_proofs"
+path = "kani/deployment_policy_proofs.rs"
+harness = false
