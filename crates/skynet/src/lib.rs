@@ -103,8 +103,9 @@ pub use error::{
     SkynetResult,
 };
 pub use provenance::{
-    PolicyAuthorityReference,
+    PolicyContentReference,
     PolicyLineage,
+    PolicyAuthorityReference,
     PolicyRuleReference,
     PolicyVersion,
 };
