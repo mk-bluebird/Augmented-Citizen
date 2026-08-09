@@ -8,224 +8,364 @@ format_family = F6
 family_description = CWT/COSE constrained credential profile
 selection_state = CONDITIONAL_SELECTION_PENDING_EVIDENCE
 format_selected = false
+credential_schema_selected = false
+COSE_profile_selected = false
+issuer_selected = false
+verifier_selected = false
+cryptographic_dependency_selected = false
 source_generation = prohibited
 adapter_generation = prohibited
+deployment_activation = prohibited
 ```
 
 ## Purpose
 
-This document researches whether a CWT/COSE-based credential profile can satisfy
-Skynet's opaque-reference, holder-controlled, purpose-limited, content-minimized
-boundary.
+This document researches whether a constrained CWT/COSE credential profile can
+satisfy Skynet's opaque-reference, holder-controlled, purpose-limited, and
+content-minimized design.
 
-It does not select a credential schema, claim vocabulary, COSE profile, issuer,
-verifier, or cryptographic suite. CWT (RFC 8392) is a CBOR claims container
-secured with COSE; it is not by itself a complete VC interoperability profile.
-An exact profile must be identified before any adapter decision.
-
-Primary sources:
-- RFC 8392 CWT: https://datatracker.ietf.org/doc/rfc8392/
-- RFC 9052 COSE: https://datatracker.ietf.org/doc/rfc9052/
-- RFC 9334 CBOR Web Token claims discussion
-- W3C VC Data Model 2.0 (data model reference, not wire format): https://www.w3.org/TR/vc-data-model-2.0/
-- IETF SD-JWT VC tracking page for comparison (not selected): https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/
-
-## Research Questions and Findings (OPEN)
-
-### 1. Which exact CWT credential profile is proposed?
-
-**OPEN - EVIDENCE_REQUIRED**
-
-Candidates to evaluate (none selected):
+It does not select:
 
 ```text
-CWT with cnf claim for holder confirmation (RFC 8747)
-CWT with custom credential-type claim under private claim namespace
-CWT with exp/nbf/iat for validity interval
-CWT with status reference claim pointing to external status artifact (not dereferenced by Skynet core)
-CWT with selective disclosure via SD-CWT draft (IETF draft-ietf-spice-sd-cwt) - active Internet-Draft, track version-neutral URL
+credential schema
+claim vocabulary
+COSE profile
+issuer
+verifier
+proof format
+wallet
+transport
+cryptographic dependency
+status mechanism
+selective-disclosure mechanism
 ```
 
-Evidence required before identifier can be proposed:
+CWT is a compact CBOR claims container. A future CWT credential profile may use
+a COSE security profile, but CWT alone is not a complete VC interoperability
+profile. An exact profile identifier must be evidenced before any future adapter
+decision.
+
+## Primary Research Sources
 
 ```text
-primary spec source and version
-private claim namespace registration or collision analysis
-cnf claim structure and proof-of-possession model
-interoperability evidence with at least one issuer ecosystem
-interoperability evidence with at least one verifier ecosystem
-offline verification evidence
+RFC 8392 — CBOR Web Token
+RFC 8747 — Proof-of-Possession Key Semantics for CWTs
+RFC 9052 — CBOR Object Signing and Encryption
+W3C Verifiable Credentials Data Model v2.0
+IETF SD-CWT tracking record
 ```
 
-No profile identifier may be marked SELECTED_FOR_ADAPTER_ONLY until evidence matrix
-reaches EVIDENCE_COLLECTED.
+These sources are research inputs only. They do not constitute format selection,
+issuer authorization, verifier authorization, or interoperability evidence.
 
-### 2. Which fields are mandatory at the adapter boundary?
+## Fixed Core Boundary
 
-**OPEN**
-
-Proposed mandatory fields for future adapter (not core) - all remain inside adapter,
-never crossing into Skynet core as raw values:
+Skynet core never receives:
 
 ```text
-adapter input: sealed CWT (CBOR bytes) - never decoded by core
-adapter internal: iss (issuer reference, opaque mapping only)
-adapter internal: sub or cnf (holder confirmation material, never core)
-adapter internal: exp, nbf, iat (validity interval, used only to derive Expired/Active for core)
-adapter internal: cti or jti (credential identifier, stays in adapter)
-adapter internal: status claim (status reference, not dereferenced by core, passed to CredentialStatusProvider only)
-adapter internal: credential type claim (maps to CredentialTypeReference)
-adapter output to core: CredentialTypeReference (opaque), CredentialFormatReference = F6, CredentialReference (opaque derived, not raw cti), expiry as UtcTimestamp for core to compare via Clock
-```
-
-Every field above must be documented with primary source and adapter impact.
-No field is approved for core ingestion as raw claim value.
-
-### 3. Which fields are prohibited from crossing into Skynet core?
-
-**EVIDENCE_COLLECTED for prohibition list**
-
-Prohibited from Skynet core types, ports, fixtures, provenance, audit:
-
-```text
-raw CWT CBOR bytes
-claim values
-cnf public key material
-cnf proof material
-credential proof material
+CWT CBOR bytes
+credential payload
+credential claims
+credential identifiers
+holder identifiers
+subject identifiers
+issuer identifiers
+status locator values
+proof material
 public key material
 signature material
-credential identifier (cti/jti) as direct identifier
-issuer identifier as direct identifier
-holder identifier as direct identifier
-subject identifier as long-lived identifier
-status URL content
+COSE headers
 network endpoint
-device identifier
-biometric, neural, physiological, clinical, location, network metadata
-UnboundedJsonValue, UnrestrictedMap, UnrestrictedList
-FreeTextReason, FreeTextException
-StablePseudonymousIdentifier that enables cross-session correlation
+transport payload
+device data
+location data
+neural data
+physiological data
+clinical data
+free-text narrative
+unbounded payload
 ```
 
-Core receives only:
+Skynet core may receive only:
 
 ```text
 PolicyAuthority
 PolicyVersion
 PolicyLineageReference
-CredentialTypeReference (opaque)
-CredentialFormatReference (opaque, = F6 family)
-CredentialReference (opaque, not raw cti)
-CredentialStatus (closed enum from CredentialStatusProvider)
-ClaimDescriptorId (closed set)
+CredentialTypeReference
+CredentialFormatReference
+CredentialReference
+CredentialStatus
+ClaimDescriptorId
 DisclosureProfileId
-HolderAuthorization result (typed, not proof material)
-PresentationCommitment (opaque sealed bytes from wallet adapter, never decoded by core)
+HolderAuthorization
+PresentationCommitmentReference
 ```
 
-### 4. How is credential type represented?
+Every core-facing reference is opaque, validated, non-empty, bounded, and
+non-semantic.
 
-**OPEN**
+## Research Questions
 
-Options (none selected):
+### 1. Exact F6 profile identity
+
+**Status:** `OPEN`
+
+Determine:
 
 ```text
-private claim namespace (e.g., vc_type or credential_type) mapping to CredentialTypeReference
-COSE header parameter mapping
-external type registry with opaque reference
+Which CWT credential profile is proposed?
+Which COSE security profile, if any, is required?
+Which claim vocabulary is formally defined?
+Which credential-type representation is interoperable?
+Which primary source defines the profile?
+Which profile version is being evaluated?
 ```
 
-Requirement: type representation must allow adapter to map protocol-specific type
-to Skynet opaque `CredentialTypeReference` without exposing claim values to core.
-Type must not be derived from network, device, location, or holder identifier.
-
-### 5. How are validity interval and credential status represented?
-
-**OPEN for interval, DEFERRED for status mechanism pending S6 research**
-
-Validity interval:
+Candidate research directions:
 
 ```text
-CWT exp (expiry), nbf (not-before), iat (issued-at) claims inside adapter
-Adapter normalizes to: not_before, expires_at as UtcTimestamp for core comparison via Clock port
-Core never receives exp/nbf/iat raw values, only normalized expiry result via credential_is_usable logic
+CWT with proof-of-possession confirmation semantics
+CWT with externally governed credential-type mapping
+CWT with normalized validity claims
+CWT with adapter-private status locator
+CWT with independently specified selective-disclosure mechanism
 ```
 
-Credential status:
+No direction is selected.
+
+### 2. Adapter-private CWT inputs
+
+**Status:** `OPEN`
+
+A future F6 adapter may need to process these adapter-private categories:
 
 ```text
-Skynet core never dereferences a credential status URL, retrieves a status resource,
-parses a status list, or receives a status payload.
-Future CredentialStatusProvider adapter may resolve status via F6-specific status claim
-under approved privacy, freshness, and failure policy, then returns only closed CredentialStatus enum:
-Active, Expired, Suspended, Unavailable, Unrecognized
-Status resolution details deferred to accumulator-status-research.md (S6)
+sealed CWT CBOR input
+credential claim set
+credential type claim
+issuer claim
+subject claim
+confirmation material
+validity claims
+credential identifier
+adapter-private status locator
+security header material
+presentation proof material
 ```
 
-### 6. How can an adapter produce an eligibility result without exposing claim values?
-
-**OPEN - EVIDENCE_REQUIRED**
-
-Research question:
+The future adapter must demonstrate that none of these categories cross into:
 
 ```text
-Can adapter evaluate requested ClaimDescriptorIds against allowed descriptors
-and produce PresentationOutcome with disclosed_claim_descriptor_ids only,
-without passing claim values into Skynet core or audit?
+Skynet core types
+Skynet ports
+Skynet fixtures
+Skynet provenance
+Skynet audit events
+Skynet error values
+```
+
+### 3. Core-facing adapter outputs
+
+**Status:** `OPEN`
+
+The future adapter may emit only:
+
+```text
+CredentialFormatReference
+CredentialTypeReference
+CredentialReference
+CredentialStatus
+ClaimDescriptorId set
+DisclosureProfileId
+HolderAuthorization
+PresentationCommitmentReference
+```
+
+Rules:
+
+```text
+CredentialReference must not equal a raw credential identifier.
+CredentialReference must not be derived in Skynet core.
+CredentialTypeReference must not reveal claim values.
+PresentationCommitmentReference must not contain presentation bytes.
+PresentationCommitmentReference must not contain a transport payload.
+```
+
+The wallet adapter retains sealed presentation material. The transport adapter
+resolves the commitment reference only after policy approval.
+
+### 4. Credential type representation
+
+**Status:** `OPEN`
+
+Research options:
+
+```text
+externally governed type registry
+adapter-private claim-to-reference mapping
+COSE profile metadata mapping
+private claim namespace with collision analysis
 ```
 
 Required evidence:
 
 ```text
-eligibility logic inside adapter
-mapping from CWT claim names to ClaimDescriptorId
-proof that core and audit receive only descriptor IDs, not values
-privacy analysis showing no claim value leakage
+type source
+type-version governance
+collision behavior
+issuer interoperability
+verifier interoperability
+mapping to CredentialTypeReference
+privacy impact
+adapter-only processing proof
 ```
 
-This is mandatory for Skynet compatibility. If adapter cannot prove eligibility without
-claim-value exposure, F6 is REJECTED_FOR_SKYNET.
-
-### 7. How is selective disclosure achieved, if supported?
-
-**OPEN - EVIDENCE_REQUIRED**
-
-Candidates (none selected):
+Credential type must not be derived from:
 
 ```text
-SD-CWT (IETF draft-ietf-spice-sd-cwt) - selective disclosure for CWT
-COSE selective disclosure via claim redaction
-No selective disclosure - full credential disclosure inside adapter, but only descriptor IDs cross to core (still requires privacy review)
+holder identifier
+issuer identifier
+network endpoint
+device state
+location
+clinical state
+biophysical state
 ```
 
-Evaluation criteria:
+### 5. Validity interval normalization
+
+**Status:** `OPEN`
+
+The adapter may evaluate CWT validity information and normalize it for Skynet
+policy evaluation.
+
+Research questions:
 
 ```text
-disclosure mechanism primary source and version
-whether disclosure produces unlinkable presentations
-whether disclosure requires holder key proof
-whether disclosure increases adapter complexity
-whether disclosure enables verifier-specific presentations without long-lived identifier
+How are not-before and expiry semantics represented?
+How does the adapter use Clock-provided time?
+How is a malformed validity interval handled?
+How is an absent validity interval handled?
+How does the adapter avoid passing raw CWT claim values into core?
 ```
 
-SD-CWT is an active Internet-Draft; must reference version-neutral tracking URL
-https://datatracker.ietf.org/doc/draft-ietf-spice-sd-cwt/ plus specific revision and retrieval date when evaluating.
-
-### 8. How is holder binding represented?
-
-**OPEN - EVIDENCE_REQUIRED, linked to H5 research**
-
-F6 holder binding must use:
+Required normalization rule:
 
 ```text
-cnf claim (confirmation) per RFC 8747 - holder proof-of-possession
-or COSE_Key in cnf
-or external wallet-held key proof
+Expired means validated current time is after normalized expiry.
+
+Not-before failure means credential is not currently usable.
+Its closed-status mapping remains OPEN pending data-contract approval.
+
+Not-before failure must never be classified as Expired.
 ```
 
-Binding material must never enter Skynet core. Core receives only HolderAuthorization
-result with mandatory bindings:
+### 6. Status boundary
+
+**Status:** `DEFERRED_TO_S6`
+
+Skynet core never:
+
+```text
+dereferences a status locator
+retrieves a status artifact
+parses a status artifact
+parses revocation material
+parses suspension material
+receives witness material
+receives epoch material
+```
+
+A future `CredentialStatusProvider` adapter may resolve an adapter-private status
+locator under approved privacy, freshness, and failure policy.
+
+The adapter returns only:
+
+```text
+Active
+Expired
+Suspended
+Unavailable
+Unrecognized
+```
+
+Status-family research remains in:
+
+```text
+accumulator-status-research.md
+```
+
+### 7. Eligibility without claim-value exposure
+
+**Status:** `OPEN`
+
+Research question:
+
+```text
+Can the adapter evaluate a requested ClaimDescriptorId set against an approved
+disclosure profile and produce a policy-compatible result without exposing
+credential claim values to Skynet core or audit?
+```
+
+Required evidence:
+
+```text
+adapter-side evaluation model
+claim-to-descriptor mapping
+descriptor vocabulary governance
+claim-value non-disclosure proof
+audit non-disclosure proof
+error non-disclosure proof
+cross-verifier privacy analysis
+```
+
+If F6 cannot support this boundary, it must be marked:
+
+```text
+REJECTED_FOR_SKYNET
+```
+
+### 8. Selective disclosure
+
+**Status:** `OPEN`
+
+Research candidate:
+
+```text
+Independently specified CWT selective-disclosure mechanism.
+```
+
+No generic COSE behavior is presumed to provide selective disclosure.
+
+Required evidence:
+
+```text
+primary specification and version
+issuer support
+holder wallet support
+verifier support
+disclosure minimization behavior
+holder-binding interaction
+linkability analysis
+cross-verifier correlation analysis
+offline behavior
+failure behavior
+adapter complexity
+```
+
+A full credential may be processed only inside a future adapter. Full credential
+material must never enter Skynet core, audit, fixtures, provenance, or errors.
+
+### 9. Holder binding
+
+**Status:** `OPEN`
+
+Proof-of-possession confirmation semantics may be relevant to F6 research, but
+they do not by themselves establish the selected self-issued holder-authentication
+profile.
+
+The H5 research gate must determine how holder authorization is bound to:
 
 ```text
 holder_authorization_id
@@ -239,82 +379,101 @@ policy_authority
 policy_version
 ```
 
-No DID, key, proof, credential, challenge, route, endpoint may appear in core result.
-Holder binding evaluation and replay prevention details deferred to self-issued-holder-binding-research.md (H5).
+No DID, key, proof, challenge, credential, route, endpoint, or message content
+may enter the resulting `HolderAuthorization`.
 
-### 9. How is verifier-specific presentation unlinkability evaluated?
+### 10. Unlinkability and correlation
 
-**OPEN - EVIDENCE_REQUIRED**
+**Status:** `OPEN`
 
-Anti-correlation question (required):
-
-```text
-Can F6 produce a verifier-specific, purpose-specific presentation without exposing
-a long-lived holder identifier, credential identifier (cti/jti), issuer identifier,
-or reusable presentation identifier?
-```
-
-Evidence required:
+Required question:
 
 ```text
-linkability analysis per W3C VC Data Model 2.0 privacy considerations https://www.w3.org/TR/vc-data-model-2.0/#privacy-considerations
-whether cti/jti is stable pseudonymous identifier
-whether sub is stable
-whether cnf enables correlation
-whether SD-CWT disclosures enable correlation
-adapter mitigation (e.g., per-verifier nonce, per-presentation identifier)
+Can F6 support verifier-specific and purpose-specific presentation without
+disclosing a stable holder identifier, credential identifier, issuer identifier,
+subject identifier, or reusable presentation identifier?
 ```
 
-If F6 cannot avoid long-lived identifiers, it must be marked REJECTED_FOR_SKYNET or
-require explicit holder privacy impact assessment and independent authorization.
-
-### 10. What is interoperability evidence for issuer and verifier ecosystems?
-
-**OPEN - EVIDENCE_REQUIRED**
-
-Required:
+Research must assess whether any adapter-private material becomes a:
 
 ```text
-issuer ecosystem that can issue CWT-based credential with cnf and type claim
-verifier ecosystem that can verify CWT COSE signature and cnf proof
-at least one documented implementation or test vector
-offline verification test evidence
-failure behavior evidence (expired, suspended, unavailable)
+StablePseudonymousIdentifier
+CrossSessionCorrelationIdentifier
+IssuerControlledIdentifier
+VerifierControlledIdentifier
+CredentialProofMaterial
+PublicKeyMaterial
+SignatureMaterial
 ```
 
-No issuer or verifier may be claimed as supported without primary source or test evidence.
-
-### 11. What are offline verification constraints?
-
-**OPEN**
-
-Constraints to document:
+If correlation cannot be mitigated, F6 must be:
 
 ```text
-COSE signature verification without network (requires pre-distributed issuer keys via registry with independently evidenced integrity)
-status freshness without network (requires S6 offline status snapshot or accumulator epoch policy)
-validity interval check via Clock port only, no system time
-no network fetch for issuer keys, status, or revocation in Skynet core - all in adapter under approved policy
+REJECTED_FOR_SKYNET
 ```
 
-Offline behavior must not assert network reachability, endpoint availability, or routing.
+or require a separately approved privacy-impact record and independent holder
+authorization.
+
+### 11. Interoperability evidence
+
+**Status:** `EVIDENCE_REQUIRED`
+
+Before any F6 adapter design may be proposed, evidence must establish:
+
+```text
+at least one documented issuer-capable ecosystem
+at least one documented verifier-capable ecosystem
+documented CWT and COSE interoperability behavior
+documented holder-binding behavior
+documented failure behavior
+documented offline verification constraints
+test vector or equivalent reproducible evidence
+```
+
+No issuer or verifier is currently selected or supported.
+
+### 12. Offline constraints
+
+**Status:** `OPEN`
+
+Research questions:
+
+```text
+How can an adapter validate issuer material without core network access?
+How can an adapter validate status freshness without core network access?
+What versioned policy artifact is required?
+How is integrity and provenance independently evidenced?
+What is the permitted freshness window?
+How are stale artifacts handled?
+How are unavailable artifacts handled?
+```
+
+Rules:
+
+```text
+Skynet core makes no network call.
+Skynet core does not receive endpoint or routing data.
+Offline behavior must not imply network reachability.
+Unavailable evidence must never produce Active.
+```
 
 ## Required Evidence Matrix
 
-| Topic | Evidence source | Evidence status | Privacy impact | Core boundary impact | Open question |
+| Topic | Evidence source | Status | Privacy impact | Core-boundary impact | Open question |
 |---|---|---|---|---|---|
-| Exact CWT profile | RFC 8392, RFC 9052, SD-CWT tracking page | OPEN | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | Which private claim namespace and cnf structure? |
-| Mandatory adapter fields | RFC 8392 claims registry | OPEN | EVIDENCE_REQUIRED | EVIDENCE_COLLECTED for prohibition list | Can expiry be normalized without claim exposure? |
-| Type representation | Private claim or external registry | OPEN | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | How to map to CredentialTypeReference opaquely? |
-| Validity and status | RFC 8392 exp/nbf/iat, S6 research | OPEN | EVIDENCE_REQUIRED | EVIDENCE_COLLECTED - core receives only closed enum | How does status claim map to CredentialStatusProvider? |
-| Eligibility without claim values | Adapter logic | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | Can adapter prove eligibility with only descriptor IDs? |
-| Selective disclosure | SD-CWT draft tracking page https://datatracker.ietf.org/doc/draft-ietf-spice-sd-cwt/ | OPEN | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | SD-CWT vs full disclosure privacy impact |
-| Holder binding | RFC 8747 cnf, H5 research | OPEN | EVIDENCE_REQUIRED | EVIDENCE_COLLECTED - proof material never core | cnf proof-of-possession model still OPEN |
-| Unlinkability | W3C VC 2.0 privacy considerations https://www.w3.org/TR/vc-data-model-2.0/#privacy-considerations | OPEN | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | Long-lived cti/jti/sub correlation risk |
-| Interoperability | Issuer/verifier implementation evidence | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | No implementation evidenced yet |
-| Offline verification | Registry integrity model | OPEN | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | Offline key distribution and status freshness |
+| Exact CWT profile | Primary specification | OPEN | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | Which profile identifier is interoperable? |
+| Type representation | Type-governance source | OPEN | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | How is type mapped opaquely? |
+| Validity behavior | CWT and policy evidence | OPEN | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | How is not-before normalized? |
+| Status integration | S6 research | DEFERRED | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | How is status located privately? |
+| Eligibility isolation | Adapter-boundary analysis | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | Can core avoid claim values entirely? |
+| Selective disclosure | Primary mechanism source | OPEN | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | Does the mechanism preserve unlinkability? |
+| Holder binding | H5 research | OPEN | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | How is replay prevented? |
+| Correlation resistance | Privacy analysis | OPEN | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | Are repeat presentations linkable? |
+| Interoperability | Reproducible ecosystem evidence | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | Are issuer and verifier implementations available? |
+| Offline verification | Policy and artifact evidence | OPEN | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | What freshness constraints apply? |
 
-## Conclusion Format (Required)
+## Required Conclusion Format
 
 ```text
 F6_PROFILE_IDENTIFIER = OPEN
@@ -328,34 +487,42 @@ F6_OFFLINE_BEHAVIOR = OPEN
 F6_EVIDENCE_STATUS = EVIDENCE_REQUIRED
 ```
 
-No conclusion may be marked EVIDENCE_COLLECTED until primary source, interoperability evidence, privacy analysis, linkability analysis, and core-boundary compatibility are documented.
-
 ## Decision Preconditions
 
 | Future decision | Required predecessor evidence |
 |---|---|
-| F6 adapter design | Exact profile identifier, interoperability evidence, privacy compatibility, core boundary compatibility, selective disclosure analysis, holder binding analysis, unlinkability analysis, offline behavior, failure semantics, threat-model review |
-| Combined F6+S6+P3+H5 acceptance | F6 privacy compatibility EVIDENCE_COLLECTED, S6 epoch/witness/freshness defined, P3 adapter-only transport with explicit approval, H5 mandatory bindings enforced, no prohibited data in core |
+| F6 adapter design | Exact profile identity, interoperability evidence, privacy analysis, core-boundary analysis, selective-disclosure analysis, H5 analysis, unlinkability analysis, offline and failure analysis, threat-model review |
+| Combined F6 + S6 + P3 + H5 profile | F6 evidence collected, S6 freshness and witness lifecycle defined, P3 adapter-only transport evidence, H5 request-bound authorization evidence, no prohibited core data flow |
 
 ## Prohibited Actions
 
 ```text
-No credential schema selected
-No claim vocabulary selected
-No COSE profile selected
-No issuer selected
-No verifier selected
-No cryptographic dependency selected
-No source code, fixture, ALN, or Rust file generation
-No municipal, location, or infrastructure claim
+No credential schema selection
+No claim vocabulary selection
+No COSE profile selection
+No issuer selection
+No verifier selection
+No cryptographic dependency selection
+No source generation
+No adapter generation
+No fixture generation
+No ALN generation
+No municipal or infrastructure claim
 ```
 
 ## Fixed Bindings
 
 ```text
-host_did = didalnorganic-host - external ALN governance only, not in Skynet core types
-bostrom_address = bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7 - external ALN governance only
-aln_authority = ALN.MIGRATION.CYBERCORE_AUTHORITY.v1 - policy lineage reference only as PolicyAuthority
+host_did = didalnorganic-host
+bostrom_address = bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+aln_authority = ALN.MIGRATION.CYBERCORE_AUTHORITY.v1
 ```
 
-Policy lineage in core is only PolicyAuthority, PolicyVersion, PolicyLineageReference.
+The fixed host DID and Bostrom address are external ALN-governance bindings only.
+Skynet core policy lineage contains only:
+
+```text
+PolicyAuthority
+PolicyVersion
+PolicyLineageReference
+```
