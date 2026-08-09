@@ -407,5 +407,4 @@ host_did = didalnorganic-host - external ALN governance only, not core
 bostrom_address = bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7 - external ALN governance only
 aln_authority = ALN.MIGRATION.CYBERCORE_AUTHORITY.v1 - policy lineage reference only as PolicyAuthority
 ```
-
 Core policy lineage is only PolicyAuthority, PolicyVersion, PolicyLineageReference.
