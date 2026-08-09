@@ -1,77 +1,78 @@
-# Augmented-Citizen
+# Skynet
 
-Augmented-Citizen is a rights-oriented engineering repository for
-privacy-preserving identity, consent, and governance systems used by
-augmented citizens.
+Skynet is a rights-oriented engineering repository for privacy-preserving
+identity, consent, policy lineage, and accountable infrastructure interactions
+for sovereign persons using integrated or assistive technology.
 
-The repository treats the person as the primary sovereign stakeholder.
-It provides implementable contracts for cognitive liberty, mental privacy,
-identity continuity, explicit consent, and accountable infrastructure
-interactions. It does not collect, infer from, or expose raw neural,
+The repository treats the person as the primary sovereign stakeholder. It
+provides implementable contracts for cognitive liberty, mental privacy,
+identity continuity, explicit consent, and narrowly scoped credential
+presentation.
+
+Skynet does not collect, infer from, retain, or expose raw neural,
 physiological, credential-claim, device-internal, network-payload, or
 continuous-location data.
 
-`crates/skynet` is the repository's civic identity and
-credential-routing core. It evaluates narrowly scoped, holder-authorized
-credential presentations without retaining credential claims or creating
-a surveillance profile.
+`crates/skynet` is the repository's civic identity and credential-routing
+core. It evaluates holder-authorized credential presentations without retaining
+credential claims or creating a surveillance profile.
 
-> **Important:** This repository is not evidence of authorization by any
-> government, municipality, device manufacturer, credential issuer, or
-> infrastructure provider. Deployment labels and policy references are
-> application-defined until a documented, independently authorized
-> integration exists.
+> **Important:** This repository does not establish authorization by a
+> government, municipality, device manufacturer, credential issuer, verifier,
+> or infrastructure provider. Deployment labels and policy references remain
+> application-defined until a documented, independently authorized integration
+> exists.
 
 ## Mission
 
-- Preserve cognitive sovereignty and mental privacy for augmented citizens.
-- Implement holder-controlled identity and credential presentation boundaries.
+- Preserve cognitive sovereignty and mental privacy.
+- Implement holder-controlled identity and credential-presentation boundaries.
 - Require explicit, purpose-specific, time-bounded, and revocable consent.
 - Prevent non-consensual surveillance, manipulation, data export, and
   capability reduction by design.
 - Provide auditable Rust, ALN, policy, and documentation artifacts for
-  rights-preserving augmented-citizen infrastructure.
+  rights-preserving infrastructure.
 - Support monotone evolution: future changes may add safety and freedom but
   must not silently reduce a host's protected capabilities or rights.
 
 ## Identity Model
 
-Augmented-Citizen distinguishes four identity layers:
+Skynet distinguishes four identity layers:
 
 | Layer | Purpose | Excluded content |
 |---|---|---|
-| `CitizenIdentityReference` | Opaque local reference to a holder-controlled identity | Name, raw biometrics, neural data, direct identifiers |
-| `CredentialReference` | Opaque reference to a credential retained by the holder wallet | Credential claims and raw credential payload |
+| `CitizenIdentityReference` | Opaque local reference to a holder-controlled identity | Names, raw biometrics, neural data, direct identifiers |
+| `CredentialReference` | Opaque reference to a credential retained by the holder wallet | Credential claims and raw credential payloads |
 | `VerifierReference` | Reference to an approved requesting service | Unverified verifier metadata |
-| `DeploymentProfile` | Versioned policy-bound infrastructure profile | Real-time location, network traces, device serials |
+| `DeploymentProfile` | Versioned, policy-bound infrastructure profile | Real-time location, network traces, device serials |
 
-Identity is not a behavioral score, a diagnosis, a surveillance record, or a
+Identity is not a behavioral score, clinical diagnosis, surveillance record, or
 claim of municipal authorization.
 
 Credential claims remain within a holder-controlled wallet or a
-format-specific adapter. The core policy layer processes only opaque
-references, declared claim descriptors, policy lineage, status results,
-holder authorization results, and content-minimized audit facts.
+format-specific adapter. The Skynet policy core processes only opaque
+references, declared claim descriptors, policy lineage, normalized status
+results, holder-authorization results, and content-minimized audit facts.
 
-## Skynet Civic Identity Core
+## Civic Identity Core
 
-`crates/skynet` is a privacy-preserving civic identity and
-credential-routing core. It coordinates a credential interaction only after
-all required checks succeed:
+`crates/skynet` is a privacy-preserving civic identity and credential-routing
+core. It coordinates a credential interaction only after all required checks
+succeed:
 
 1. Validate the named deployment profile.
 2. Validate the requesting verifier against an approved registry.
 3. Load an ALN-derived policy projection with complete authority and version.
 4. Validate the declared processing purpose.
 5. Validate active, purpose-matched consent.
-6. Obtain explicit holder authorization from a local trusted interface.
+6. Obtain explicit holder authorization through a local trusted interface.
 7. Evaluate credential status through a status-provider port.
 8. Verify that requested claim descriptors are within the approved disclosure profile.
 9. Construct a sealed verifier-addressed presentation through a wallet adapter.
 10. Transport only the approved sealed presentation.
 11. Record a content-minimized audit event.
 
-The core crate does not parse a raw credential, issue credentials, perform
+The core crate does not parse raw credentials, issue credentials, perform
 identity proofing, connect automatically to civic systems, access external
 networks, or store credential claims.
 
@@ -104,14 +105,13 @@ Skynet audit sink receives only opaque references,
 closed reason codes, policy lineage, and timestamps.
 ```
 
-## Rights and Safety Principles
+## Rights and Safety
 
 ### Cognitive sovereignty
 
-The augmented citizen retains authority over their thoughts, memories,
-decision-making, identity bindings, and AI-assisted reasoning. No repository
-component may treat cognitive state as a commodity, a credential, or an
-infrastructure access condition.
+The holder retains authority over thoughts, memories, decision-making, identity
+bindings, and AI-assisted reasoning. No component may treat cognitive state as
+a commodity, credential, behavioral score, or infrastructure-access condition.
 
 ### Explicit holder authorization
 
@@ -137,14 +137,14 @@ switches, and non-consensual behavior-control mechanisms are prohibited.
 
 ### Non-weaponization
 
-This repository must not be used to build systems for covert cognitive
-manipulation, non-consensual behavioral influence, population control,
-surveillance scoring, or discrimination against augmented citizens.
+Skynet must not be used to build systems for covert cognitive manipulation,
+non-consensual behavioral influence, population control, surveillance scoring,
+or discrimination.
 
 ## Governance Bindings
 
 When ALN- or BioPay-governed artifacts are enabled, host-critical policy
-projections must bind to the following governance constants:
+projections bind to the following governance constants:
 
 ```text
 host_did = didalnorganic-host
@@ -153,23 +153,22 @@ aln_authority = ALN.MIGRATION.CYBERCORE_AUTHORITY.v1
 ```
 
 These values establish policy lineage for governed artifacts. They are not
-public credential claims, they do not authorize third-party access, and they
-must not be copied into credential presentations or content-minimized audit
-events unless an approved policy explicitly requires their opaque reference.
+public credential claims, do not authorize third-party access, and must not be
+copied into credential presentations or content-minimized audit events unless
+an approved policy requires an opaque reference.
 
-`mk-bluebird/Cybercore` is the intended authority for cybernetic evolution
-artifacts and ALN policy lineage, subject to verification against the active
-repository governance documents.
+Cybercore is the intended authority for cybernetic-evolution artifacts and ALN
+policy lineage, subject to verification against active governance documents.
 
 ## Deployment Profiles
 
-The initial `skynet` deployment label is:
+The initial Skynet deployment label is:
 
 ```text
 PHX_AZ_US
 ```
 
-This means only:
+This label means only:
 
 ```text
 Application-defined Phoenix, Arizona, United States deployment profile.
@@ -197,7 +196,7 @@ change-management process.
 │   │   ├── Civic identity, consent, disclosure, and credential-routing core
 │   │   ├── Typed ports for wallet, status, transport, registry, and audit adapters
 │   │   └── Tests, fixtures, and formal-verification harnesses
-│   └── Additional rights-preserving cybernetic and policy crates
+│   └── Additional rights-preserving policy and infrastructure crates
 ├── docs/
 │   └── Architecture, threat models, research gates, and implementation guidance
 ├── policy/
@@ -233,21 +232,42 @@ Each crate must define:
 No source file should be generated until its upstream contracts, required
 ports, invariants, fixtures, and test obligations are defined.
 
-## Standards Position
+## Credential Profile Position
 
-Augmented-Citizen uses open credential standards as interoperability references,
-not as a reason to centralize personal data.
+Skynet uses open credential standards as interoperability references, not as a
+reason to centralize personal data.
 
-- W3C Verifiable Credentials Data Model 2.0 informs the issuer-holder-verifier
-  credential model and credential data representation.
-- OpenID for Verifiable Presentations informs presentation-request and
-  wallet-to-verifier exchange adapters.
-- NIST SP 800-63-4 informs assurance, privacy, identity-proofing, and
-  authentication planning.
+The core remains credential-format-neutral. Credential profiles must be
+introduced through separately reviewed adapters after their profile research
+gate is complete.
 
-The `skynet` core remains format-neutral. W3C VC, ISO mdoc, SD-JWT VC, or
-other credential formats must be introduced through separately reviewed
-adapters after the repository's credential-profile research gate is complete.
+A credential adapter must provide only:
+
+- An `EligibilityDecision`.
+- A normalized `CredentialStatus`.
+- A `HolderAuthorization` result.
+- A `PolicyLineage` reference.
+- A content-minimized `DisclosureReceipt`.
+- A closed, content-minimized `AuditEvent`.
+
+The core must not receive credential claims, raw credential payloads, holder
+keys, direct identifiers, cryptographic proof material, request challenges, or
+transport-routing metadata.
+
+## Formal Invariants
+
+Skynet implementation work must preserve these core properties:
+
+```text
+SKY-I-001: Core policy evaluation receives no raw credential or claim values.
+SKY-I-002: Holder authorization is bound to request, verifier, purpose,
+           consent scope, policy version, and validity interval.
+SKY-I-003: Stale, unavailable, or unrecognized status evidence never becomes Active.
+SKY-I-004: Audit records cannot become a secondary credential or surveillance store.
+SKY-I-005: Every policy decision contains reproducible authority and version lineage.
+SKY-I-006: Deployment labels cannot be treated as real-time location evidence.
+SKY-I-007: Capability changes require transparent, host-authorized governance.
+```
 
 ## Installation
 
@@ -257,8 +277,6 @@ repository-specific build instructions.
 Typical Rust workspace workflow:
 
 ```bash
-git clone https://github.com/mk-bluebird/Augmented-Citizen.git
-cd Augmented-Citizen
 cargo build --workspace
 cargo test --workspace
 ```
@@ -272,7 +290,7 @@ Contributions must:
 
 - Preserve holder control, mental privacy, and explicit consent.
 - Use opaque references instead of sensitive identifiers or payloads.
-- Keep raw credential claims outside core policy, provenance, and audit types.
+- Keep raw credential claims outside policy, provenance, and audit types.
 - Keep neural and physiological data outside public contracts.
 - Define consent, disclosure, deployment, verifier, and audit implications.
 - Add deterministic tests and applicable formal-proof targets.
@@ -285,7 +303,7 @@ Contributions must not:
 
 - Add covert collection, inference, manipulation, or tracking features.
 - Treat biosignal-derived output as consent.
-- Add direct network access to the `skynet` core.
+- Add direct network access to the Skynet policy core.
 - Add raw credential parsing or generic payload fields to core types.
 - Add silent capability reductions, hidden control paths, or non-consensual
   behavior-control features.
@@ -293,7 +311,7 @@ Contributions must not:
 
 ## Security Posture
 
-The primary threats considered by this repository include:
+Primary threats considered by Skynet include:
 
 - Unauthorized disclosure of credential claims.
 - Unauthorized presentation of a holder credential.
@@ -303,18 +321,20 @@ The primary threats considered by this repository include:
 - Incomplete policy lineage or unrecognized deployment profiles.
 - Audit data becoming a secondary surveillance store.
 - Coercive, deceptive, or non-consensual interaction flows.
+- Replay, purpose substitution, cross-verifier substitution, and expiry bypass.
+- Adapter-to-core leakage of credential, identity, or routing information.
 
-The principal mitigations are holder authorization, narrow disclosure profiles,
+Principal mitigations include holder authorization, narrow disclosure profiles,
 typed policy evaluation, verifier registries, status evaluation, sealed
 presentation transport, closed audit schemas, and independently testable
 invariants.
 
 ## Limitations
 
-This repository is an engineering and governance framework. It is not legal
-advice, medical advice, clinical-device validation, an identity-proofing
-service, a credential issuer, or an authorization from a municipality or
-infrastructure operator.
+Skynet is an engineering and governance framework. It is not legal advice,
+medical advice, clinical-device validation, an identity-proofing service, a
+credential issuer, or authorization from a municipality or infrastructure
+operator.
 
 Actual protection depends on correct implementation, independent review,
 holder-controlled deployment, trustworthy adapters, applicable law, and
@@ -323,8 +343,8 @@ operators.
 
 ## License
 
-See the repository license files for the authoritative licensing terms. No crate
-manifest should declare a license value until the repository license has been
+See repository license files for authoritative licensing terms. No crate
+manifest should declare a license value until repository licensing has been
 verified.
 
 ## References
