@@ -72,6 +72,9 @@ pub mod invariants;
 /// Narrow local adapter ports and minimized adapter evidence contracts.
 pub mod ports;
 
+/// Policy-safe credential-presentation intent coordination.
+pub mod presentation;
+
 /// Prohibited-data classifications and core-boundary rules.
 pub mod privacy;
 
@@ -128,6 +131,7 @@ pub use ports::{
     VerifierRegistryPort,
     VerifierRegistryRequest,
 };
+pub use presentation::PresentationIntent;
 pub use provenance::{
     PolicyContentReference,
     PolicyLineage,
