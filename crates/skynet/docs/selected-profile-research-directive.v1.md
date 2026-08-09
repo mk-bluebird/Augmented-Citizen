@@ -1,3 +1,4 @@
+[selected-profile-research-directive.v1.md](https://github.com/user-attachments/files/30867534/selected-profile-research-directive.v1.md)
 # Skynet Selected Profile Research Directive v1
 
 ## Status
@@ -70,6 +71,8 @@ F6_INTEROPERABILITY = OPEN
 F6_PRIVACY_COMPATIBILITY = OPEN
 F6_CORE_BOUNDARY_COMPATIBILITY = OPEN
 ```
+
+CWT is a CBOR claims container (RFC 8392) secured with COSE. It is not by itself a complete VC interoperability profile. Exact profile must be identified.
 
 ## S6 — Cryptographic Accumulator Status Research
 
@@ -144,6 +147,9 @@ thread identifiers, routing metadata, endpoint references, and transport
 receipts must not enter Skynet core types, fixtures, provenance, or audit events.
 ```
 
+DIDComm defines application-level messaging and carries sender, recipient, threading,
+and routing metadata. All such metadata must remain inside transport adapter.
+
 ## H5 — Self-Issued Holder Authentication Research
 
 Create:
@@ -169,7 +175,7 @@ What failure state is returned when binding evidence is unavailable?
 How does the adapter emit only HolderAuthorization to Skynet core?
 ```
 
-Mandatory `HolderAuthorization` semantic fields:
+Mandatory `HolderAuthorization` semantic fields (not optional):
 
 ```text
 holder_authorization_id
@@ -185,6 +191,13 @@ policy_version
 
 No DID, key, proof, credential, challenge, route, endpoint, or message value may
 appear in this core result.
+
+H5 alone is not sufficient. Self-issued flow must be bound to specific presentation
+request; otherwise replay or redirection to another verifier is possible.
+
+The future Skynet core still receives only a typed HolderAuthorization result. DID, key,
+proof, challenge, message headers, routing information, and any self-issued artifact
+remain inside adapters.
 
 ## Threat Model Additions
 
@@ -213,7 +226,7 @@ adapter-to-core prohibited-data leakage
 
 The combined F6 + S6 + P3 + H5 profile may advance only when:
 
-- A complete F6 credential profile is identified.
+- A complete F6 credential profile is identified (CWT alone insufficient).
 - S6 status behavior has defined epoch, witness, freshness, and failure rules.
 - P3 transport is adapter-only and requires explicit external-action approval.
 - H5 binds authorization to request, verifier, purpose, interval, and policy lineage.
@@ -222,3 +235,18 @@ The combined F6 + S6 + P3 + H5 profile may advance only when:
 - No format, status, protocol, or binding artifact enters Skynet core.
 - Privacy, verifier-trust, deployment, and threat-model gates contain
   EVIDENCE_COLLECTED entries for the selected family.
+
+## Next Required Research Order
+
+```text
+1. cwt-cose-credential-profile-research.md
+2. accumulator-status-research.md
+3. self-issued-holder-binding-research.md
+4. didcomm-presentation-profile-research.md
+5. threat-model.md update incorporating all four selections
+6. Reconcile findings into credential-profile-research.md
+7. Decide whether combined profile is accepted or rejected for adapter design
+```
+
+No Rust, ALN, fixture, protocol-message, wallet, or cryptographic implementation work
+should begin before this research sequence is completed.
