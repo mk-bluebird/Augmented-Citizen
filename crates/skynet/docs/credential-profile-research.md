@@ -1,3 +1,4 @@
+[credential-profile-research.md](https://github.com/user-attachments/files/30867281/credential-profile-research.md)
 # Skynet Credential Profile Research
 
 ## Status
@@ -148,6 +149,13 @@ No static issuer or verifier allowlist may be embedded in Skynet source.
 
 | Research topic | Candidate | Primary source | Evidence status | Privacy impact | Adapter impact | Open question |
 |---|---|---|---|---|---|---|
+| Credential representation | W3C VC Data Model 2.0 | https://www.w3.org/TR/vc-data-model-2.0/ | OPEN | EVIDENCE_REQUIRED - claim minimization and linkability analysis needed | EVIDENCE_REQUIRED - adapter parsing boundary | How does credentialStatus property map to core status normalization without claim exposure? |
+| Credential representation | SD-JWT VC | https://www.ietf.org/archive/id/draft-ietf-oauth-sd-jwt-vc/draft-ietf-oauth-sd-jwt-vc-08.html | OPEN | EVIDENCE_REQUIRED - selective disclosure privacy analysis | EVIDENCE_REQUIRED - disclosure mapping to ClaimDescriptorId | Can adapter prove eligibility without core seeing disclosed claim values? |
+| Credential representation | ISO mdoc (18013-5) | https://www.iso.org/standard/69084.html | DEFERRED | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | Deferred pending mobile-document trust model evidence |
+| Holder authorization | Request-bound authorization | NIST SP 800-63-4 https://pages.nist.gov/800-63-4/ | OPEN | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | What binds HolderAuthorizationId to presentation_request_id, verifier, purpose, interval? |
+| Credential status | Status mechanism | W3C VC 2.0 status properties | OPEN | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | Offline availability, freshness, suspension, failure semantics still require signed policy source |
+| Disclosure profile | Descriptor mapping | W3C VC 2.0, OpenID4VP DCQL draft | OPEN | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | How does protocol-specific claim request map to closed ClaimDescriptorId set? |
+| Issuer/verifier trust | Trust governance | Organizational policy source required | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | EVIDENCE_REQUIRED | No documented enrollment agreement evidenced in repository yet |
 
 Allowed evidence statuses:
 
@@ -173,3 +181,17 @@ This research gate is complete only when all of the following are documented:
 
 Completion of this document does not authorize source generation. It enables the
 next decision: whether a profile-selection record may be proposed.
+
+## Decision Preconditions
+
+This section identifies predecessor evidence required before future selections:
+
+| Future decision | Required predecessor evidence |
+|---|---|
+| Credential format | Interoperability evidence, privacy analysis, selective-disclosure analysis, holder-binding analysis, primary spec source, adapter boundary analysis |
+| Status mechanism | Failure semantics, freshness policy, privacy impact, offline behavior, revocation governance, signed status-list source |
+| OpenID4VP use | Verifier metadata model, request integrity, holder-binding requirements, DCQL mapping, replay-resistance evidence |
+| Verifier activation | Enrollment agreement, registry entry, purpose matrix, audit duty, removal process, policy-version governance |
+| PHX_AZ_US activation | Policy authority, versioned profile, approved registry, retention policy, documented authority, independent lineage review |
+
+No selection may occur until EVIDENCE_COLLECTED status is reached for each predecessor, linked to primary standard or signed policy source.
