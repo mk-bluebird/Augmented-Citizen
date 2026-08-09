@@ -1,0 +1,63 @@
+{
+  "artifact": "SkynetIntegrationControlStatus",
+  "version": "1",
+  "authority_record": "docs/research/skynet-readiness-reconciliation.v1.md",
+  "decision": "READY_AFTER_LISTED_REMEDIATIONS",
+  "source_generation": {
+    "approved": true,
+    "deferred": true,
+    "blocked_until": [
+      "raw_validation_evidence_reconciled",
+      "workspace_member_set_verified",
+      "dual_license_application_verified",
+      "rust_ci_workflow_application_verified",
+      "kani_0_67_validation_evidence_reviewed",
+      "aln_validator_implementation_plan_activated"
+    ]
+  },
+  "skynet_core_dependency_policy": {
+    "allowed": [
+      "serde",
+      "serde_json",
+      "thiserror"
+    ],
+    "prohibited_reviewed_crates": [
+      "ac-aln-core",
+      "augmented-id-guard",
+      "brain-identity-core",
+      "city-pass",
+      "sovereign-guards-core"
+    ],
+    "external_boundaries": [
+      "credential_format_adapter",
+      "wallet_adapter",
+      "credential_status_provider",
+      "presentation_transport",
+      "aln_policy_projection",
+      "verifier_registry_provider",
+      "deployment_profile_provider",
+      "audit_sink"
+    ]
+  },
+  "privacy_contract": {
+    "identity_model": "opaque_references_only",
+    "audit_model": "content_minimized",
+    "brain_and_biophysical_data": "prohibited",
+    "credential_claim_material": "prohibited",
+    "direct_host_identifiers": "prohibited",
+    "network_and_location_data": "prohibited",
+    "free_text_and_unbounded_payloads": "prohibited"
+  },
+  "next_action": {
+    "kind": "read_only_evidence_collection",
+    "required_output": "docs/research/validation-evidence-raw.md",
+    "prohibited_actions": [
+      "repository_modification",
+      "dependency_installation",
+      "external_connection",
+      "secret_access",
+      "sensitive_data_inspection",
+      "skynet_source_generation"
+    ]
+  }
+}
