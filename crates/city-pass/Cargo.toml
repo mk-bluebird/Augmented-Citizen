@@ -1,0 +1,22 @@
+[package]
+name = "city-pass"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+homepage.workspace = true
+repository.workspace = true
+publish.workspace = true
+description = "Offline civic-pass capability state machine for separately governed transit integrations."
+
+[lib]
+name = "city_pass"
+path = "src/lib.rs"
+
+[dependencies]
+chrono = { workspace = true }
+serde = { workspace = true }
+
+[features]
+default = []
