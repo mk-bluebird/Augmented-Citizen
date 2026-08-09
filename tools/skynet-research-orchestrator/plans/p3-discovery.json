@@ -1,0 +1,63 @@
+{
+  "plan_id": "p3-discovery-v1",
+  "gate": "P3",
+  "repository_root": ".",
+  "limits": {
+    "max_parallel_tasks": 2,
+    "per_task_timeout_seconds": 60,
+    "max_output_bytes": 131072
+  },
+  "tasks": [
+    {
+      "task_id": "p3-active-source-search",
+      "purpose": "Find P3 and policy-evaluation definitions in active source paths.",
+      "command_id": "ripgrep",
+      "arguments": [
+        "P3|P3_POLICY|EligibilityDecision|PolicyProgram|PolicyLineage|decision_reason|denial_reason",
+        "crates/skynet",
+        "docs",
+        "policy",
+        "aln"
+      ],
+      "expected_evidence": [
+        "adopted_p3_definition",
+        "policy_ir_candidate",
+        "outcome_taxonomy"
+      ]
+    },
+    {
+      "task_id": "p3-history-search",
+      "purpose": "Find historical commits that introduced P3 or eligibility-decision terms.",
+      "command_id": "git_log",
+      "arguments": [
+        "-S",
+        "EligibilityDecision",
+        "--all",
+        "--",
+        "."
+      ],
+      "expected_evidence": [
+        "governance_source",
+        "architecture_decision",
+        "historical_p3_definition"
+      ]
+    },
+    {
+      "task_id": "p3-governance-search",
+      "purpose": "Find governance and authority-delegation artifacts.",
+      "command_id": "ripgrep",
+      "arguments": [
+        "GOVERNANCE|ADR|architecture decision|authority delegation|ALN.MIGRATION.CYBERCORE_AUTHORITY.v1",
+        "docs",
+        "policy",
+        "aln",
+        ".github"
+      ],
+      "expected_evidence": [
+        "governance_source",
+        "authority_delegation",
+        "adoption_path"
+      ]
+    }
+  ]
+}
