@@ -69,6 +69,9 @@ pub mod identity;
 /// Pure functions that enforce Skynet privacy and policy invariants.
 pub mod invariants;
 
+/// Narrow local adapter ports and minimized adapter evidence contracts.
+pub mod ports;
+
 /// Prohibited-data classifications and core-boundary rules.
 pub mod privacy;
 
@@ -95,6 +98,13 @@ pub use consent::{
     ConsentState,
     ConsentWithdrawal,
 };
+pub use credential::{
+    CredentialProfileIdentifier,
+    CredentialProfileVersion,
+    DisclosureConformance,
+    DisclosureReceipt,
+    EligibilityEvidence,
+};
 pub use deployment::{
     DeploymentProfile,
     DeploymentProfileVersion,
@@ -102,6 +112,21 @@ pub use deployment::{
 pub use error::{
     SkynetError,
     SkynetResult,
+};
+pub use ports::{
+    AuditSink,
+    FreshnessRequirement,
+    HolderAuthorization,
+    HolderAuthorizationPort,
+    HolderAuthorizationRequest,
+    PolicyAuthoritySnapshotPort,
+    PolicyAuthoritySnapshotRequest,
+    RequestBinding,
+    StatusEvidencePort,
+    StatusEvidenceRequest,
+    VerifierRegistrationStatus,
+    VerifierRegistryPort,
+    VerifierRegistryRequest,
 };
 pub use provenance::{
     PolicyContentReference,
@@ -125,11 +150,4 @@ pub use types::{
     PresentationRequestId,
     UtcTimestamp,
     VerifierReference,
-};
-pub use credential::{
-    CredentialProfileIdentifier,
-    CredentialProfileVersion,
-    DisclosureConformance,
-    DisclosureReceipt,
-    EligibilityEvidence,
 };
