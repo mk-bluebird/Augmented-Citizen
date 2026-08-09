@@ -1,0 +1,33 @@
+{
+  "artifact": "F6S6CommitBlocker",
+  "version": "1",
+  "commit_ready": false,
+  "blocking_documents": [
+    "crates/skynet/docs/accumulator-status-research.md",
+    "crates/skynet/docs/cwt-cose-credential-profile-research.md"
+  ],
+  "required_s6_changes": [
+    "replace construction-specific tree and digest candidate wording",
+    "replace all implied signature-selection wording",
+    "replace URL and resource wording",
+    "remove holder-notification question",
+    "separate expiry from not-before semantics",
+    "add fail-closed status rule"
+  ],
+  "required_f6_changes": [
+    "remove RFC 9334",
+    "replace payload-bearing PresentationCommitment with PresentationCommitmentReference",
+    "remove generic COSE selective-disclosure assertion"
+  ],
+  "next_permitted_action_after_correction": "commit_research_documents_only",
+  "prohibited_actions": [
+    "Rust source generation",
+    "ALN generation",
+    "fixture generation",
+    "adapter generation",
+    "credential issuance",
+    "status implementation",
+    "transport activation"
+  ],
+  "status_after_this_correction": "corrections_applied_ready_for_commit_review"
+}
