@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0",
+  "artifact": "Skynet Core Boundary Contract",
+  "boundary": {
+    "adapter_to_core": [
+      "CredentialStatus",
+      "HolderAuthorization",
+      "PolicyLineage",
+      "DisclosureReceipt"
+    ],
+    "core_to_external": [
+      "EligibilityDecision",
+      "AuditEvent"
+    ],
+    "prohibited_core_data": [
+      "raw_credential",
+      "credential_claim_value",
+      "holder_identifier",
+      "holder_public_key",
+      "cryptographic_proof",
+      "request_nonce",
+      "transport_route",
+      "raw_biometric_data",
+      "raw_neural_data",
+      "raw_physiological_data"
+    ]
+  },
+  "credential_status": {
+    "allowed_values": [
+      "Active",
+      "Expired",
+      "Suspended",
+      "Unavailable",
+      "Unrecognized"
+    ],
+    "equivocation_result": "Unavailable",
+    "stale_evidence_result": "Unavailable",
+    "unsupported_mechanism_result": "Unrecognized"
+  },
+  "eligibility_decision": {
+    "producer": "SkynetPolicyCore",
+    "permitted_fields": [
+      "decision_receipt_id",
+      "outcome",
+      "reason_codes",
+      "profile_identifier",
+      "policy_lineage_id",
+      "evaluated_at"
+    ],
+    "prohibited_fields": [
+      "claim_value",
+      "credential_digest",
+      "holder_identifier",
+      "verifier_network_address"
+    ]
+  },
+  "audit_event": {
+    "producer": "SkynetPolicyCore",
+    "permitted_fields": [
+      "event_id",
+      "timestamp_utc",
+      "actor_role",
+      "action",
+      "outcome_code",
+      "transaction_scoped_reference",
+      "policy_lineage_id"
+    ],
+    "prohibited_fields": [
+      "actor_identifier",
+      "credential_claim",
+      "credential_payload",
+      "presentation_payload",
+      "network_route",
+      "continuous_location"
+    ]
+  },
+  "f6": {
+    "profile_identifier": "OPEN",
+    "baseline_container": "CWT_COSE_Sign1",
+    "selective_disclosure": "CONDITIONAL",
+    "production_selection": "BLOCKED_PENDING_INTEROPERABILITY_EVIDENCE"
+  },
+  "p3": {
+    "definition_source": "OPEN",
+    "status": "BLOCKED"
+  }
+}
