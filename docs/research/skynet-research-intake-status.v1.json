@@ -1,0 +1,31 @@
+{
+  "artifact": "SkynetResearchIntakeStatus",
+  "version": "1",
+  "intake_state": "accepted",
+  "conditional_research_families": {
+    "format": "F6",
+    "status": "S6",
+    "presentation": "P3",
+    "holder_binding": "H5"
+  },
+  "implementation_state": {
+    "rust_source": "prohibited",
+    "aln_source": "prohibited",
+    "fixture_generation": "prohibited",
+    "adapter_generation": "prohibited",
+    "deployment_activation": "prohibited",
+    "verifier_activation": "prohibited"
+  },
+  "required_next_research": [
+    "cwt-cose-credential-profile-research.md",
+    "accumulator-status-research.md",
+    "self-issued-holder-binding-research.md",
+    "didcomm-presentation-profile-research.md",
+    "threat-model.md"
+  ],
+  "required_reconciliation": [
+    "privacy-model.md prohibited-class amendments",
+    "verifier-trust-research.md separation and negative-test amendments",
+    "credential-profile-research.md status and anti-correlation amendments"
+  ]
+}
