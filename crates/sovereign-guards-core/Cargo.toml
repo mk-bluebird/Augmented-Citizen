@@ -16,3 +16,9 @@ serde_json = { workspace = true }
 [features]
 default = []
 kani = []  # Kani proofs are required in CI but optional at compile-time for consumers
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ["cfg(kani)"] }
+
+[package.metadata.kani.flags]
+default-unwind = "8"
