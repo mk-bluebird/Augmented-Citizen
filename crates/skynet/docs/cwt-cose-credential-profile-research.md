@@ -1,4 +1,3 @@
-[cwt-cose-credential-profile-research (1).md](https://github.com/user-attachments/files/30867667/cwt-cose-credential-profile-research.1.md)
 # F6 CWT/COSE Constrained Credential Profile Research
 
 ## Status
