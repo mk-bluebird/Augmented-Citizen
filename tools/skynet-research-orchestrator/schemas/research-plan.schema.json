@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Skynet Research Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "plan_id",
+    "gate",
+    "repository_root",
+    "tasks",
+    "limits"
+  ],
+  "properties": {
+    "plan_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{2,63}$"
+    },
+    "gate": {
+      "type": "string",
+      "enum": [
+        "FOUNDATION",
+        "F6",
+        "S6",
+        "H5",
+        "P3",
+        "ALN",
+        "AUDIT_DELIVERY"
+      ]
+    },
+    "repository_root": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "tasks": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 24,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "task_id",
+          "purpose",
+          "command_id",
+          "arguments",
+          "expected_evidence"
+        ],
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._-]{2,63}$"
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "command_id": {
+            "type": "string",
+            "enum": [
+              "git_head",
+              "git_log",
+              "git_grep",
+              "file_inventory",
+              "ripgrep",
+              "cargo_metadata",
+              "cargo_check",
+              "cargo_test",
+              "cargo_fmt_check",
+              "cargo_clippy"
+            ]
+          },
+          "arguments": {
+            "type": "array",
+            "maxItems": 16,
+            "items": {
+              "type": "string",
+              "maxLength": 256
+            }
+          },
+          "expected_evidence": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 16,
+            "items": {
+              "type": "string",
+              "maxLength": 128
+            }
+          }
+        }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_parallel_tasks",
+        "per_task_timeout_seconds",
+        "max_output_bytes"
+      ],
+      "properties": {
+        "max_parallel_tasks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        },
+        "per_task_timeout_seconds": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 120
+        },
+        "max_output_bytes": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 262144
+        }
+      }
+    }
+  }
+}
