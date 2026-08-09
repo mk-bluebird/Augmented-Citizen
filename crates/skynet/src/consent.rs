@@ -164,6 +164,7 @@ impl ConsentWithdrawal {
 /// validate a cryptographic presentation, reveal credential claims, or provide
 /// a generic authorization for unrelated verifier interactions.
 #[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+#[serde(deny_unknown_fields)]
 pub struct ConsentScope {
     id: ConsentScopeId,
     verifier: VerifierReference,
