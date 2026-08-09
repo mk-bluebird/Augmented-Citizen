@@ -89,6 +89,7 @@ pub use audit::{
     AuditRecord,
 };
 pub use consent::{
+    ConsentPurpose,
     ConsentScope,
     ConsentState,
     ConsentWithdrawal,
