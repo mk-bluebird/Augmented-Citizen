@@ -5,6 +5,7 @@ members = [
     "crates/brain-identity-core",
     "crates/city-pass",
     "crates/sovereign-guards-core",
+    "crates/skynet",
 ]
 resolver = "2"
 
